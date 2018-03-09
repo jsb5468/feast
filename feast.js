@@ -3,44 +3,18 @@ let currentDialog = null;
 
 let dirButtons = [];
 let actionButtons = [];
-let dialogButtons = [];
 
 let mode = "explore";
 let actions = [];
-let time = 9*60;
+let time = 9*60*60;
 let newline = "&nbsp;";
 
 let player = new Player();
 
-function Object(name="Potato") {
-  this.name = name;
-  this.actions = [];
-}
-
-function Burger() {
-  Object.call(this, "Burger");
-  this.actions.push({
-    "name": "Punch Burger",
-    "action": function() {
-      player.health += 10;
-      update(["You punch the hamburger."]);
-    }
-  });
-}
-
-function Nerd() {
-  Object.call(this, "Nerd");
-  this.actions.push({
-    "name": "Eat Nerd",
-    "action": function() {
-      startDialog(new EatDude());
-    }
-  });
-}
-
 function startDialog(dialog) {
   mode = "dialog";
   currentDialog = dialog;
+  update([currentDialog.visit()]);
   updateDisplay();
 }
 
@@ -87,18 +61,20 @@ function updateCombat() {
 }
 
 function updateDialog() {
-  for (let i = 0; i < dialogButtons.length; i++) {
-    if (i < currentDialog.choices.length) {
-      dialogButtons[i].disabled = false;
-      dialogButtons[i].innerHTML = currentDialog.choices[i].text;
-      dialogButtons[i].classList.remove("inactive-button");
-      dialogButtons[i].classList.add("active-button");
-    } else {
-      dialogButtons[i].disabled = true;
-      dialogButtons[i].innerHTML = "";
-      dialogButtons[i].classList.remove("active-button");
-      dialogButtons[i].classList.add("inactive-button");
-    }
+  let list = document.getElementById("dialog");
+
+  while(list.firstChild) {
+    list.removeChild(list.firstChild);
+  }
+
+  for (let i = 0; i < currentDialog.choices.length; i++) {
+    let li = document.createElement("li");
+    let button = document.createElement("button");
+    button.classList.add("dialog-button");
+    button.innerHTML = currentDialog.choices[i].text;
+    button.addEventListener("click", function() { dialogClicked(i); });
+    li.appendChild(button);
+    list.appendChild(li);
   }
 }
 
@@ -115,6 +91,7 @@ function updateDisplay() {
       document.getElementById("selector-combat").style.display = "flex";
       document.getElementById("selector-dialog").style.display = "none";
       updateCombat();
+      break;
     case "dialog":
       document.getElementById("selector-explore").style.display = "none";
       document.getElementById("selector-combat").style.display = "none";
@@ -130,14 +107,15 @@ function updateDisplay() {
 }
 
 function advanceTime(amount) {
-  time = (time + amount) % 1440;
+  time = (time + amount) % 86400;
 }
+
 function renderTime(time) {
-  let suffix = (time < 720) ? "AM" : "PM";
-  let hour = Math.floor((time % 720) / 60);
+  let suffix = (time < 43200) ? "AM" : "PM";
+  let hour = Math.floor((time % 43200) / 3600);
   if (hour == 0)
     hour = 12;
-  let minute = time % 60;
+  let minute = Math.floor(time / 60) % 60;
   if (minute < 9)
     minute = "0" + minute;
 
@@ -151,21 +129,21 @@ function move(direction) {
     return;
   }
 
-  moveTo(target);
+  moveTo(target,currentRoom.exitDescs[direction]);
 }
 
-function moveTo(room) {
+function moveTo(room,desc="You go places lol") {
   actions = [];
   currentRoom = room;
-  advanceTime(1);
+  advanceTime(30);
 
   currentRoom.objects.forEach(function (object) {
     object.actions.forEach(function (action) {
       actions.push(action);
-    })
-  })
+    });
+  });
 
-  update(["You move to " + currentRoom.name,currentRoom.description,newline]);
+  update([desc,newline]);
 }
 
 window.addEventListener('load', function(event) {
@@ -173,8 +151,6 @@ window.addEventListener('load', function(event) {
   loadCompass();
   loadDialog();
   currentRoom = createWorld();
-  currentRoom.objects.push(new Burger());
-  currentRoom.objects.push(new Nerd());
   moveTo(currentRoom);
   updateDisplay();
 });
@@ -186,6 +162,8 @@ function update(lines=[]) {
     div.innerHTML = lines[i];
     log.appendChild(div);
   }
+
+  log.scrollTop = log.scrollHeight;
   updateDisplay();
 }
 
