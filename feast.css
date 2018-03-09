@@ -3,6 +3,7 @@ body {
   color: #eee;
   height: 100%;
   width: 100%;
+  font-family: sans-serif;
 }
 
 button {
@@ -10,9 +11,14 @@ button {
   color: #eee;
 }
 
+#selector-combat {
+  display: none;
+}
+
 .compass-button {
   width: 100px;
   height: 100px;
+  font-size: 18px;
 }
 
 .active-compass-button {
@@ -20,6 +26,34 @@ button {
 }
 
 .inactive-compass-button {
+  background: #111;
+}
+
+.action-button {
+  width: 100px;
+  height: 100px;
+  font-size: 18px;
+}
+
+.active-action-button {
+
+}
+
+.inactive-action-button {
+  background: #111;
+}
+
+.combat-button {
+  width: 100px;
+  height: 100px;
+  font-size: 18px;
+}
+
+.active-combat-button {
+
+}
+
+.inactive-combat-button {
   background: #111;
 }
 
@@ -35,6 +69,10 @@ button {
   flex: 1;
 }
 
+.stat-line {
+
+}
+
 #game-and-stats {
   margin: auto;
   height: 500px;
@@ -45,4 +83,8 @@ button {
 #footer {
   width: 500px;
   margin: auto;
+}
+
+.selector {
+  display: flex;
 }

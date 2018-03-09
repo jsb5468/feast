@@ -1,7 +1,17 @@
 let currentRoom = null;
 let dirButtons = [];
+let mode = "explore";
 
-function updateDisplay() {
+let player = {
+  name: "Fen",
+  height: 1.55,
+  health: 75,
+  maxHealth: 100,
+  fullness: 35,
+  maxFullness: 200
+};
+
+function updateExplore() {
   for (let i = 0; i < dirButtons.length; i++) {
     let button = dirButtons[i];
     if (currentRoom.exits[i] == null) {
@@ -16,6 +26,29 @@ function updateDisplay() {
       button.innerHTML = currentRoom.exits[i].name;
     }
   }
+}
+
+function updateCombat() {
+
+}
+
+function updateDisplay() {
+  switch(mode) {
+    case "explore":
+      document.getElementById("selector-explore").style.display = "flex";
+      document.getElementById("selector-combat").style.display = "none";
+      updateExplore();
+      break;
+    case "combat":
+      document.getElementById("selector-explore").style.display = "none";
+      document.getElementById("selector-combat").style.display = "flex";
+      updateCombat();
+      break;
+  }
+
+  document.getElementById("stat-name").innerHTML = "Name: " + player.name;
+  document.getElementById("stat-health").innerHTML = "Health: " + player.health + "/" + player.maxHealth;
+  document.getElementById("stat-fullness").innerHTML = "Fullness: " + player.fullness + "/" + player.maxFullness;
 }
 
 function move(direction) {
