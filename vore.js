@@ -1,3 +1,7 @@
+function pick(list) {
+  return list[Math.floor(Math.random()*list.length)];
+}
+
 function Creature(name = "Creature") {
   this.name = name;
   this.health = 100;
@@ -12,6 +16,14 @@ function Player(name = "Player") {
   this.fullness = 100;
   this.maxFullness = 200;
 }
+
+function Anthro() {
+  let species = pick(["dog","cat","lizard","deer","wolf","fox"]);
+
+  Creature.call(this, name);
+}
+// vore stuff here
+
 function Container(name = "stomach") {
   this.name = name;
   this.contents = [];
