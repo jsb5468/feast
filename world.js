@@ -14,6 +14,7 @@ let NORTH_WEST = 7;
 
 function Location(name="Nowhere") {
   this.name = name;
+  this.description = "Not much of anything, really.";
   this.exits = [null,null,null,null,null,null,null,null];
 }
 

@@ -1,4 +1,23 @@
+body {
+  background: #111;
+  color: #eee;
+}
+
+button {
+  background: #222;
+  color: #eee;
+}
 .compass-button {
   width: 100px;
   height: 100px;
+}
+
+#log {
+  background: #222;
+  width: 500px;
+  height: 700px;
+}
+
+#stats {
+  float: right;
 }

@@ -10,6 +10,8 @@ function move(direction) {
     alert("Tried to move to an empty room!");
     return;
   } else {
+    currentRoom = target;
+    update(["You move to " + currentRoom.name]);
     updateDisplay();
   }
 
@@ -20,6 +22,15 @@ window.addEventListener('load', function(event) {
   currentRoom = createWorld();
   updateDisplay();
 });
+
+function update(lines=[]) {
+  let log = document.getElementById("log");
+  for (let i=0; i<lines.length; i++) {
+    let div = document.createElement("div");
+    div.innerHTML = lines[i];
+    log.appendChild(div);
+  }
+}
 
 function loadCompass() {
   document.getElementById("compass-north-west").addEventListener("click", function() {
