@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <title>Feast</title>
   <link rel="stylesheet" href="feast.css">
+  <script src="dialog.js"></script>
   <script src="world.js"></script>
   <script src="vore.js"></script>
   <script src="feast.js"></script>
@@ -49,7 +50,7 @@
               <button class="compass-button" id="compass-west">West</button>
             </th>
             <th>
-              <button class="compass-button inactive-compass-button" id="compass-filler" disabled="true"></button>
+              <button class="compass-button inactive-button" id="compass-filler" disabled="true"></button>
             </th>
             <th>
               <button class="compass-button" id="compass-east">East</button>
@@ -75,32 +76,32 @@
               <button class="action-button" id="action-look">Look</button>
             </th>
             <th>
-              <button class="inactive-action-button action-button" disabled="true" ></button>
+              <button class="inactive-button action-button" disabled="true" ></button>
             </th>
             <th>
-              <button class="inactive-action-button action-button" disabled="true" ></button>
-            </th>
-          </tr>
-          <tr>
-            <th>
-              <button class="inactive-action-button action-button" disabled="true" ></button>
-            </th>
-            <th>
-              <button class="inactive-action-button action-button" disabled="true"></button>
-            </th>
-            <th>
-              <button class="inactive-action-button action-button" disabled="true" ></button>
+              <button class="inactive-button action-button" disabled="true" ></button>
             </th>
           </tr>
           <tr>
             <th>
-              <button class="inactive-action-button action-button" disabled="true" ></button>
+              <button class="inactive-button action-button" disabled="true" ></button>
             </th>
             <th>
-              <button class="inactive-action-button action-button" disabled="true" ></button>
+              <button class="inactive-button action-button" disabled="true"></button>
             </th>
             <th>
-              <button class="inactive-action-button action-button" disabled="true" ></button>
+              <button class="inactive-button action-button" disabled="true" ></button>
+            </th>
+          </tr>
+          <tr>
+            <th>
+              <button class="inactive-button action-button" disabled="true" ></button>
+            </th>
+            <th>
+              <button class="inactive-button action-button" disabled="true" ></button>
+            </th>
+            <th>
+              <button class="inactive-button action-button" disabled="true" ></button>
             </th>
           </tr>
         </table>
@@ -118,6 +119,23 @@
             </th>
             <th>
               <button class="combat-button">Sneeze</button>
+            </th>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="selector" id="selector-dialog">
+      <div id="combat">
+        <table>
+          <tr>
+            <th>
+              <button class="dialog-button">Headbang violently</button>
+            </th>
+            <th>
+              <button class="dialog-button">Belch at</button>
+            </th>
+            <th>
+              <button class="dialog-button">Accost</button>
             </th>
           </tr>
         </table>

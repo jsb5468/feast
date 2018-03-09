@@ -1,6 +1,10 @@
 let currentRoom = null;
+let currentDialog = null;
+
 let dirButtons = [];
 let actionButtons = [];
+let dialogButtons = [];
+
 let mode = "explore";
 let actions = [];
 let time = 9*60;
@@ -24,17 +28,33 @@ function Burger() {
   });
 }
 
+function Nerd() {
+  Object.call(this, "Nerd");
+  this.actions.push({
+    "name": "Eat Nerd",
+    "action": function() {
+      startDialog(new EatDude());
+    }
+  });
+}
+
+function startDialog(dialog) {
+  mode = "dialog";
+  currentDialog = dialog;
+  updateDisplay();
+}
+
 function updateExploreCompass() {
   for (let i = 0; i < dirButtons.length; i++) {
     let button = dirButtons[i];
     if (currentRoom.exits[i] == null) {
       button.disabled = true;
       button.classList.remove("active-compass-button");
-      button.classList.add("inactive-compass-button");
+      button.classList.add("inactive-button");
       button.innerHTML = "";
     } else {
       button.disabled = false;
-      button.classList.remove("inactive-compass-button");
+      button.classList.remove("inactive-button");
       button.classList.add("active-compass-button");
       button.innerHTML = currentRoom.exits[i].name;
     }
@@ -42,23 +62,44 @@ function updateExploreCompass() {
 }
 function updateExploreActions() {
   for (let i = 0; i < actionButtons.length; i++) {
-    if (i < actions.length)
+    if (i < actions.length) {
+      actionButtons[i].disabled = false;
       actionButtons[i].innerHTML = actions[i].name;
-    else
+      actionButtons[i].classList.remove("inactive-button");
+      actionButtons[i].classList.add("active-button");
+    }
+    else {
+      actionButtons[i].disabled = true;
       actionButtons[i].innerHTML = "";
+      actionButtons[i].classList.remove("active-button");
+      actionButtons[i].classList.add("inactive-button");
+    }
   }
 }
+
 function updateExplore() {
-
   updateExploreCompass();
-
   updateExploreActions();
-
-
 }
 
 function updateCombat() {
 
+}
+
+function updateDialog() {
+  for (let i = 0; i < dialogButtons.length; i++) {
+    if (i < currentDialog.choices.length) {
+      dialogButtons[i].disabled = false;
+      dialogButtons[i].innerHTML = currentDialog.choices[i].text;
+      dialogButtons[i].classList.remove("inactive-button");
+      dialogButtons[i].classList.add("active-button");
+    } else {
+      dialogButtons[i].disabled = true;
+      dialogButtons[i].innerHTML = "";
+      dialogButtons[i].classList.remove("active-button");
+      dialogButtons[i].classList.add("inactive-button");
+    }
+  }
 }
 
 function updateDisplay() {
@@ -66,12 +107,19 @@ function updateDisplay() {
     case "explore":
       document.getElementById("selector-explore").style.display = "flex";
       document.getElementById("selector-combat").style.display = "none";
+      document.getElementById("selector-dialog").style.display = "none";
       updateExplore();
       break;
     case "combat":
       document.getElementById("selector-explore").style.display = "none";
       document.getElementById("selector-combat").style.display = "flex";
+      document.getElementById("selector-dialog").style.display = "none";
       updateCombat();
+    case "dialog":
+      document.getElementById("selector-explore").style.display = "none";
+      document.getElementById("selector-combat").style.display = "none";
+      document.getElementById("selector-dialog").style.display = "flex";
+      updateDialog();
       break;
   }
 
@@ -123,8 +171,10 @@ function moveTo(room) {
 window.addEventListener('load', function(event) {
   loadActions();
   loadCompass();
+  loadDialog();
   currentRoom = createWorld();
   currentRoom.objects.push(new Burger());
+  currentRoom.objects.push(new Nerd());
   moveTo(currentRoom);
   updateDisplay();
 });
@@ -137,6 +187,22 @@ function update(lines=[]) {
     log.appendChild(div);
   }
   updateDisplay();
+}
+
+function dialogClicked(index) {
+  currentDialog = currentDialog.choices[index].node;
+  update([currentDialog.visit()]);
+  if (currentDialog.choices.length == 0) {
+    mode = "explore";
+    updateDisplay();
+  }
+}
+
+function loadDialog() {
+  dialogButtons = Array.from( document.querySelectorAll(".dialog-button"));
+  for (let i = 0; i < dialogButtons.length; i++) {
+    dialogButtons[i].addEventListener("click", function() { dialogClicked(i); });
+  }
 }
 
 function actionClicked(index) {

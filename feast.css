@@ -15,18 +15,18 @@ button {
   display: none;
 }
 
+.active-button {
+
+}
+
+.inactive-button {
+  background: #111;
+}
+
 .compass-button {
   width: 100px;
   height: 100px;
   font-size: 18px;
-}
-
-.active-compass-button {
-
-}
-
-.inactive-compass-button {
-  background: #111;
 }
 
 .action-button {
@@ -35,26 +35,16 @@ button {
   font-size: 18px;
 }
 
-.active-action-button {
-
-}
-
-.inactive-action-button {
-  background: #111;
-}
-
 .combat-button {
   width: 100px;
   height: 100px;
   font-size: 18px;
 }
 
-.active-combat-button {
-
-}
-
-.inactive-combat-button {
-  background: #111;
+.dialog-button {
+  width: 100px;
+  height: 100px;
+  font-size: 18px;s
 }
 
 #log {
