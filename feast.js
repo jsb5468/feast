@@ -61,7 +61,6 @@ function move(direction) {
     update(["You move to " + currentRoom.name,currentRoom.description]);
     updateDisplay();
   }
-
 }
 
 window.addEventListener('load', function(event) {

@@ -1,5 +1,8 @@
 "use strict";
 
+/*jshint browser: true*/
+/*jshint devel: true*/
+
 let NORTH = 0;
 let NORTH_EAST = 1;
 let EAST = 2;
@@ -9,12 +12,64 @@ let SOUTH_WEST = 5;
 let WEST = 6;
 let NORTH_WEST = 7;
 
-/*jshint browser: true*/
-/*jshint devel: true*/
+let startLocation = "Bedroom";
 
-function Location(name="Nowhere") {
+let locations = {};
+
+let locationsSrc = [
+  {
+    "name": "Bedroom",
+    "desc": "A bedroom",
+    "conn": [
+      {
+        "name": "Bathroom",
+        "dir": EAST
+      },
+      {
+        "name": "Living Room",
+        "dir": NORTH
+      }
+    ]
+  },
+  {
+    "name": "Bathroom",
+    "desc": "The bathroom",
+    "conn": [
+
+    ]
+  },
+  {
+    "name": "Living Room",
+    "desc": "A bare living room",
+    "conn": [
+      {
+        "name": "Street",
+        "dir": NORTH
+      }
+    ]
+  },
+  {
+    "name": "Street",
+    "desc": "It's a street",
+    "conn": [
+      {
+        "name": "Alley",
+        "dir": WEST
+      }
+    ]
+  },
+  {
+    "name": "Alley",
+    "desc": "A suspicious alley",
+    "conn": [
+
+    ]
+  }
+]
+
+function Location(name="Nowhere",desc="Nada") {
   this.name = name;
-  this.description = "";
+  this.description = desc;
   this.exits = [null,null,null,null,null,null,null,null];
 }
 
@@ -38,19 +93,20 @@ function connectLocations(loc1,loc2,loc1Exit) {
 }
 
 function createWorld() {
-  let bedroom = new Location("Bedroom");
-  let bathroom = new Location("Bathroom");
-  let livingroom = new Location("Living Room");
-  let street = new Location("Street");
-  let alley = new Location("Alley");
-  let hotvore = new Location("Sexy vore scene");
-  hotvore.description = "Oh murr";
+  for (let i = 0; i < locationsSrc.length; i++) {
+    let src = locationsSrc[i];
+    let location = new Location(src.name,src.desc);
+    locations[src.name] = location;
+  }
 
-  connectLocations(bedroom,bathroom,EAST);
-  connectLocations(bedroom,livingroom,NORTH);
-  connectLocations(livingroom,street,NORTH);
-  connectLocations(street,alley,WEST);
-  connectLocations(alley,hotvore,NORTH_WEST);
+  for (let i = 0; i < locationsSrc.length; i++) {
+    let src = locationsSrc[i];
+    let from = locations[src.name];
+    for (let j = 0; j < src.conn.length; j++) {
+      let to = locations[src.conn[j].name];
+      connectLocations(from, to, src.conn[j].dir);
+    }
+  }
 
-  return bedroom;
+  return locations[startLocation];
 }
