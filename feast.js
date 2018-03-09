@@ -1,7 +1,21 @@
 let currentRoom = null;
+let dirButtons = [];
 
 function updateDisplay() {
-  document.getElementById("location").innerHTML = currentRoom.name;
+  for (let i = 0; i < dirButtons.length; i++) {
+    let button = dirButtons[i];
+    if (currentRoom.exits[i] == null) {
+      button.disabled = true;
+      button.classList.remove("active-compass-button");
+      button.classList.add("inactive-compass-button");
+      button.innerHTML = "";
+    } else {
+      button.disabled = false;
+      button.classList.remove("inactive-compass-button");
+      button.classList.add("active-compass-button");
+      button.innerHTML = currentRoom.exits[i].name;
+    }
+  }
 }
 
 function move(direction) {
@@ -11,7 +25,7 @@ function move(direction) {
     return;
   } else {
     currentRoom = target;
-    update(["You move to " + currentRoom.name]);
+    update(["You move to " + currentRoom.name,currentRoom.description]);
     updateDisplay();
   }
 
@@ -30,31 +44,40 @@ function update(lines=[]) {
     div.innerHTML = lines[i];
     log.appendChild(div);
   }
+  updateDisplay();
 }
 
 function loadCompass() {
-  document.getElementById("compass-north-west").addEventListener("click", function() {
+  dirButtons[NORTH_WEST] = document.getElementById("compass-north-west");
+  dirButtons[NORTH_WEST].addEventListener("click", function() {
     move(NORTH_WEST);
   });
-  document.getElementById("compass-north").addEventListener("click", function() {
+  dirButtons[NORTH] = document.getElementById("compass-north");
+  dirButtons[NORTH].addEventListener("click", function() {
     move(NORTH);
   });
-  document.getElementById("compass-north-east").addEventListener("click", function() {
+  dirButtons[NORTH_EAST] = document.getElementById("compass-north-east");
+  dirButtons[NORTH_EAST].addEventListener("click", function() {
     move(NORTH_EAST);
   });
-  document.getElementById("compass-west").addEventListener("click", function() {
+  dirButtons[WEST] = document.getElementById("compass-west");
+  dirButtons[WEST].addEventListener("click", function() {
     move(WEST);
   });
-  document.getElementById("compass-east").addEventListener("click", function() {
+  dirButtons[EAST] = document.getElementById("compass-east");
+  dirButtons[EAST].addEventListener("click", function() {
     move(EAST);
   });
-  document.getElementById("compass-south-west").addEventListener("click", function() {
+  dirButtons[SOUTH_WEST] = document.getElementById("compass-south-west");
+  dirButtons[SOUTH_WEST].addEventListener("click", function() {
     move(SOUTH_WEST);
   });
-  document.getElementById("compass-south").addEventListener("click", function() {
+  dirButtons[SOUTH] = document.getElementById("compass-south");
+  dirButtons[SOUTH].addEventListener("click", function() {
     move(SOUTH);
   });
-  document.getElementById("compass-south-east").addEventListener("click", function() {
+  dirButtons[SOUTH_EAST] = document.getElementById("compass-south-east");
+  dirButtons[SOUTH_EAST].addEventListener("click", function() {
     move(SOUTH_EAST);
   });
 }

@@ -14,7 +14,7 @@ let NORTH_WEST = 7;
 
 function Location(name="Nowhere") {
   this.name = name;
-  this.description = "Not much of anything, really.";
+  this.description = "";
   this.exits = [null,null,null,null,null,null,null,null];
 }
 
@@ -41,9 +41,16 @@ function createWorld() {
   let bedroom = new Location("Bedroom");
   let bathroom = new Location("Bathroom");
   let livingroom = new Location("Living Room");
+  let street = new Location("Street");
+  let alley = new Location("Alley");
+  let hotvore = new Location("Sexy vore scene");
+  hotvore.description = "Oh murr";
 
   connectLocations(bedroom,bathroom,EAST);
   connectLocations(bedroom,livingroom,NORTH);
+  connectLocations(livingroom,street,NORTH);
+  connectLocations(street,alley,WEST);
+  connectLocations(alley,hotvore,NORTH_WEST);
 
   return bedroom;
 }

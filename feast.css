@@ -15,6 +15,14 @@ button {
   height: 100px;
 }
 
+.active-compass-button {
+
+}
+
+.inactive-compass-button {
+  background: #111;
+}
+
 #log {
   background: #222;
   width: 100%;
