@@ -3,6 +3,8 @@ let dirButtons = [];
 let actionButtons = [];
 let mode = "explore";
 let actions = [];
+let time = 9*60;
+let newline = "&nbsp;";
 
 let player = {
   name: "Fen",
@@ -69,9 +71,25 @@ function updateDisplay() {
       break;
   }
 
+  document.getElementById("time").innerHTML = "Time: " + renderTime(time);
   document.getElementById("stat-name").innerHTML = "Name: " + player.name;
   document.getElementById("stat-health").innerHTML = "Health: " + player.health + "/" + player.maxHealth;
   document.getElementById("stat-fullness").innerHTML = "Fullness: " + player.fullness + "/" + player.maxFullness;
+}
+
+function advanceTime(amount) {
+  time = (time + amount) % 1440;
+}
+function renderTime(time) {
+  let suffix = (time < 720) ? "AM" : "PM";
+  let hour = Math.floor((time % 720) / 60);
+  if (hour == 0)
+    hour = 12;
+  let minute = time % 60;
+  if (minute < 9)
+    minute = "0" + minute;
+
+  return hour + ":" + minute + " " + suffix;
 }
 
 function move(direction) {
@@ -87,6 +105,7 @@ function move(direction) {
 function moveTo(room) {
   actions = [];
   currentRoom = room;
+  advanceTime(1);
 
   currentRoom.objects.forEach(function (object) {
     object.actions.forEach(function (action) {
@@ -94,9 +113,7 @@ function moveTo(room) {
     })
   })
 
-  update(["You move to " + currentRoom.name,currentRoom.description]);
-
-  updateDisplay();
+  update(["You move to " + currentRoom.name,currentRoom.description,newline]);
 }
 
 window.addEventListener('load', function(event) {
