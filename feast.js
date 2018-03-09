@@ -6,14 +6,7 @@ let actions = [];
 let time = 9*60;
 let newline = "&nbsp;";
 
-let player = {
-  name: "Fen",
-  height: 1.55,
-  health: 75,
-  maxHealth: 100,
-  fullness: 35,
-  maxFullness: 200
-};
+let player = new Player();
 
 function Object(name="Potato") {
   this.name = name;
@@ -31,7 +24,7 @@ function Burger() {
   });
 }
 
-function updateExplore() {
+function updateExploreCompass() {
   for (let i = 0; i < dirButtons.length; i++) {
     let button = dirButtons[i];
     if (currentRoom.exits[i] == null) {
@@ -46,11 +39,22 @@ function updateExplore() {
       button.innerHTML = currentRoom.exits[i].name;
     }
   }
-
-  for (let i = 0; i < actionButtons.length && i < actions.length; i++) {
-    actionButtons[i].innerHTML = actions[i].name;
-    actionButtons[i].addEventListener("click", function() { actions[i].action(); });
+}
+function updateExploreActions() {
+  for (let i = 0; i < actionButtons.length; i++) {
+    if (i < actions.length)
+      actionButtons[i].innerHTML = actions[i].name;
+    else
+      actionButtons[i].innerHTML = "";
   }
+}
+function updateExplore() {
+
+  updateExploreCompass();
+
+  updateExploreActions();
+
+
 }
 
 function updateCombat() {
@@ -117,8 +121,8 @@ function moveTo(room) {
 }
 
 window.addEventListener('load', function(event) {
+  loadActions();
   loadCompass();
-  actionButtons = Array.from( document.querySelectorAll(".action-button"));
   currentRoom = createWorld();
   currentRoom.objects.push(new Burger());
   moveTo(currentRoom);
@@ -133,6 +137,17 @@ function update(lines=[]) {
     log.appendChild(div);
   }
   updateDisplay();
+}
+
+function actionClicked(index) {
+  actions[index].action();
+}
+
+function loadActions() {
+  actionButtons = Array.from( document.querySelectorAll(".action-button"));
+  for (let i = 0; i < actionButtons.length; i++) {
+    actionButtons[i].addEventListener("click", function() { actionClicked(i); });
+  }
 }
 
 function loadCompass() {
