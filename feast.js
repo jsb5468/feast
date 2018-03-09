@@ -1,6 +1,8 @@
 let currentRoom = null;
 let dirButtons = [];
+let actionButtons = [];
 let mode = "explore";
+let actions = [];
 
 let player = {
   name: "Fen",
@@ -10,6 +12,22 @@ let player = {
   fullness: 35,
   maxFullness: 200
 };
+
+function Object(name="Potato") {
+  this.name = name;
+  this.actions = [];
+}
+
+function Burger() {
+  Object.call(this, "Burger");
+  this.actions.push({
+    "name": "Punch Burger",
+    "action": function() {
+      player.health += 10;
+      update(["You punch the hamburger."]);
+    }
+  });
+}
 
 function updateExplore() {
   for (let i = 0; i < dirButtons.length; i++) {
@@ -25,6 +43,11 @@ function updateExplore() {
       button.classList.add("active-compass-button");
       button.innerHTML = currentRoom.exits[i].name;
     }
+  }
+
+  for (let i = 0; i < actionButtons.length && i < actions.length; i++) {
+    actionButtons[i].innerHTML = actions[i].name;
+    actionButtons[i].addEventListener("click", function() { actions[i].action(); });
   }
 }
 
@@ -56,16 +79,32 @@ function move(direction) {
   if (target == null) {
     alert("Tried to move to an empty room!");
     return;
-  } else {
-    currentRoom = target;
-    update(["You move to " + currentRoom.name,currentRoom.description]);
-    updateDisplay();
   }
+
+  moveTo(target);
+}
+
+function moveTo(room) {
+  actions = [];
+  currentRoom = room;
+
+  currentRoom.objects.forEach(function (object) {
+    object.actions.forEach(function (action) {
+      actions.push(action);
+    })
+  })
+
+  update(["You move to " + currentRoom.name,currentRoom.description]);
+
+  updateDisplay();
 }
 
 window.addEventListener('load', function(event) {
   loadCompass();
+  actionButtons = Array.from( document.querySelectorAll(".action-button"));
   currentRoom = createWorld();
+  currentRoom.objects.push(new Burger());
+  moveTo(currentRoom);
   updateDisplay();
 });
 

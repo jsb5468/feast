@@ -71,6 +71,7 @@ function Location(name="Nowhere",desc="Nada") {
   this.name = name;
   this.description = desc;
   this.exits = [null,null,null,null,null,null,null,null];
+  this.objects = [];
 }
 
 function opposite(direction) {
