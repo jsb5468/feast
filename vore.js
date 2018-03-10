@@ -9,6 +9,10 @@ function Creature(name = "Creature") {
   this.mass = 80;
   this.bowels = new Bowels();
   this.stomach = new Stomach(this.bowels);
+
+  this.str = 10;
+  this.dex = 10;
+  this.con = 10;
 }
 
 function Player(name = "Player") {

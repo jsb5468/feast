@@ -11,6 +11,10 @@ let newline = "&nbsp;";
 
 let player = new Player();
 
+let attacks = [];
+
+attacks.push(new punchAttack(player));
+attacks.push(new flankAttack(player));
 function round(number, digits) {
   return Math.round(number * Math.pow(10,digits)) / Math.pow(10,digits);
 }
@@ -54,7 +58,21 @@ function updateExplore() {
 }
 
 function updateCombat() {
+  let list = document.getElementById("combat");
 
+  while(list.firstChild) {
+    list.removeChild(list.firstChild);
+  }
+
+  for (let i = 0; i < attacks.length; i++) {
+    let li = document.createElement("li");
+    let button = document.createElement("button");
+    button.classList.add("combat-button");
+    button.innerHTML = attacks[i].name;
+    button.addEventListener("click", function() { attackClicked(i) });
+    li.appendChild(button);
+    list.appendChild(li);
+  }
 }
 
 function updateDialog() {
@@ -142,6 +160,8 @@ function moveTo(room,desc="You go places lol") {
   });
 
   update([desc,newline]);
+
+  currentRoom.visit();
 }
 
 window.addEventListener('load', function(event) {
@@ -163,6 +183,21 @@ function update(lines=[]) {
 
   log.scrollTop = log.scrollHeight;
   updateDisplay();
+}
+
+function startCombat(opponent) {
+  mode = "combat";
+  currentFoe = opponent;
+  update(["Oh shit it's a " + opponent.description()]);
+}
+
+function attackClicked(index) {
+  update([attacks[index].attack(currentFoe)]);
+
+  if (currentFoe.health <= 0) {
+    update(["The " + currentFoe.description() + " falls to the ground!"]);
+    startDialog(new FallenFoe(currentFoe));
+  }
 }
 
 function startDialog(dialog) {

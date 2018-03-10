@@ -60,3 +60,24 @@ function PhoneCall() {
     nodeCrash.hooks.push(function() { potato() });
   }
 }
+
+function FallenFoe(foe) {
+  DialogNode.call(this);
+
+  this.text = "What do you want to do with your enemy?";
+
+  {
+    let nodeEat = new DialogNode();
+    this.addChoice("Devour!",nodeEat);
+    nodeEat.text = "You grab your helpless prey and force them down your gullet.";
+    nodeEat.hooks.push(function() {
+      player.stomach.feed(foe);
+    })
+  }
+
+  {
+    let nodeSpare = new DialogNode();
+    this.addChoice("Spare",nodeSpare);
+    nodeSpare.text = "You decide to leave your foe uneaten.";
+  }
+}

@@ -34,7 +34,7 @@ let locationsSrc = [
     ],
     "objs": [
       Bed
-    ]
+    ],
   },
   {
     "name": "Bathroom",
@@ -88,6 +88,11 @@ let locationsSrc = [
         "name": "Crossroads",
         "dir": SOUTH,
         "desc": "You walk south"
+      },
+      {
+        "name": "DANGER ZONE",
+        "dir": NORTH,
+        "desc": "You walk into the DANGER ZONE"
       }
     ],
     "objs": [
@@ -108,9 +113,6 @@ let locationsSrc = [
         "dir": NORTH,
         "desc": "You step into the bar."
       }
-    ],
-    "objs": [
-
     ]
   },
   {
@@ -122,9 +124,6 @@ let locationsSrc = [
         "dir": SOUTH,
         "desc": "You step out of the bar"
       }
-    ],
-    "objs": [
-
     ]
   },
   {
@@ -141,9 +140,6 @@ let locationsSrc = [
         "dir": SOUTH,
         "desc": "You walk south"
       }
-    ],
-    "objs": [
-
     ]
   },
   {
@@ -155,9 +151,22 @@ let locationsSrc = [
         "dir": NORTH,
         "desc": "You walk to the crossroads"
       }
+    ]
+  },
+  {
+    "name": "DANGER ZONE",
+    "desc": "THE DANGER ZONE",
+    "conn": [
+      {
+        "name": "North Street",
+        "dir": SOUTH,
+        "desc": "You walk out of the DANGER ZONE"
+      }
     ],
-    "objs": [
-
+    "hooks": [
+      function() {
+        startCombat(new Anthro());
+      }
     ]
   }
 ];
@@ -168,6 +177,13 @@ function Location(name="Nowhere",desc="Nada") {
   this.exits = [null,null,null,null,null,null,null,null];
   this.exitDescs = [null,null,null,null,null,null,null,null];
   this.objects = [];
+  this.hooks = [];
+
+  this.visit = function() {
+    this.hooks.forEach(function (x) {
+      x();
+    });
+  };
 }
 
 function opposite(direction) {
@@ -193,9 +209,17 @@ function createWorld() {
     let src = locationsSrc[i];
     let location = new Location(src.name,src.desc);
     locations[src.name] = location;
-    src.objs.forEach(function (obj) {
-      location.objects.push(new obj());
-    });
+    if (src.objs != undefined) {
+      src.objs.forEach(function (obj) {
+        location.objects.push(new obj());
+      });
+    }
+    if (src.hooks != undefined) {
+      src.hooks.forEach(function (hook) {
+        location.hooks.push(hook);
+      });
+    }
+
   }
 
   for (let i = 0; i < locationsSrc.length; i++) {
