@@ -46,6 +46,26 @@ function Anthro() {
 
   this.attacks.push(new punchAttack(this));
   this.attacks.push(new flankAttack(this));
+
+  this.struggles = [];
+
+  this.struggles.push(new plead(this));
+  this.struggles.push(new struggle(this));
+}
+
+function Fen() {
+  Anthro.call(this, name);
+
+  this.build = "loomy";
+  this.species = "crux";
+
+  this.attacks = [];
+
+  this.attacks.push(new devourPlayer(this));
+
+  this.struggles = [];
+
+  this.struggles.push(new rub(this));
 }
 
 function Micro() {
@@ -207,4 +227,63 @@ function WasteContainer(name) {
 
 function Bowels() {
   WasteContainer.call(this, "Bowels");
+}
+
+// PLAYER PREY
+
+function plead(predator) {
+  return {
+    name: "Plead",
+    desc: "Ask very, very nicely for the predator to let you go. More effective if you haven't hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() < predator.health / predator.maxHealth;
+
+      if (escape) {
+        return {
+          "escape": escape,
+          "lines": ["You plead for the " + predator.description() + " to let you free, and they begrudingly agree, horking you up and leaving you shivering on the ground"]
+        };
+      } else {
+        return {
+          "escape": escape,
+          "lines": ["You plead with the " + predator.description() + " to let you go, but they refuse."]
+        };
+      }
+    }
+  };
+}
+
+function struggle(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() > predator.health / predator.maxHealth;
+
+      if (escape) {
+        return {
+          "escape": escape,
+          "lines": ["You struggle and squirm, forcing the " + predator.description() + " to hork you up. They groan and stumble away, exhausted by your efforts."]
+        };
+      } else {
+        return {
+          "escape": escape,
+          "lines": ["You squirm and writhe within the " + predator.description() + " to no avail."]
+        };
+      }
+    }
+  };
+}
+
+function rub(predator) {
+  return {
+    name: "Rub",
+    desc: "Rub rub rub",
+    struggle: function(player) {
+      return {
+        "escape": false,
+        "lines": ["You rub the walls of your predator's belly. At least the " + predator.description() + " is getting something out of this."]
+      };
+    }
+  };
 }

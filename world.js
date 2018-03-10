@@ -161,11 +161,32 @@ let locationsSrc = [
         "name": "North Street",
         "dir": SOUTH,
         "desc": "You walk out of the DANGER ZONE"
+      },
+      {
+        "name": "SUPER DANGER ZONE",
+        "dir": NORTH,
+        "desc": "Getting eaten is fun!"
       }
     ],
     "hooks": [
       function() {
         startCombat(new Anthro());
+      }
+    ]
+  },
+  {
+    "name": "SUPER DANGER ZONE",
+    "desc": "Very dangerous",
+    "conn": [
+      {
+        "name": "DANGER ZONE",
+        "dir": SOUTH,
+        "desc": "You hurriedly leave the SUPER DANGER ZONE"
+      }
+    ],
+    "hooks": [
+      function() {
+        startCombat(new Fen());
       }
     ]
   }

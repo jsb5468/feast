@@ -1,3 +1,4 @@
+
 let currentRoom = null;
 let currentDialog = null;
 
@@ -10,6 +11,8 @@ let time = 9*60*60;
 let newline = "&nbsp;";
 
 let player = new Player();
+
+let respawnRoom;
 
 function round(number, digits) {
   return Math.round(number * Math.pow(10,digits)) / Math.pow(10,digits);
@@ -53,6 +56,25 @@ function updateExplore() {
   updateExploreActions();
 }
 
+function updateEaten() {
+  let list = document.getElementById("eaten");
+
+  while(list.firstChild) {
+    list.removeChild(list.firstChild);
+  }
+
+  for (let i = 0; i < currentFoe.struggles.length; i++) {
+    let li = document.createElement("li");
+    let button = document.createElement("button");
+    button.classList.add("eaten-button");
+    button.innerHTML = currentFoe.struggles[i].name;
+    button.addEventListener("click", function() { struggleClicked(i); } );
+    button.addEventListener("mouseover", function() { struggleHovered(i); } );
+    li.appendChild(button);
+    list.appendChild(li);
+  }
+
+}
 function updateCombat() {
   let list = document.getElementById("combat");
 
@@ -91,24 +113,26 @@ function updateDialog() {
 }
 
 function updateDisplay() {
+
+  document.querySelectorAll(".selector").forEach(function (x) {
+    x.style.display = "none";
+  });
   switch(mode) {
     case "explore":
       document.getElementById("selector-explore").style.display = "flex";
-      document.getElementById("selector-combat").style.display = "none";
-      document.getElementById("selector-dialog").style.display = "none";
       updateExplore();
       break;
     case "combat":
-      document.getElementById("selector-explore").style.display = "none";
       document.getElementById("selector-combat").style.display = "flex";
-      document.getElementById("selector-dialog").style.display = "none";
       updateCombat();
       break;
     case "dialog":
-      document.getElementById("selector-explore").style.display = "none";
-      document.getElementById("selector-combat").style.display = "none";
       document.getElementById("selector-dialog").style.display = "flex";
       updateDialog();
+      break;
+    case "eaten":
+      document.getElementById("selector-eaten").style.display = "flex";
+      updateEaten();
       break;
   }
 
@@ -166,6 +190,7 @@ window.addEventListener('load', function(event) {
   loadCompass();
   loadDialog();
   currentRoom = createWorld();
+  respawnRoom = currentRoom;
   moveTo(currentRoom);
   updateDisplay();
 });
@@ -182,8 +207,8 @@ function update(lines=[]) {
   updateDisplay();
 }
 
-function changeMode(mode) {
-  this.mode = mode;
+function changeMode(newMode) {
+  mode = newMode;
   let body = document.querySelector("body");
   body.className = "";
   switch(mode) {
@@ -198,9 +223,11 @@ function changeMode(mode) {
       body.classList.add("eaten");
       break;
   }
+
+  updateDisplay();
 }
 function startCombat(opponent) {
-  mode = "combat";
+  changeMode("combat");
   currentFoe = opponent;
   update(["Oh shit it's a " + opponent.description()]);
 }
@@ -219,6 +246,7 @@ function attackClicked(index) {
     if (player.health <= 0) {
       update(["You fall to the ground..."]);
       changeMode("eaten");
+      updateDisplay();
     }
   }
 }
@@ -227,8 +255,34 @@ function attackHovered(index) {
   document.getElementById("combat-desc").innerHTML = player.attacks[index].desc;
 }
 
+function struggleClicked(index) {
+  let struggle = currentFoe.struggles[index];
+
+  let result = struggle.struggle(player);
+
+  update([result.lines]);
+
+  if (result.escape) {
+    changeMode("explore");
+  } else {
+    player.health -= 20;
+
+    if (player.health <= -100) {
+      update(["You digest in the depths of the " + currentFoe.description()]);
+      moveTo(respawnRoom);
+      changeMode("explore");
+      player.health = 100;
+      update(["You wake back up in your bed."]);
+    }
+  }
+}
+
+function struggleHovered(index) {
+  document.getElementById("eaten-desc").innerHTML = player.struggles[index].desc;
+}
+
 function startDialog(dialog) {
-  mode = "dialog";
+  changeMode("dialog");
   currentDialog = dialog;
   update([currentDialog.text]);
   currentDialog.visit();
@@ -240,7 +294,7 @@ function dialogClicked(index) {
   update([currentDialog.text]);
   currentDialog.visit();
   if (currentDialog.choices.length == 0) {
-    mode = "explore";
+    changeMode("explore");
     updateDisplay();
   }
 }

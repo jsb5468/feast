@@ -56,6 +56,13 @@ button {
   user-select: none;
 }
 
+.eaten-button {
+  width: 200px;
+  height: 50px;
+  font-size: 18px;
+  user-select: none;
+}
+
 #combat-desc {
   width: 200px;
   height: 400px;
@@ -74,6 +81,10 @@ button {
 }
 
 #combat {
+  list-style-type: none;
+}
+
+#eaten {
   list-style-type: none;
 }
 

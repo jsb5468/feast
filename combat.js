@@ -31,3 +31,14 @@ function flankAttack(attacker) {
     }
   };
 }
+
+function devourPlayer(attacker) {
+  return {
+    name: "Devours YOU!",
+    desc: "You won't see this",
+    attackPlayer: function(defender) {
+      changeMode("eaten");
+      return "The voracious " + attacker.description() + " pins you down and devours you in seconds.";
+    }
+  }
+}
