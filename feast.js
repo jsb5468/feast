@@ -282,8 +282,8 @@ function struggleHovered(index) {
 }
 
 function startDialog(dialog) {
-  changeMode("dialog");
   currentDialog = dialog;
+  changeMode("dialog");
   update([currentDialog.text]);
   currentDialog.visit();
   updateDisplay();
