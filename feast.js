@@ -108,6 +108,7 @@ function updateDisplay() {
 
 function advanceTime(amount) {
   time = (time + amount) % 86400;
+  update(player.stomach.digest(amount));
 }
 
 function renderTime(time) {

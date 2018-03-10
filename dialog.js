@@ -20,12 +20,14 @@ function DialogNode() {
 function EatDude() {
   DialogNode.call(this);
 
-  this.text = "You approach the nerd.";
+  let nerd = new Anthro();
+
+  this.text = "You approach the " + nerd.description();
 
   let eatHim = new DialogNode();
 
   eatHim.text = "You eat the nerd. Burp.";
-  eatHim.hooks.push(function() { player.health += 100 } );
+  eatHim.hooks.push(function() { player.stomach.feed(nerd); });
 
   let dontEatHim = new DialogNode();
   dontEatHim.text = "You don't eat the nerd.";
