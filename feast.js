@@ -70,6 +70,7 @@ function updateCombat() {
     button.classList.add("combat-button");
     button.innerHTML = attacks[i].name;
     button.addEventListener("click", function() { attackClicked(i) });
+    button.addEventListener("mouseover", function() { attackHovered(i) });
     li.appendChild(button);
     list.appendChild(li);
   }
@@ -200,6 +201,9 @@ function attackClicked(index) {
   }
 }
 
+function attackHovered(index) {
+  document.getElementById("combat-desc").innerHTML = attacks[index].desc;
+}
 function startDialog(dialog) {
   mode = "dialog";
   currentDialog = dialog;

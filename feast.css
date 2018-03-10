@@ -38,10 +38,16 @@ button {
 }
 
 .combat-button {
-  width: 100px;
-  height: 100px;
+  width: 200px;
+  height: 50px;
   font-size: 18px;
   user-select: none;
+}
+
+#combat-desc {
+  width: 200px;
+  height: 400px;
+  background: #222;
 }
 
 .dialog-button {
@@ -52,6 +58,10 @@ button {
 }
 
 #dialog {
+  list-style-type: none;
+}
+
+#combat {
   list-style-type: none;
 }
 
