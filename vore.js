@@ -9,6 +9,7 @@ function Creature(name = "Creature") {
   this.mass = 80;
   this.bowels = new Bowels();
   this.stomach = new Stomach(this.bowels);
+  this.butt = new Butt(this.bowels,this.stomach);
 
   this.str = 10;
   this.dex = 10;
@@ -24,6 +25,8 @@ function Player(name = "Player") {
 }
 
 function Anthro() {
+  Creature.call(this, name);
+
   this.mass = 80 * (Math.random()/2 - 0.25 + 1);
   this.build = "ordinary";
   if (this.mass < 70) {
@@ -33,26 +36,38 @@ function Anthro() {
   }
 
   this.species = pick(["dog","cat","lizard","deer","wolf","fox"]);
-
-  Creature.call(this, name);
-
   this.description = function() {
     return this.build + " " + this.species;
   };
 }
 
+function Micro() {
+  Creature.call(this, name);
+
+  this.health = 5;
+  this.mass = 0.1 * (Math.random()/2 - 0.25 + 1);
+
+  this.species = pick(["dog","cat","lizard","deer","wolf","fox"]);
+  this.description = function() {
+    return "micro " + this.species;
+  };
+}
+
 // vore stuff here
 
-function Container(name) {
-  this.name = name;
-  this.contents = [];
-  // health/sec
-  this.damageRate = 15*100/86400;
+class Container {
+  constructor(name) {
+    this.name = name;
 
-  // kg/sec
-  this.digestRate = 80/8640;
+    this.contents = [];
+    // health/sec
+    this.damageRate = 15*100/86400;
 
-  this.digest = function(time) {
+    // kg/sec
+    this.digestRate = 80/8640;
+  }
+
+  digest(time) {
     let lines = [];
     this.contents.forEach(function(prey) {
       if (prey.health > 0) {
@@ -85,35 +100,86 @@ function Container(name) {
     });
 
     return lines;
-  };
+  }
 
-  this.feed = function(prey) {
+  feed(prey) {
     this.contents.push(prey);
-  };
+  }
 
-  this.fullness = function() {
+  fullness() {
     return this.contents.reduce((total, prey) => total + prey.mass, 0);
   }
 }
 
-function Stomach(bowels) {
-  Container.call(this, "stomach");
+class Stomach extends Container {
+  constructor(bowels) {
+    super();
+    this.bowels = bowels;
+  }
 
-  this.describeKill = function(prey) {
+  describeKill(prey) {
     return "The " + prey.description() + "'s struggles wane as your stomach overpowers them.";
   }
 
-  this.describeFinish = function(prey) {
+  describeFinish(prey) {
     return "Your churning guts have reduced a " + prey.description() + " to meaty chyme.";
-  };
+  }
 
-  this.fill = function(amount) {
-    bowels.add(amount);
-  };
+  fill(amount) {
+    this.bowels.add(amount);
+  }
 
-  this.finish = function(prey) {
-    bowels.finish(prey);
-  };
+  finish(prey) {
+    this.bowels.finish(prey);
+  }
+}
+
+class Butt extends Container {
+  constructor(bowels, stomach) {
+    super();
+    this.bowels = bowels;
+    this.stomach = stomach;
+  }
+
+  digest(time) {
+    this.contents.forEach(function (x) {
+      x.timeInButt += time;
+    });
+
+    let lines = super.digest(time);
+
+    let pushed = this.contents.filter(prey => prey.timeInButt >= 60 * 30);
+
+    pushed.forEach(function(x) {
+      this.stomach.feed(x);
+      lines.push("Your winding guts squeeze the " + x.description() + " into your stomach.");
+    },this);
+
+    this.contents = this.contents.filter(prey => prey.timeInButt < 60 * 30);
+
+    return lines;
+  }
+
+  describeKill(prey) {
+    return "The " + prey.description() + " abruptly stops struggling, overpowered by your winding intestines.";
+  }
+
+  describeFinish(prey) {
+    return "That delicious " + prey.description() + " didn't even make it to your stomach...now they're gone.";
+  }
+
+  feed(prey) {
+    prey.timeInButt = 0;
+    super.feed(prey);
+  }
+
+  fill(amount) {
+    this.bowels.add(amount);
+  }
+
+  finish(prey) {
+    this.bowels.finish(prey);
+  }
 }
 
 function WasteContainer(name) {

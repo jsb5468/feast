@@ -65,3 +65,13 @@ function Bed() {
     }
   });
 }
+
+function Sofa() {
+  Object.call(this, "Sofa");
+  this.actions.push({
+    "name": "Sit on sofa",
+    "action": function(){
+      startDialog(SofaSit());
+    }
+  })
+}
