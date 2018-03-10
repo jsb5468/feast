@@ -11,6 +11,10 @@ let newline = "&nbsp;";
 
 let player = new Player();
 
+function round(number, digits) {
+  return Math.round(number * Math.pow(10,digits)) / Math.pow(10,digits);
+}
+
 function updateExploreCompass() {
   for (let i = 0; i < dirButtons.length; i++) {
     let button = dirButtons[i];
@@ -96,7 +100,7 @@ function updateDisplay() {
   document.getElementById("time").innerHTML = "Time: " + renderTime(time);
   document.getElementById("stat-name").innerHTML = "Name: " + player.name;
   document.getElementById("stat-health").innerHTML = "Health: " + player.health + "/" + player.maxHealth;
-  document.getElementById("stat-fullness").innerHTML = "Fullness: " + player.fullness();
+  document.getElementById("stat-fullness").innerHTML = "Fullness: " + round(player.fullness(),0);
 }
 
 function advanceTime(amount) {

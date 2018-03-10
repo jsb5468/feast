@@ -56,7 +56,7 @@ let locationsSrc = [
     "conn": [
       {
         "name": "North Street",
-        "dir": NORTH,
+        "dir": WEST,
         "desc": "You step outside."
       },
       {
@@ -77,12 +77,17 @@ let locationsSrc = [
       {
         "name": "Alley",
         "dir": WEST,
-        "desc": "You wander into the dark alley."
+        "desc": "You wander into the dark alley"
       },
       {
         "name": "Living Room",
         "dir": EAST,
-        "desc": "You step back into your apartment."
+        "desc": "You step back into your apartment"
+      },
+      {
+        "name": "Crossroads",
+        "dir": SOUTH,
+        "desc": "You walk south"
       }
     ],
     "objs": [
@@ -94,7 +99,7 @@ let locationsSrc = [
     "desc": "A suspicious alley",
     "conn": [
       {
-        "name": "Street",
+        "name": "North Street",
         "dir": EAST,
         "desc": "You hurry back into the open street."
       },
@@ -115,7 +120,40 @@ let locationsSrc = [
       {
         "name": "Alley",
         "dir": SOUTH,
-        "desc": "You step out of the bar."
+        "desc": "You step out of the bar"
+      }
+    ],
+    "objs": [
+
+    ]
+  },
+  {
+    "name": "Crossroads",
+    "desc": "Where the roads cross",
+    "conn": [
+      {
+        "name": "North Street",
+        "dir": NORTH,
+        "desc": "You walk north"
+      },
+      {
+        "name": "South Street",
+        "dir": SOUTH,
+        "desc": "You walk south"
+      }
+    ],
+    "objs": [
+
+    ]
+  },
+  {
+    "name": "South Street",
+    "desc": "This street is in the south",
+    "conn": [
+      {
+        "name": "Crossroads",
+        "dir": NORTH,
+        "desc": "You walk to the crossroads"
       }
     ],
     "objs": [

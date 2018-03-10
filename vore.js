@@ -55,6 +55,10 @@ function Container(name) {
         let damage = Math.min(prey.health, this.damageRate * time);
         prey.health -= damage;
         time -= damage / this.damageRate;
+
+        if (prey.health <= 0) {
+          lines.push(this.describeKill(prey));
+        }
       }
 
       if (prey.health <= 0) {
@@ -66,7 +70,7 @@ function Container(name) {
       }
 
       if (prey.mass <= 0) {
-        lines.push(this.describeDigest(prey));
+        lines.push(this.describeFinish(prey));
         this.finish(prey);
       }
 
@@ -91,7 +95,11 @@ function Container(name) {
 function Stomach(bowels) {
   Container.call(this, "stomach");
 
-  this.describeDigest = function(prey) {
+  this.describeKill = function(prey) {
+    return "The " + prey.description() + "'s struggles wane as your stomach overpowers them.";
+  }
+
+  this.describeFinish = function(prey) {
     return "Your churning guts have reduced a " + prey.description() + " to meaty chyme.";
   };
 
