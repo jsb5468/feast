@@ -55,7 +55,7 @@ let locationsSrc = [
     "desc": "A bare living room",
     "conn": [
       {
-        "name": "Street",
+        "name": "North Street",
         "dir": NORTH,
         "desc": "You step outside."
       },
@@ -71,7 +71,7 @@ let locationsSrc = [
     ]
   },
   {
-    "name": "Street",
+    "name": "North Street",
     "desc": "It's a street",
     "conn": [
       {
@@ -81,7 +81,7 @@ let locationsSrc = [
       },
       {
         "name": "Living Room",
-        "dir": SOUTH,
+        "dir": EAST,
         "desc": "You step back into your apartment."
       }
     ],

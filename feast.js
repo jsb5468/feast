@@ -96,7 +96,7 @@ function updateDisplay() {
   document.getElementById("time").innerHTML = "Time: " + renderTime(time);
   document.getElementById("stat-name").innerHTML = "Name: " + player.name;
   document.getElementById("stat-health").innerHTML = "Health: " + player.health + "/" + player.maxHealth;
-  document.getElementById("stat-fullness").innerHTML = "Fullness: " + player.fullness + "/" + player.maxFullness;
+  document.getElementById("stat-fullness").innerHTML = "Fullness: " + player.fullness();
 }
 
 function advanceTime(amount) {

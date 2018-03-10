@@ -14,8 +14,9 @@ function Creature(name = "Creature") {
 function Player(name = "Player") {
   Creature.call(this, name);
 
-  this.fullness = 100;
-  this.maxFullness = 200;
+  this.fullness = function() {
+    return this.stomach.fullness();
+  }
 }
 
 function Anthro() {
@@ -81,6 +82,10 @@ function Container(name) {
   this.feed = function(prey) {
     this.contents.push(prey);
   };
+
+  this.fullness = function() {
+    return this.contents.reduce((total, prey) => total + prey.mass, 0);
+  }
 }
 
 function Stomach(bowels) {
