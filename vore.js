@@ -7,7 +7,8 @@ function Creature(name = "Creature") {
   this.health = 100;
   this.maxHealth = 100;
   this.mass = 80;
-  this.stomach = new Stomach();
+  this.bowels = new Bowels();
+  this.stomach = new Stomach(this.bowels);
 }
 
 function Player(name = "Player") {
@@ -37,22 +38,9 @@ function Anthro() {
 
 // vore stuff here
 
-function Container(name = "stomach") {
+function Container(name) {
   this.name = name;
   this.contents = [];
-  this.digested = [];
-  this.digest = function(time) {
-
-  };
-
-  this.feed = function(prey) {
-    this.contents.push(prey);
-  };
-}
-
-function Stomach() {
-  Container.call(this, "stomach");
-
   // health/sec
   this.damageRate = 15*100/86400;
 
@@ -72,21 +60,61 @@ function Stomach() {
         let digested = Math.min(prey.mass, this.digestRate * time);
 
         prey.mass -= digested;
+
+        this.fill(digested);
       }
 
       if (prey.mass <= 0) {
-        lines.push("Your churning guts have reduced a " + prey.description() + " to meaty chyme.");
-        this.digested.push(prey);
+        lines.push(this.describeDigest(prey));
+        this.finish(prey);
       }
 
     }, this);
 
-    this.contents.filter(function(prey) {
+    this.contents = this.contents.filter(function(prey) {
       return prey.mass > 0;
     });
 
     return lines;
   };
 
+  this.feed = function(prey) {
+    this.contents.push(prey);
+  };
+}
 
+function Stomach(bowels) {
+  Container.call(this, "stomach");
+
+  this.describeDigest = function(prey) {
+    return "Your churning guts have reduced a " + prey.description() + " to meaty chyme.";
+  };
+
+  this.fill = function(amount) {
+    bowels.add(amount);
+  };
+
+  this.finish = function(prey) {
+    bowels.finish(prey);
+  };
+}
+
+function WasteContainer(name) {
+  this.name = name;
+
+  this.fullness = 0;
+
+  this.contents = [];
+
+  this.add = function(amount) {
+    this.fullness += amount;
+  };
+
+  this.finish = function(prey) {
+    this.contents.push(prey);
+  };
+}
+
+function Bowels() {
+  WasteContainer.call(this, "Bowels");
 }
