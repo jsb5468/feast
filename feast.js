@@ -269,7 +269,7 @@ function struggleClicked(index) {
 
     if (player.health <= -100) {
       update(["You digest in the depths of the " + currentFoe.description()]);
-      moveTo(respawnRoom);
+      moveTo(respawnRoom,"You drift through space and time...");
       changeMode("explore");
       player.health = 100;
       update(["You wake back up in your bed."]);
@@ -278,7 +278,7 @@ function struggleClicked(index) {
 }
 
 function struggleHovered(index) {
-  document.getElementById("eaten-desc").innerHTML = player.struggles[index].desc;
+  document.getElementById("eaten-desc").innerHTML = currentFoe.struggles[index].desc;
 }
 
 function startDialog(dialog) {

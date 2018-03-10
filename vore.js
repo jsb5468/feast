@@ -26,6 +26,10 @@ function Player(name = "Player") {
 
   this.attacks.push(new punchAttack(this));
   this.attacks.push(new flankAttack(this));
+
+  this.str = 15;
+  this.dex = 15;
+  this.con = 15;
 }
 
 function Anthro() {
