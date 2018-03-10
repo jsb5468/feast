@@ -97,13 +97,32 @@ let locationsSrc = [
         "name": "Street",
         "dir": EAST,
         "desc": "You hurry back into the open street."
+      },
+      {
+        "name": "Seedy Bar",
+        "dir": NORTH,
+        "desc": "You step into the bar."
+      }
+    ],
+    "objs": [
+
+    ]
+  },
+  {
+    "name": "Seedy Bar",
+    "desc": "God this place is seedy",
+    "conn": [
+      {
+        "name": "Alley",
+        "dir": SOUTH,
+        "desc": "You step out of the bar."
       }
     ],
     "objs": [
 
     ]
   }
-]
+];
 
 function Location(name="Nowhere",desc="Nada") {
   this.name = name;

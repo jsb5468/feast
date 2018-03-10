@@ -47,7 +47,7 @@ function TV() {
 function Phone() {
   Object.call(this, "Phone");
   this.actions.push({
-    "name": "Headbutt phone",
+    "name": "Use phone",
     "action": function() {
       startDialog(new PhoneCall());
     }

@@ -11,13 +11,6 @@ let newline = "&nbsp;";
 
 let player = new Player();
 
-function startDialog(dialog) {
-  mode = "dialog";
-  currentDialog = dialog;
-  update([currentDialog.visit()]);
-  updateDisplay();
-}
-
 function updateExploreCompass() {
   for (let i = 0; i < dirButtons.length; i++) {
     let button = dirButtons[i];
@@ -168,9 +161,18 @@ function update(lines=[]) {
   updateDisplay();
 }
 
+function startDialog(dialog) {
+  mode = "dialog";
+  currentDialog = dialog;
+  update([currentDialog.text]);
+  currentDialog.visit();
+  updateDisplay();
+}
+
 function dialogClicked(index) {
   currentDialog = currentDialog.choices[index].node;
-  update([currentDialog.visit()]);
+  update([currentDialog.text]);
+  currentDialog.visit();
   if (currentDialog.choices.length == 0) {
     mode = "explore";
     updateDisplay();
