@@ -11,10 +11,6 @@ let newline = "&nbsp;";
 
 let player = new Player();
 
-let attacks = [];
-
-attacks.push(new punchAttack(player));
-attacks.push(new flankAttack(player));
 function round(number, digits) {
   return Math.round(number * Math.pow(10,digits)) / Math.pow(10,digits);
 }
@@ -64,13 +60,13 @@ function updateCombat() {
     list.removeChild(list.firstChild);
   }
 
-  for (let i = 0; i < attacks.length; i++) {
+  for (let i = 0; i < player.attacks.length; i++) {
     let li = document.createElement("li");
     let button = document.createElement("button");
     button.classList.add("combat-button");
-    button.innerHTML = attacks[i].name;
-    button.addEventListener("click", function() { attackClicked(i) });
-    button.addEventListener("mouseover", function() { attackHovered(i) });
+    button.innerHTML = player.attacks[i].name;
+    button.addEventListener("click", function() { attackClicked(i); } );
+    button.addEventListener("mouseover", function() { attackHovered(i); } );
     li.appendChild(button);
     list.appendChild(li);
   }
@@ -186,6 +182,23 @@ function update(lines=[]) {
   updateDisplay();
 }
 
+function changeMode(mode) {
+  this.mode = mode;
+  let body = document.querySelector("body");
+  body.className = "";
+  switch(mode) {
+    case "explore":
+    case "dialog":
+      body.classList.add("explore");
+      break;
+    case "combat":
+      body.classList.add("combat");
+      break;
+    case "eaten":
+      body.classList.add("eaten");
+      break;
+  }
+}
 function startCombat(opponent) {
   mode = "combat";
   currentFoe = opponent;
@@ -193,17 +206,27 @@ function startCombat(opponent) {
 }
 
 function attackClicked(index) {
-  update([attacks[index].attack(currentFoe)]);
+  update([player.attacks[index].attack(currentFoe)]);
 
   if (currentFoe.health <= 0) {
     update(["The " + currentFoe.description() + " falls to the ground!"]);
     startDialog(new FallenFoe(currentFoe));
+  } else {
+    let attack = pick(currentFoe.attacks);
+
+    update([attack.attackPlayer(player)]);
+
+    if (player.health <= 0) {
+      update(["You fall to the ground..."]);
+      changeMode("eaten");
+    }
   }
 }
 
 function attackHovered(index) {
-  document.getElementById("combat-desc").innerHTML = attacks[index].desc;
+  document.getElementById("combat-desc").innerHTML = player.attacks[index].desc;
 }
+
 function startDialog(dialog) {
   mode = "dialog";
   currentDialog = dialog;

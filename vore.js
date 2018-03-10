@@ -10,6 +10,7 @@ function Creature(name = "Creature") {
   this.bowels = new Bowels();
   this.stomach = new Stomach(this.bowels);
   this.butt = new Butt(this.bowels,this.stomach);
+  this.attacks = [];
 
   this.str = 10;
   this.dex = 10;
@@ -21,7 +22,10 @@ function Player(name = "Player") {
 
   this.fullness = function() {
     return this.stomach.fullness();
-  }
+  };
+
+  this.attacks.push(new punchAttack(this));
+  this.attacks.push(new flankAttack(this));
 }
 
 function Anthro() {
@@ -39,6 +43,9 @@ function Anthro() {
   this.description = function() {
     return this.build + " " + this.species;
   };
+
+  this.attacks.push(new punchAttack(this));
+  this.attacks.push(new flankAttack(this));
 }
 
 function Micro() {

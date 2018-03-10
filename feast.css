@@ -6,6 +6,18 @@ body {
   font-family: sans-serif;
 }
 
+body.combat {
+  background: #311;
+}
+
+body.explore {
+  background: #111;
+}
+
+body.eaten {
+  background: #500;
+}
+
 button {
   background: #222;
   color: #eee;
