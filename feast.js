@@ -14,6 +14,12 @@ let player = new Player();
 
 let respawnRoom;
 
+let prefs = {
+  player: {
+    prey: true
+  }
+};
+
 function round(number, digits) {
   return Math.round(number * Math.pow(10,digits)) / Math.pow(10,digits);
 }
@@ -229,6 +235,17 @@ function generateSettings() {
 
 function applySettings(settings) {
   player.name = settings.name;
+
+  for (let key in settings) {
+    if (settings.hasOwnProperty(key)) {
+      if (key.match(/prefs/)) {
+        let tokens = key.split("-");
+        let pref = prefs;
+        pref = tokens.slice(1,-1).reduce((pref, key) => pref[key], pref);
+        pref[tokens.slice(-1)[0]] = settings[key];
+      }
+    }
+  }
 }
 
 function saveSettings() {
