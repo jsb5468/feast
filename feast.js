@@ -27,21 +27,21 @@ function round(number, digits) {
 function updateExploreCompass() {
   for (let i = 0; i < dirButtons.length; i++) {
     let button = dirButtons[i];
+    button.classList.remove("active-button");
+    button.classList.remove("inactive-button");
+    button.classList.remove("disabled-button");
     if (currentRoom.exits[i] == null) {
       button.disabled = true;
-      button.classList.remove("active-compass-button");
       button.classList.add("inactive-button");
       button.innerHTML = "";
     } else {
       if (currentRoom.exits[i].conditions.reduce((result, test) => result && test(prefs), true)) {
         button.disabled = false;
-        button.classList.remove("inactive-button");
-        button.classList.add("active-compass-button");
+        button.classList.add("active-button");
         button.innerHTML = currentRoom.exits[i].name;
       } else {
         button.disabled = true;
-        button.classList.add("inactive-button");
-        button.classList.remove("active-compass-button");
+        button.classList.add("disabled-button");
         button.innerHTML = currentRoom.exits[i].name;
       }
     }

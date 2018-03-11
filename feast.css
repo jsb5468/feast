@@ -35,6 +35,16 @@ button {
   background: #111;
 }
 
+.disabled-button {
+  background: repeating-linear-gradient(
+    45deg,
+    #111,
+    #111 10px,
+    #622 10px,
+    #622 20px
+    );
+}
+
 .compass-button {
   width: 100px;
   height: 100px;
