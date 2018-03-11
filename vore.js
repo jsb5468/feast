@@ -72,8 +72,6 @@ function Fen() {
   this.struggles.push(new rub(this));
 
   this.conditions = [];
-
-  this.conditions.push(function(prefs) { return prefs.player.prey; } );
 }
 
 function Micro() {

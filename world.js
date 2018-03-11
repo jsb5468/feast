@@ -165,7 +165,7 @@ let locationsSrc = [
       {
         "name": "SUPER DANGER ZONE",
         "dir": NORTH,
-        "desc": "Getting eaten is fun!"
+        "desc": "Getting eaten is fun!",
       }
     ],
     "hooks": [
@@ -188,6 +188,9 @@ let locationsSrc = [
       function() {
         startCombat(new Fen());
       }
+    ],
+    "conditions": [
+      function(prefs) { return prefs.player.prey; }
     ]
   }
 ];
@@ -199,6 +202,7 @@ function Location(name="Nowhere",desc="Nada") {
   this.exitDescs = [null,null,null,null,null,null,null,null];
   this.objects = [];
   this.hooks = [];
+  this.conditions = [];
 
   this.visit = function() {
     this.hooks.forEach(function (x) {
@@ -238,6 +242,11 @@ function createWorld() {
     if (src.hooks != undefined) {
       src.hooks.forEach(function (hook) {
         location.hooks.push(hook);
+      });
+    }
+    if (src.conditions != undefined) {
+      src.conditions.forEach(function (cond) {
+        location.conditions.push(cond);
       });
     }
 

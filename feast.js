@@ -33,10 +33,17 @@ function updateExploreCompass() {
       button.classList.add("inactive-button");
       button.innerHTML = "";
     } else {
-      button.disabled = false;
-      button.classList.remove("inactive-button");
-      button.classList.add("active-compass-button");
-      button.innerHTML = currentRoom.exits[i].name;
+      if (currentRoom.exits[i].conditions.reduce((result, test) => result && test(prefs), true)) {
+        button.disabled = false;
+        button.classList.remove("inactive-button");
+        button.classList.add("active-compass-button");
+        button.innerHTML = currentRoom.exits[i].name;
+      } else {
+        button.disabled = true;
+        button.classList.add("inactive-button");
+        button.classList.remove("active-compass-button");
+        button.innerHTML = currentRoom.exits[i].name;
+      }
     }
   }
 }
