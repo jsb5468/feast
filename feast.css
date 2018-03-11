@@ -120,3 +120,15 @@ button {
 .selector {
   display: flex;
 }
+
+#game {
+  display: none;
+}
+
+#create {
+  text-align: center;
+}
+
+#character-form-list {
+  list-style-type: none;
+}

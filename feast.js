@@ -186,6 +186,13 @@ function moveTo(room,desc="You go places lol") {
 }
 
 window.addEventListener('load', function(event) {
+  document.getElementById("start-button").addEventListener("click", start, false);
+});
+
+function start() {
+  applySettings(generateSettings());
+  document.getElementById("create").style.display = "none";
+  document.getElementById("game").style.display = "block";
   loadActions();
   loadCompass();
   loadDialog();
@@ -193,8 +200,44 @@ window.addEventListener('load', function(event) {
   respawnRoom = currentRoom;
   moveTo(currentRoom);
   updateDisplay();
-});
+}
 
+// copied from Stroll LUL
+
+function generateSettings() {
+  let form = document.forms.namedItem("character-form");
+  let settings = {};
+  for (let i=0; i<form.length; i++) {
+    let value = form[i].value == "" ? form[i].placeholder : form[i].value;
+    if (form[i].type == "text")
+      settings[form[i].name] = value;
+    else if (form[i].type == "number")
+      settings[form[i].name] = parseFloat(value);
+    else if (form[i].type == "checkbox") {
+      settings[form[i].name] = form[i].checked;
+    } else if (form[i].type == "radio") {
+      let name = form[i].name;
+      if (form[i].checked)
+        settings[name] = form[i].value;
+    } else if (form[i].type == "select-one") {
+      settings[form[i].name] = form[i][form[i].selectedIndex].value;
+    }
+  }
+
+  return settings;
+}
+
+function applySettings(settings) {
+  player.name = settings.name;
+}
+
+function saveSettings() {
+  window.localStorage.setItem("settings", JSON.stringify(generateSettings()));
+}
+
+function retrieveSettings() {
+  return JSON.parse(window.localStorage.getItem("settings"));
+}
 function update(lines=[]) {
   let log = document.getElementById("log");
   for (let i=0; i<lines.length; i++) {

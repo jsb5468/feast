@@ -21,112 +21,127 @@
 
 <body>
 
-  <div id="game-and-stats">
-    <div id="log">
-      Welcome to Feast v0.0.2
+  <div id="game">
+    <div id="game-and-stats">
+      <div id="log">
+        Welcome to Feast v0.0.2
+      </div>
+      <div id="stats">
+        <div class="stat-line" id="time">Time: to get a watch</div>
+        <div class="stat-line" id="stat-name">Vim: 15</div>
+        <div class="stat-line" id="stat-health">Pulchritude: 44</div>
+        <div class="stat-line" id="stat-fullness">Imagination: 97</div>
+      </div>
     </div>
-    <div id="stats">
-      <div class="stat-line" id="time">Time: to get a watch</div>
-      <div class="stat-line" id="stat-name">Vim: 15</div>
-      <div class="stat-line" id="stat-health">Pulchritude: 44</div>
-      <div class="stat-line" id="stat-fullness">Imagination: 97</div>
+    <div id="footer">
+      <div class="selector" id="selector-explore">
+        <div id="compass">
+          <table>
+            <tr>
+              <th>
+                <button class="compass-button" id="compass-north-west">North West</button>
+              </th>
+              <th>
+                <button class="compass-button" id="compass-north">North</button>
+              </th>
+              <th>
+                <button class="compass-button" id="compass-north-east">North East</button>
+              </th>
+            </tr>
+            <tr>
+              <th>
+                <button class="compass-button" id="compass-west">West</button>
+              </th>
+              <th>
+                <button class="compass-button inactive-button" id="compass-filler" disabled="true"></button>
+              </th>
+              <th>
+                <button class="compass-button" id="compass-east">East</button>
+              </th>
+            </tr>
+            <tr>
+              <th>
+                <button class="compass-button" id="compass-south-west">South West</button>
+              </th>
+              <th>
+                <button class="compass-button" id="compass-south">South</button>
+              </th>
+              <th>
+                <button class="compass-button" id="compass-south-east">South East</button>
+              </th>
+            </tr>
+          </table>
+        </div>
+        <div id="actions">
+          <table>
+            <tr>
+              <th>
+                <button class="action-button" id="action-look">Look</button>
+              </th>
+              <th>
+                <button class="inactive-button action-button" disabled="true"></button>
+              </th>
+              <th>
+                <button class="inactive-button action-button" disabled="true"></button>
+              </th>
+            </tr>
+            <tr>
+              <th>
+                <button class="inactive-button action-button" disabled="true"></button>
+              </th>
+              <th>
+                <button class="inactive-button action-button" disabled="true"></button>
+              </th>
+              <th>
+                <button class="inactive-button action-button" disabled="true"></button>
+              </th>
+            </tr>
+            <tr>
+              <th>
+                <button class="inactive-button action-button" disabled="true"></button>
+              </th>
+              <th>
+                <button class="inactive-button action-button" disabled="true"></button>
+              </th>
+              <th>
+                <button class="inactive-button action-button" disabled="true"></button>
+              </th>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="selector" id="selector-combat">
+        <ul id="combat">
+        </ul>
+        <div id="combat-desc">
+        </div>
+      </div>
+      <div class="selector" id="selector-eaten">
+        <ul id="eaten">
+        </ul>
+        <div id="eaten-desc">
+        </div>
+      </div>
+      <div class="selector" id="selector-dialog">
+
+        <ul id="dialog">
+        </ul>
+
+      </div>
     </div>
   </div>
-  <div id="footer">
-    <div class="selector" id="selector-explore">
-      <div id="compass">
-        <table>
-          <tr>
-            <th>
-              <button class="compass-button" id="compass-north-west">North West</button>
-            </th>
-            <th>
-              <button class="compass-button" id="compass-north">North</button>
-            </th>
-            <th>
-              <button class="compass-button" id="compass-north-east">North East</button>
-            </th>
-          </tr>
-          <tr>
-            <th>
-              <button class="compass-button" id="compass-west">West</button>
-            </th>
-            <th>
-              <button class="compass-button inactive-button" id="compass-filler" disabled="true"></button>
-            </th>
-            <th>
-              <button class="compass-button" id="compass-east">East</button>
-            </th>
-          </tr>
-          <tr>
-            <th>
-              <button class="compass-button" id="compass-south-west">South West</button>
-            </th>
-            <th>
-              <button class="compass-button" id="compass-south">South</button>
-            </th>
-            <th>
-              <button class="compass-button" id="compass-south-east">South East</button>
-            </th>
-          </tr>
-        </table>
-      </div>
-      <div id="actions">
-        <table>
-          <tr>
-            <th>
-              <button class="action-button" id="action-look">Look</button>
-            </th>
-            <th>
-              <button class="inactive-button action-button" disabled="true" ></button>
-            </th>
-            <th>
-              <button class="inactive-button action-button" disabled="true" ></button>
-            </th>
-          </tr>
-          <tr>
-            <th>
-              <button class="inactive-button action-button" disabled="true" ></button>
-            </th>
-            <th>
-              <button class="inactive-button action-button" disabled="true"></button>
-            </th>
-            <th>
-              <button class="inactive-button action-button" disabled="true" ></button>
-            </th>
-          </tr>
-          <tr>
-            <th>
-              <button class="inactive-button action-button" disabled="true" ></button>
-            </th>
-            <th>
-              <button class="inactive-button action-button" disabled="true" ></button>
-            </th>
-            <th>
-              <button class="inactive-button action-button" disabled="true" ></button>
-            </th>
-          </tr>
-        </table>
-      </div>
-    </div>
-    <div class="selector" id="selector-combat">
-      <ul id="combat">
+  <div id="create">
+    <form id="character-form">
+      <ul id="character-form-list">
+        <li>
+          <label for="character-name">Name</label>
+          <input type="text" id="character-name" name="name"></input>
+        </li>
+        <li>
+          <button type="button" id="start-button">Start</button>
+        </li>
       </ul>
-      <div id="combat-desc">
-      </div>
-    </div>
-    <div class="selector" id="selector-eaten">
-      <ul id="eaten">
-      </ul>
-      <div id="eaten-desc">
-      </div>
-    </div>
-    <div class="selector" id="selector-dialog">
-
-      <ul id="dialog">
-      </ul>
-
-    </div>
+    </form>
   </div>
 </body>
 
