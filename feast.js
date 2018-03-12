@@ -153,12 +153,13 @@ function updateDisplay() {
 
   document.getElementById("time").innerHTML = "Time: " + renderTime(time);
   document.getElementById("stat-name").innerHTML = "Name: " + player.name;
-  document.getElementById("stat-health").innerHTML = "Health: " + player.health + "/" + player.maxHealth;
+  document.getElementById("stat-health").innerHTML = "Health: " + round(player.health,0) + "/" + round(player.maxHealth,0);
   document.getElementById("stat-fullness").innerHTML = "Fullness: " + round(player.fullness(),0);
 }
 
 function advanceTime(amount) {
   time = (time + amount) % 86400;
+  player.health = Math.min(amount * player.maxHealth / 86400 * 12 + player.health, player.maxHealth);
   update(player.stomach.digest(amount));
 }
 
@@ -315,7 +316,7 @@ function attackClicked(index) {
     attacks = attacks.filter(attack => attack.requirements == undefined || attack.requirements.reduce((result, test) => result && test(currentFoe, player), true));
 
     let attack = pick(attacks);
-    
+
     if (attack == null) {
       attack = currentFoe.backupAttack;
     }
@@ -349,6 +350,7 @@ function struggleClicked(index) {
     if (player.health <= -100) {
       update(["You digest in the depths of the " + currentFoe.description()]);
       moveTo(respawnRoom,"You drift through space and time...");
+      advanceTime(86400/2);
       changeMode("explore");
       player.health = 100;
       update(["You wake back up in your bed."]);

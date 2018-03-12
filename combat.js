@@ -58,7 +58,7 @@ function leer(attacker) {
       return "The " + attacker.description() + " leers at you.";
     },
     requirements: [
-      function(attacker, defender) { return attack.leering != true; }
+      function(attacker, defender) { return attacker.leering != true; }
     ]
   };
 }
