@@ -24,7 +24,7 @@ function Player(name = "Player") {
   Creature.call(this, name);
 
   this.fullness = function() {
-    return this.stomach.fullness();
+    return this.stomach.fullness() + this.butt.fullness();
   };
 
   this.attacks.push(new punchAttack(this));
@@ -32,6 +32,7 @@ function Player(name = "Player") {
 
   this.attacks.push(new grapple(this));
   this.attacks.push(new grappleDevour(this));
+  this.attacks.push(new grappleAnalVore(this));
   this.attacks.push(new grappleRelease(this));
 
   this.attacks.push(new grappledStruggle(this));

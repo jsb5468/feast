@@ -172,6 +172,7 @@ function advanceTime(amount) {
   time = (time + amount) % 86400;
   player.health = Math.min(amount * player.maxHealth / 86400 * 12 + player.health, player.maxHealth);
   update(player.stomach.digest(amount));
+  update(player.butt.digest(amount));
 }
 
 function renderTime(time) {

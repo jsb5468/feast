@@ -99,7 +99,29 @@ function grappleDevour(attacker) {
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
     ], conditions: [
-      function(prefs, player=false) { return player || prefs.player.prey }
+      function(prefs, player=false) { return player || prefs.player.prey; }
+    ]
+  };
+}
+
+function grappleAnalVore(attacker) {
+  return {
+    name: "Anal Vore",
+    desc: "Try to shove your opponent up your ass.",
+    attack: function(defender) {
+      let success = Math.random() < 0.25 + (1 - defender.health / defender.maxHealth) * 0.75;
+      if (success) {
+        attacker.butt.feed(defender);
+        defender.grappled = false;
+        changeMode("explore");
+        return "You shove the " + defender.description() + " between your cheeks. Their head slips into your ass with a wet <i>shlk</i>, and the rest of their body follows suit. You moan and gasp, working them deeper and deeper...";
+      } else {
+        return "Your grasp and shove the " + defender.description() + ", but they manage to avoid becoming " + attacker.species + " chow.";
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
+    ], conditions: [
+      function(prefs, player=false) { return player || prefs.player.prey; }
     ]
   };
 }
