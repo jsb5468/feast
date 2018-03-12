@@ -6,6 +6,14 @@ function attack(attacker, defender, baseDamage) {
   return damage;
 }
 
+function isNormal(entity) {
+  return entity.grappled != true;
+}
+
+function isGrappled(entity) {
+  return entity.grappled == true;
+}
+
 function punchAttack(attacker) {
   return {
     name: "Punch",
@@ -15,7 +23,9 @@ function punchAttack(attacker) {
     },
     attackPlayer: function(defender) {
       return "The " + attacker.description() + " punches you for " + attack(attacker, defender, attacker.str) + " damage";
-    }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ]
   };
 }
 
@@ -28,6 +38,92 @@ function flankAttack(attacker) {
     },
     attackPlayer: function(defender) {
       return "The " + attacker.description() + " runs past you, then turns and hits you for " + attack(attacker, defender, attacker.str) + " damage";
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ]
+  };
+}
+
+function grapple(attacker) {
+  return {
+    name: "Grapple",
+    desc: "Try to grab your opponent",
+    attack: function(defender) {
+      let success = Math.random() < 0.5;
+      if (success) {
+        defender.grappled = true;
+        return "You charge at the " + defender.description() + ", tackling them and knocking them to the ground.";
+      } else {
+        return "You charge at the " + defender.description() + ", but they dodge out of the way!";
+      }
+    },
+    attackPlayer: function(defender) {
+      let success = Math.random() < 0.5;
+      if (success) {
+        defender.grappled = true;
+        return "The " + attacker.description() + " lunges at you, pinning you to the floor!";
+      } else {
+        return "The " + attacker.description() + " tries to tackle you, but you deftly avoid them.";
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ]
+  };
+}
+
+function grappleDevour(attacker) {
+  return {
+    name: "Devour",
+    desc: "Try to consume your grappled opponent",
+    attack: function(defender) {
+      let success = Math.random() < 0.25 + (1 - defender.health / defender.maxHealth) * 0.75;
+      if (success) {
+        attacker.stomach.feed(defender);
+        defender.grappled = false;
+        changeMode("explore");
+        return "You open your jaws wide, stuffing the " + defender.description() + "'s head into your gullet and greedily wolfing them down. Delicious.";
+      } else {
+        return "Your jaws open wide, but the " + defender.description() + " manages to avoid becoming " + attacker.species + " chow.";
+      }
+    },
+    attackPlayer: function(defender) {
+      let success = Math.random() < 0.5 + (1 - defender.health / defender.maxHealth)*0.5 && Math.random() < 0.5;
+      if(success) {
+        defender.grappled = false;
+        changeMode("eaten");
+        return "The " + attacker.description() + " forces your head into their sloppy jaws, devouring you despite your frantic struggles. Glp.";
+      } else {
+        return "The " + attacker.description() + " tries to swallow you down, but you manage to resist their hunger.";
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
+    ]
+  };
+}
+
+function grappleRelease(attacker) {
+  return {
+    name: "Release",
+    desc: "Release your opponent",
+    attack: function(defender) {
+      defender.grappled = false;
+      return "You throw the " + defender.description() + " back, dealing " + attack(attacker, defender, attacker.str*1.5) + " damage";
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
+    ]
+  };
+}
+
+function pass(attacker) {
+  return {
+    name: "Pass",
+    desc: "You can't do anything!",
+    attack: function(defender) {
+      return "You do nothing.";
+    },
+    attackPlayer: function(defender) {
+      return "The " + attacker.description() + " does nothing.";
     }
   };
 }
@@ -46,7 +142,7 @@ function devourPlayer(attacker) {
       changeMode("eaten");
       return "The voracious " + attacker.description() + " pins you down and devours you in seconds.";
     }
-  }
+  };
 }
 
 function leer(attacker) {

@@ -29,7 +29,12 @@ function Player(name = "Player") {
 
   this.attacks.push(new punchAttack(this));
   this.attacks.push(new flankAttack(this));
+  this.attacks.push(new grapple(this));
 
+  this.attacks.push(new grappleDevour(this));
+  this.attacks.push(new grappleRelease(this));
+
+  this.backupAttack = new pass(this);
   this.str = 15;
   this.dex = 15;
   this.con = 15;
@@ -53,6 +58,11 @@ function Anthro() {
 
   this.attacks.push(new punchAttack(this));
   this.attacks.push(new flankAttack(this));
+  this.attacks.push(new grapple(this));
+
+  this.attacks.push(new grappleDevour(this));
+
+  this.backupAttack = new pass(this);
 
   this.struggles = [];
 
@@ -269,7 +279,7 @@ function plead(predator) {
     name: "Plead",
     desc: "Ask very, very nicely for the predator to let you go. More effective if you haven't hurt your predator.",
     struggle: function(player) {
-      let escape = Math.random() < predator.health / predator.maxHealth;
+      let escape = Math.random() < predator.health / predator.maxHealth && Math.random() < 0.33;
 
       if (escape) {
         return {
@@ -291,7 +301,7 @@ function struggle(predator) {
     name: "Struggle",
     desc: "Try to squirm free. More effective if you've hurt your predator.",
     struggle: function(player) {
-      let escape = Math.random() > predator.health / predator.maxHealth;
+      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
 
       if (escape) {
         return {

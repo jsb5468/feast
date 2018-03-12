@@ -11,6 +11,7 @@ let time = 9*60*60;
 let newline = "&nbsp;";
 
 let player = new Player();
+let playerAttacks = [];
 
 let respawnRoom;
 
@@ -19,6 +20,11 @@ let prefs = {
     prey: true
   }
 };
+
+function filterValid(options, attacker, defender) {
+  let filtered = options.filter(option => option.conditions == undefined || option.conditions.reduce((result, test) => result && test(prefs), true));
+  return filtered.filter(option => option.requirements == undefined || option.requirements.reduce((result, test) => result && test(attacker, defender), true));
+}
 
 function round(number, digits) {
   return Math.round(number * Math.pow(10,digits)) / Math.pow(10,digits);
@@ -96,11 +102,16 @@ function updateCombat() {
     list.removeChild(list.firstChild);
   }
 
-  for (let i = 0; i < player.attacks.length; i++) {
+  playerAttacks = filterValid(player.attacks, player, currentFoe);
+
+  if (playerAttacks.length == 0)
+    playerAttacks = [player.backupAttack];
+
+  for (let i = 0; i < playerAttacks.length; i++) {
     let li = document.createElement("li");
     let button = document.createElement("button");
     button.classList.add("combat-button");
-    button.innerHTML = player.attacks[i].name;
+    button.innerHTML = playerAttacks[i].name;
     button.addEventListener("click", function() { attackClicked(i); } );
     button.addEventListener("mouseover", function() { attackHovered(i); } );
     button.addEventListener("mouseout", function() { document.getElementById("combat-desc").innerHTML = ""; } );
@@ -248,6 +259,7 @@ function generateSettings() {
 
 function applySettings(settings) {
   player.name = settings.name;
+  player.species = settings.species;
 
   for (let key in settings) {
     if (settings.hasOwnProperty(key)) {
@@ -309,22 +321,19 @@ function respawn(respawnRoom) {
 }
 
 function startCombat(opponent) {
-  changeMode("combat");
   currentFoe = opponent;
+  changeMode("combat");
   update(["Oh shit it's a " + opponent.description()]);
 }
 
 function attackClicked(index) {
-  update([player.attacks[index].attack(currentFoe)]);
+  update([playerAttacks[index].attack(currentFoe)]);
 
   if (currentFoe.health <= 0) {
     update(["The " + currentFoe.description() + " falls to the ground!"]);
     startDialog(new FallenFoe(currentFoe));
-  } else {
-    let attacks = currentFoe.attacks.filter(attack => attack.conditions == undefined || attack.conditions.reduce((result, test) => result && test(prefs), true));
-    attacks = attacks.filter(attack => attack.requirements == undefined || attack.requirements.reduce((result, test) => result && test(currentFoe, player), true));
-
-    let attack = pick(attacks);
+  } else if (mode == "combat") {
+    let attack = pick(filterValid(currentFoe.attacks, currentFoe, player));
 
     if (attack == null) {
       attack = currentFoe.backupAttack;
@@ -344,7 +353,7 @@ function attackClicked(index) {
 }
 
 function attackHovered(index) {
-  document.getElementById("combat-desc").innerHTML = player.attacks[index].desc;
+  document.getElementById("combat-desc").innerHTML = playerAttacks[index].desc;
 }
 
 function struggleClicked(index) {
@@ -357,10 +366,7 @@ function struggleClicked(index) {
   if (result.escape) {
     changeMode("explore");
   } else {
-    let digests = currentFoe.digests.filter(digest => digest.conditions == undefined || digest.conditions.reduce((result, test) => result && test(prefs), true));
-    digests = digests.filter(digest => digest.requirements == undefined || digest.requirements.reduce((result, test) => result && test(currentFoe, player), true));
-
-    let digest = pick(digests);
+    let digest = pick(filterValid(currentFoe.digests, currentFoe, player));
 
     if (digest == null) {
       digest = currentFoe.backupDigest;
