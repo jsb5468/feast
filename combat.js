@@ -206,7 +206,7 @@ function leer(attacker) {
       return "The " + attacker.description() + " leers at you.";
     },
     requirements: [
-      function(attacker, defender) { return attacker.leering != true; }
+      function(attacker, defender) { return attacker.leering != true && attacker.grappled != true; }
     ]
   };
 }
