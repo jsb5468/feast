@@ -39,6 +39,9 @@ function devourPlayer(attacker) {
     conditions: [
       function(prefs) { return prefs.player.prey; }
     ],
+    requirements: [
+      function(attacker, defender) { return attacker.leering == true; }
+    ],
     attackPlayer: function(defender) {
       changeMode("eaten");
       return "The voracious " + attacker.description() + " pins you down and devours you in seconds.";
@@ -46,13 +49,24 @@ function devourPlayer(attacker) {
   }
 }
 
+function leer(attacker) {
+  return {
+    name: "Leer",
+    desc: "Leer at something",
+    attackPlayer: function(defender) {
+      attacker.leering = true;
+      return "The " + attacker.description() + " leers at you.";
+    },
+    requirements: [
+      function(attacker, defender) { return attack.leering != true; }
+    ]
+  };
+}
+
 function poke(attacker) {
   return {
     name: "Poke",
     desc: "Poke a nerd",
-    attack: function(defender) {
-      return "You poke the " + defender.description() + " for " + attack(attacker, defender, 1e12) + " damage";
-    },
     attackPlayer: function(defender) {
       return "The " + attacker.description() + " pokes you on the snout for " + attack(attacker, defender, 1e12) + " damage";
     }

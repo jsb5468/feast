@@ -311,8 +311,11 @@ function attackClicked(index) {
     update(["The " + currentFoe.description() + " falls to the ground!"]);
     startDialog(new FallenFoe(currentFoe));
   } else {
-    let attack = pick(currentFoe.attacks.filter(attack => attack.conditions == undefined || attack.conditions.reduce((result, test) => result && test(prefs), true)));
+    let attacks = currentFoe.attacks.filter(attack => attack.conditions == undefined || attack.conditions.reduce((result, test) => result && test(prefs), true));
+    attacks = attacks.filter(attack => attack.requirements == undefined || attack.requirements.reduce((result, test) => result && test(currentFoe, player), true));
 
+    let attack = pick(attacks);
+    
     if (attack == null) {
       attack = currentFoe.backupAttack;
     }

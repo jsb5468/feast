@@ -69,7 +69,7 @@ function Fen() {
   this.attacks = [];
 
   this.attacks.push(new devourPlayer(this));
-
+  this.attacks.push(new leer(this));
   this.backupAttack = new poke(this);
 
   this.struggles = [];
