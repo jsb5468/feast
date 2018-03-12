@@ -111,6 +111,10 @@ class Container {
         prey.health -= damage;
         time -= damage / this.damageRate;
 
+        if (prey.health + damage > 50 && prey.health <= 50) {
+          lines.push(this.describeDamage(prey));
+        }
+
         if (prey.health <= 0) {
           lines.push(this.describeKill(prey));
         }
@@ -151,6 +155,10 @@ class Stomach extends Container {
   constructor(bowels) {
     super();
     this.bowels = bowels;
+  }
+
+  describeDamage(prey) {
+    return "Your guts gurgle and churn, slowly wearing down the " + prey.description() + " trapped within.";
   }
 
   describeKill(prey) {
@@ -194,6 +202,10 @@ class Butt extends Container {
     this.contents = this.contents.filter(prey => prey.timeInButt < 60 * 30);
 
     return lines;
+  }
+
+  describeDamage(prey) {
+    return "Your bowels gurgle and squeeze, working to wear down the " + prey.description() + " trapped in those musky confines.";
   }
 
   describeKill(prey) {
