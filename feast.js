@@ -448,4 +448,10 @@ function loadCompass() {
   dirButtons[SOUTH_EAST].addEventListener("click", function() {
     move(SOUTH_EAST);
   });
+
+  document.getElementById("compass-look").addEventListener("click", look, false);
+}
+
+function look() {
+  update([currentRoom.description]);
 }
