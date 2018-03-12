@@ -1,5 +1,8 @@
 function pick(list) {
-  return list[Math.floor(Math.random()*list.length)];
+  if (list.length == 0)
+    return null;
+  else
+    return list[Math.floor(Math.random()*list.length)];
 }
 
 function Creature(name = "Creature") {
@@ -67,11 +70,11 @@ function Fen() {
 
   this.attacks.push(new devourPlayer(this));
 
+  this.backupAttack = new poke(this);
+
   this.struggles = [];
 
   this.struggles.push(new rub(this));
-
-  this.conditions = [];
 }
 
 function Micro() {

@@ -83,6 +83,7 @@ function updateEaten() {
     button.innerHTML = currentFoe.struggles[i].name;
     button.addEventListener("click", function() { struggleClicked(i); } );
     button.addEventListener("mouseover", function() { struggleHovered(i); } );
+    button.addEventListener("mouseout", function() { document.getElementById("eaten-desc").innerHTML = ""; } );
     li.appendChild(button);
     list.appendChild(li);
   }
@@ -102,6 +103,7 @@ function updateCombat() {
     button.innerHTML = player.attacks[i].name;
     button.addEventListener("click", function() { attackClicked(i); } );
     button.addEventListener("mouseover", function() { attackHovered(i); } );
+    button.addEventListener("mouseout", function() { document.getElementById("combat-desc").innerHTML = ""; } );
     li.appendChild(button);
     list.appendChild(li);
   }
@@ -223,7 +225,10 @@ function generateSettings() {
   for (let i=0; i<form.length; i++) {
     let value = form[i].value == "" ? form[i].placeholder : form[i].value;
     if (form[i].type == "text")
-      settings[form[i].name] = value;
+      if (form[i].value == "")
+        settings[form[i].name] = form[i].placeholder;
+      else
+        settings[form[i].name] = value;
     else if (form[i].type == "number")
       settings[form[i].name] = parseFloat(value);
     else if (form[i].type == "checkbox") {
@@ -306,7 +311,11 @@ function attackClicked(index) {
     update(["The " + currentFoe.description() + " falls to the ground!"]);
     startDialog(new FallenFoe(currentFoe));
   } else {
-    let attack = pick(currentFoe.attacks);
+    let attack = pick(currentFoe.attacks.filter(attack => attack.conditions == undefined || attack.conditions.reduce((result, test) => result && test(prefs), true)));
+
+    if (attack == null) {
+      attack = currentFoe.backupAttack;
+    }
 
     update([attack.attackPlayer(player)]);
 

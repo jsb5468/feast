@@ -36,9 +36,25 @@ function devourPlayer(attacker) {
   return {
     name: "Devours YOU!",
     desc: "You won't see this",
+    conditions: [
+      function(prefs) { return prefs.player.prey; }
+    ],
     attackPlayer: function(defender) {
       changeMode("eaten");
       return "The voracious " + attacker.description() + " pins you down and devours you in seconds.";
     }
   }
+}
+
+function poke(attacker) {
+  return {
+    name: "Poke",
+    desc: "Poke a nerd",
+    attack: function(defender) {
+      return "You poke the " + defender.description() + " for " + attack(attacker, defender, 1e12) + " damage";
+    },
+    attackPlayer: function(defender) {
+      return "The " + attacker.description() + " pokes you on the snout for " + attack(attacker, defender, 1e12) + " damage";
+    }
+  };
 }

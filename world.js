@@ -188,9 +188,6 @@ let locationsSrc = [
       function() {
         startCombat(new Fen());
       }
-    ],
-    "conditions": [
-      function(prefs) { return prefs.player.prey; }
     ]
   }
 ];
