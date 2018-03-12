@@ -115,6 +115,34 @@ function grappleRelease(attacker) {
   };
 }
 
+function grappledStruggle(attacker) {
+  return {
+    name: "Struggle",
+    desc: "Try to break your opponent's pin",
+    attack: function(defender) {
+      let success = Math.random() < 0.5 + (1 - defender.health / defender.maxHealth)*0.5;
+      if (success) {
+        attacker.grappled = false;
+        return "You struggle and shove the " + defender.description() + " off of you.";
+      } else {
+        return "You struggle, but to no avail.";
+      }
+    },
+    attackPlayer: function(defender) {
+      let success = Math.random() < 0.5 + (1 - defender.health / defender.maxHealth)*0.5 && Math.random() < 0.5;
+      if (success) {
+        attacker.grappled = false;
+        return "Your prey shoves you back, breaking your grapple!";
+      } else {
+        return "Your prey squirms, but remains pinned.";
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isGrappled(attacker) && isNormal(defender); }
+    ]
+  };
+}
+
 function pass(attacker) {
   return {
     name: "Pass",

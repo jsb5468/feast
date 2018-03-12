@@ -29,10 +29,12 @@ function Player(name = "Player") {
 
   this.attacks.push(new punchAttack(this));
   this.attacks.push(new flankAttack(this));
-  this.attacks.push(new grapple(this));
 
+  this.attacks.push(new grapple(this));
   this.attacks.push(new grappleDevour(this));
   this.attacks.push(new grappleRelease(this));
+
+  this.attacks.push(new grappledStruggle(this));
 
   this.backupAttack = new pass(this);
   this.str = 15;
@@ -58,9 +60,11 @@ function Anthro() {
 
   this.attacks.push(new punchAttack(this));
   this.attacks.push(new flankAttack(this));
-  this.attacks.push(new grapple(this));
 
+  this.attacks.push(new grapple(this));
   this.attacks.push(new grappleDevour(this));
+
+  this.attacks.push(new grappledStruggle(this));
 
   this.backupAttack = new pass(this);
 
