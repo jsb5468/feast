@@ -299,6 +299,15 @@ function changeMode(newMode) {
 
   updateDisplay();
 }
+
+function respawn(respawnRoom) {
+  moveTo(respawnRoom,"You drift through space and time...");
+  advanceTime(86400/2);
+  changeMode("explore");
+  player.health = 100;
+  update(["You wake back up in your bed."]);
+}
+
 function startCombat(opponent) {
   changeMode("combat");
   currentFoe = opponent;
@@ -325,8 +334,11 @@ function attackClicked(index) {
 
     if (player.health <= 0) {
       update(["You fall to the ground..."]);
-      changeMode("eaten");
-      updateDisplay();
+      if (prefs.player.prey) {
+        changeMode("eaten");
+      } else {
+        respawn(respawnRoom);
+      }
     }
   }
 }
@@ -345,15 +357,20 @@ function struggleClicked(index) {
   if (result.escape) {
     changeMode("explore");
   } else {
-    player.health -= 20;
+    let digests = currentFoe.digests.filter(digest => digest.conditions == undefined || digest.conditions.reduce((result, test) => result && test(prefs), true));
+    digests = digests.filter(digest => digest.requirements == undefined || digest.requirements.reduce((result, test) => result && test(currentFoe, player), true));
+
+    let digest = pick(digests);
+
+    if (digest == null) {
+      digest = currentFoe.backupDigest;
+    }
+
+    update([digest.digest(player)]);
 
     if (player.health <= -100) {
       update(["You digest in the depths of the " + currentFoe.description()]);
-      moveTo(respawnRoom,"You drift through space and time...");
-      advanceTime(86400/2);
-      changeMode("explore");
-      player.health = 100;
-      update(["You wake back up in your bed."]);
+      respawn(respawnRoom);
     }
   }
 }

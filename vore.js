@@ -58,6 +58,12 @@ function Anthro() {
 
   this.struggles.push(new plead(this));
   this.struggles.push(new struggle(this));
+
+  this.digests = [];
+
+  this.digests.push(new digestPlayerStomach(this,20));
+
+  this.backupDigest = new digestPlayerStomach(this,20);
 }
 
 function Fen() {
@@ -75,6 +81,12 @@ function Fen() {
   this.struggles = [];
 
   this.struggles.push(new rub(this));
+
+  this.digests = [];
+
+  this.digests.push(new digestPlayerStomach(this,50));
+
+  this.backupDigest = new digestPlayerStomach(this,50);
 }
 
 function Micro() {
