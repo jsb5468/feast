@@ -98,6 +98,8 @@ function grappleDevour(attacker) {
       }
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
+    ], conditions: [
+      function(prefs, player=false) { return player || prefs.player.prey }
     ]
   };
 }

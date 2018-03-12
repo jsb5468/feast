@@ -22,7 +22,7 @@ let prefs = {
 };
 
 function filterValid(options, attacker, defender) {
-  let filtered = options.filter(option => option.conditions == undefined || option.conditions.reduce((result, test) => result && test(prefs), true));
+  let filtered = options.filter(option => option.conditions == undefined || option.conditions.reduce((result, test) => result && test(prefs, attacker === player), true));
   return filtered.filter(option => option.requirements == undefined || option.requirements.reduce((result, test) => result && test(attacker, defender), true));
 }
 
