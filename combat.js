@@ -25,7 +25,8 @@ function punchAttack(attacker) {
       return "The " + attacker.description() + " punches you for " + attack(attacker, defender, attacker.str) + " damage";
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
-    ]
+    ],
+    priority: 1,
   };
 }
 
@@ -40,7 +41,8 @@ function flankAttack(attacker) {
       return "The " + attacker.description() + " runs past you, then turns and hits you for " + attack(attacker, defender, attacker.str) + " damage";
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
-    ]
+    ],
+    priority: 1,
   };
 }
 
@@ -68,7 +70,8 @@ function grapple(attacker) {
     },
     requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
-    ]
+    ],
+    priority: 1,
   };
 }
 
@@ -100,7 +103,8 @@ function grappleDevour(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
     ], conditions: [
       function(prefs, player=false) { return player || prefs.player.prey; }
-    ]
+    ],
+    priority: 1,
   };
 }
 
@@ -122,7 +126,8 @@ function grappleAnalVore(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
     ], conditions: [
       function(prefs, player=false) { return player || prefs.player.prey; }
-    ]
+    ],
+    priority: 1,
   };
 }
 
@@ -135,7 +140,8 @@ function grappleRelease(attacker) {
       return "You throw the " + defender.description() + " back, dealing " + attack(attacker, defender, attacker.str*1.5) + " damage";
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
-    ]
+    ],
+    priority: 1,
   };
 }
 
@@ -163,7 +169,8 @@ function grappledStruggle(attacker) {
     },
     requirements: [
       function(attacker, defender) { return isGrappled(attacker) && isNormal(defender); }
-    ]
+    ],
+    priority: 1,
   };
 }
 
@@ -176,7 +183,8 @@ function pass(attacker) {
     },
     attackPlayer: function(defender) {
       return "The " + attacker.description() + " does nothing.";
-    }
+    },
+    priority: 0,
   };
 }
 
@@ -193,7 +201,8 @@ function devourPlayer(attacker) {
     attackPlayer: function(defender) {
       changeMode("eaten");
       return "The voracious " + attacker.description() + " pins you down and devours you in seconds.";
-    }
+    },
+    priority: 1,
   };
 }
 
@@ -207,7 +216,8 @@ function leer(attacker) {
     },
     requirements: [
       function(attacker, defender) { return attacker.leering != true && attacker.grappled != true; }
-    ]
+    ],
+    priority: 1,
   };
 }
 
@@ -217,7 +227,8 @@ function poke(attacker) {
     desc: "Poke a nerd",
     attackPlayer: function(defender) {
       return "The " + attacker.description() + " pokes you on the snout for " + attack(attacker, defender, 1e12) + " damage";
-    }
+    },
+    priority: 1,
   };
 }
 
@@ -226,6 +237,7 @@ function digestPlayerStomach(predator,damage=20) {
     digest: function(player) {
       attack(predator, player, damage);
       return "The " + predator.description() + "'s stomach grinds over your body, swiftly digesting you.";
-    }
+    },
+    priority: 1,
   };
 }

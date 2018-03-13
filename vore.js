@@ -24,6 +24,18 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.health = this.maxHealth;
   Object.defineProperty(this, "maxStamina", {get: function() { return this.dex * 5 + this.con * 10 }});
   this.stamina = this.maxStamina;
+
+  // fraction of max health per second
+  this.healthRate = 1 / 86400 * 12;
+  this.staminaRate = 1 / 86400 * 48;
+
+  this.restoreHealth = function(time) {
+    this.health = Math.min(this.maxHealth, this.health + this.maxHealth * time * this.healthRate);
+  };
+
+  this.restoreStamina = function(time) {
+    this.stamina = Math.min(this.maxStamina, this.stamina + this.maxStamina * time * this.staminaRate);
+  };
 }
 
 function Player(name = "Player") {

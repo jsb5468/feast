@@ -26,6 +26,11 @@ function filterValid(options, attacker, defender) {
   return filtered.filter(option => option.requirements == undefined || option.requirements.reduce((result, test) => result && test(attacker, defender), true));
 }
 
+function filterPriority(options) {
+  let max = options.reduce((max, option) => option.priority > max ? option.priority : max, -1000);
+  return options.filter(option => option.priority == max);
+}
+
 function round(number, digits) {
   return Math.round(number * Math.pow(10,digits)) / Math.pow(10,digits);
 }
@@ -171,7 +176,8 @@ function updateDisplay() {
 
 function advanceTime(amount) {
   time = (time + amount) % 86400;
-  player.health = Math.min(amount * player.maxHealth / 86400 * 12 + player.health, player.maxHealth);
+  player.restoreHealth(amount);
+  player.restoreStamina(amount);
   update(player.stomach.digest(amount));
   update(player.butt.digest(amount));
 }
@@ -335,7 +341,7 @@ function attackClicked(index) {
     update(["The " + currentFoe.description() + " falls to the ground!"]);
     startDialog(new FallenFoe(currentFoe));
   } else if (mode == "combat") {
-    let attack = pick(filterValid(currentFoe.attacks, currentFoe, player));
+    let attack = pick(filterPriority(filterValid(currentFoe.attacks, currentFoe, player)));
 
     if (attack == null) {
       attack = currentFoe.backupAttack;
