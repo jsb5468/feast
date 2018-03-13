@@ -54,6 +54,7 @@ function Player(name = "Player") {
   this.attacks.push(new grappleRelease(this));
 
   this.attacks.push(new grappledStruggle(this));
+  this.attacks.push(new grappledReverse(this));
 
   this.backupAttack = new pass(this);
 }
@@ -81,6 +82,7 @@ function Anthro() {
   this.attacks.push(new grappleDevour(this));
 
   this.attacks.push(new grappledStruggle(this));
+  this.attacks.push(new grappledReverse(this));
 
   this.backupAttack = new pass(this);
 

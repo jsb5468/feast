@@ -174,6 +174,37 @@ function grappledStruggle(attacker) {
   };
 }
 
+function grappledReverse(attacker) {
+  return {
+    name: "Reversal",
+    desc: "Try to pin your grappler. Less likely to work than struggling.",
+    attack: function(defender) {
+      let success = Math.random() < 0.25 + (1 - defender.health / defender.maxHealth) * 0.5;
+      if (success) {
+        attacker.grappled = false;
+        defender.grappled = true;
+        return "You surprise the " + defender.description() + " with a burst of strength, flipping them over and pinning them.";
+      } else {
+        return "You try to throw your opponent off of you, but fail.";
+      }
+    },
+    attackPlayer: function(defender) {
+      let success = Math.random() < 0.5 + (1 - defender.health / defender.maxHealth)*0.5 && Math.random() < 0.5;
+      if (success) {
+        attacker.grappled = false;
+        defender.grappled = true;
+        return "Your prey suddenly grabs hold and flips you over, pinning you!";
+      } else {
+        return "Your prey tries to grab at you, but you keep them under  control.";
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isGrappled(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+  };
+}
+
 function pass(attacker) {
   return {
     name: "Pass",
