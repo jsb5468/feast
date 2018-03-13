@@ -165,6 +165,7 @@ function updateDisplay() {
   document.getElementById("time").innerHTML = "Time: " + renderTime(time);
   document.getElementById("stat-name").innerHTML = "Name: " + player.name;
   document.getElementById("stat-health").innerHTML = "Health: " + round(player.health,0) + "/" + round(player.maxHealth,0);
+  document.getElementById("stat-stamina").innerHTML = "Stamina: " + round(player.stamina,0) + "/" + round(player.maxStamina,0);
   document.getElementById("stat-fullness").innerHTML = "Fullness: " + round(player.fullness(),0);
 }
 

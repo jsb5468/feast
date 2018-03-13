@@ -20,8 +20,10 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.dex = dex;
   this.con = con;
 
-  Object.defineProperty(this, "maxHealth", {get: function() { return this.con * 10 }});
+  Object.defineProperty(this, "maxHealth", {get: function() { return this.str * 5 + this.con * 10 }});
   this.health = this.maxHealth;
+  Object.defineProperty(this, "maxStamina", {get: function() { return this.dex * 5 + this.con * 10 }});
+  this.stamina = this.maxStamina;
 }
 
 function Player(name = "Player") {
