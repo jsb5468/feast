@@ -1,10 +1,12 @@
-function Object(name="Potato") {
+"use strict";
+
+function GameObject(name="Potato") {
   this.name = name;
   this.actions = [];
 }
 
 function Burger() {
-  Object.call(this, "Burger");
+  GameObject.call(this, "Burger");
   this.actions.push({
     "name": "Punch Burger",
     "action": function() {
@@ -15,7 +17,7 @@ function Burger() {
 }
 
 function Nerd() {
-  Object.call(this, "Nerd");
+  GameObject.call(this, "Nerd");
   this.actions.push({
     "name": "Eat Nerd",
     "action": function() {
@@ -25,7 +27,7 @@ function Nerd() {
 }
 
 function Toilet() {
-  Object.call(this, "Toilet");
+  GameObject.call(this, "Toilet");
   this.actions.push({
     "name": "Admire toilet",
     "action": function() {
@@ -35,7 +37,7 @@ function Toilet() {
 }
 
 function TV() {
-  Object.call(this, "TV");
+  GameObject.call(this, "TV");
   this.actions.push({
     "name": "Watch TV",
     "action": function() {
@@ -45,7 +47,7 @@ function TV() {
 }
 
 function Phone() {
-  Object.call(this, "Phone");
+  GameObject.call(this, "Phone");
   this.actions.push({
     "name": "Use phone",
     "action": function() {
@@ -55,7 +57,7 @@ function Phone() {
 }
 
 function Bed() {
-  Object.call(this, "Bed");
+  GameObject.call(this, "Bed");
   this.actions.push({
     "name": "Sleep",
     "action": function() {
@@ -67,11 +69,21 @@ function Bed() {
 }
 
 function Sofa() {
-  Object.call(this, "Sofa");
+  GameObject.call(this, "Sofa");
   this.actions.push({
     "name": "Sit on sofa",
     "action": function(){
       startDialog(SofaSit());
     }
-  })
+  });
+}
+
+function NatureTrailExercise() {
+  GameObject.call(this, "Exercise");
+  this.actions.push({
+    "name": "Exercise",
+    "action": function() {
+      startDialog(new NatureExercise());
+    }
+  });
 }

@@ -150,7 +150,26 @@ let locationsSrc = [
         "name": "Crossroads",
         "dir": NORTH,
         "desc": "You walk to the crossroads"
+      },
+      {
+        "name": "Nature Trail",
+        "dir": SOUTH,
+        "desc": "You head out into the woods"
       }
+    ]
+  },
+  {
+    "name": "Nature Trail",
+    "desc": "A winding train cutting through a thick forest",
+    "conn": [
+      {
+        "name": "South Street",
+        "dir": NORTH,
+        "desc": "You return to town."
+      }
+    ],
+    "objs": [
+      NatureTrailExercise
     ]
   },
   {

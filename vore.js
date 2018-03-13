@@ -1,3 +1,5 @@
+"use strict";
+
 function pick(list) {
   if (list.length == 0)
     return null;
@@ -5,23 +7,25 @@ function pick(list) {
     return list[Math.floor(Math.random()*list.length)];
 }
 
-function Creature(name = "Creature") {
+function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.name = name;
-  this.health = 100;
-  this.maxHealth = 100;
+
   this.mass = 80;
   this.bowels = new Bowels();
   this.stomach = new Stomach(this.bowels);
   this.butt = new Butt(this.bowels,this.stomach);
   this.attacks = [];
 
-  this.str = 10;
-  this.dex = 10;
-  this.con = 10;
+  this.str = str;
+  this.dex = dex;
+  this.con = con;
+
+  Object.defineProperty(this, "maxHealth", {get: function() { return this.con * 10 }});
+  this.health = this.maxHealth;
 }
 
 function Player(name = "Player") {
-  Creature.call(this, name);
+  Creature.call(this, name, 15, 15, 15);
 
   this.fullness = function() {
     return this.stomach.fullness() + this.butt.fullness();
@@ -38,9 +42,6 @@ function Player(name = "Player") {
   this.attacks.push(new grappledStruggle(this));
 
   this.backupAttack = new pass(this);
-  this.str = 15;
-  this.dex = 15;
-  this.con = 15;
 }
 
 function Anthro() {

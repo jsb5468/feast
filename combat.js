@@ -221,8 +221,6 @@ function poke(attacker) {
   };
 }
 
-
-
 function digestPlayerStomach(predator,damage=20) {
   return {
     digest: function(player) {

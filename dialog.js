@@ -81,3 +81,39 @@ function FallenFoe(foe) {
     nodeSpare.text = "You decide to leave your foe uneaten.";
   }
 }
+
+function NatureExercise() {
+  DialogNode.call(this);
+
+  this.text = "What do you want to do?";
+
+  {
+    let nodeStrength = new DialogNode();
+    this.addChoice("Rock Climbing (+STR)", nodeStrength);
+    nodeStrength.text = "You clamber up walls for a while. You feel a little stronger.";
+    nodeStrength.hooks.push(function() {
+      player.str += 1;
+      advanceTime(60*30);
+    });
+  }
+
+  {
+    let nodeDexterity = new DialogNode();
+    this.addChoice("Jogging (+DEX)", nodeDexterity);
+    nodeDexterity.text = "You go run for a run around the three-mile-long trail. You feel a little more agile.";
+    nodeDexterity.hooks.push(function() {
+      player.dex += 1;
+      advanceTime(60*30);
+    });
+  }
+
+  {
+    let nodeConstitution = new DialogNode();
+    this.addChoice("Bang your head on a tree (+CON)", nodeConstitution);
+    nodeConstitution.text = "You bash your face on a tree for half an hour. I guess that helps.";
+    nodeConstitution.hooks.push(function() {
+      player.con += 1;
+      advanceTime(60*30);
+    });
+  }
+}
