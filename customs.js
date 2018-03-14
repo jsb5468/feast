@@ -139,7 +139,7 @@ function getaStomp(attacker) {
       if (success) {
         defender.health = Math.max(-100, defender.health - 50 - Math.round(Math.random() * 25));
         defender.stamina = 0;
-        return attacker.description() + "'s paws comes crashing down on your little body, smashing you into the dirt.";
+        return attacker.description() + "'s paw comes crashing down on your little body, smashing you into the dirt.";
       } else {
         return "You dive away as " + attacker.description() + "'s paw slams down, narrowly missing your little body.";
       }

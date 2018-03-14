@@ -163,11 +163,16 @@ function updateDialog() {
   }
 
   for (let i = 0; i < currentDialog.choices.length; i++) {
+    let activated = currentDialog.choices[i].node.requirements == undefined || currentDialog.choices[i].node.requirements.reduce((result, test) => result && test(player, currentFoe), true);
     let li = document.createElement("li");
     let button = document.createElement("button");
     button.classList.add("dialog-button");
     button.innerHTML = currentDialog.choices[i].text;
     button.addEventListener("click", function() { dialogClicked(i); });
+    if (!activated) {
+      button.classList.add("disabled-button");
+      button.disabled = true;
+    }
     li.appendChild(button);
     list.appendChild(li);
   }
@@ -416,7 +421,7 @@ function struggleClicked(index) {
   if (result.escape) {
     changeMode("explore");
   } else {
-    let digest = pick(filterValid(currentFoe.digests, FurrentFoe, player), currentFoe, player);
+    let digest = pick(filterValid(currentFoe.digests, currentFoe, player), currentFoe, player);
 
     if (digest == null) {
       digest = currentFoe.backupDigest;

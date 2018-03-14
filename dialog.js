@@ -4,6 +4,8 @@ function DialogNode() {
   this.text = "Foo bar baz.";
   this.hooks = [];
 
+  this.requirements = [];
+
   this.visit = function() {
     for (let i=0; i<this.hooks.length; i++)
       this.hooks[i]();
@@ -79,6 +81,15 @@ function FallenFoe(foe) {
     let nodeSpare = new DialogNode();
     this.addChoice("Spare",nodeSpare);
     nodeSpare.text = "You decide to leave your foe uneaten.";
+  }
+
+  {
+    let nodeCrush = new DialogNode();
+    this.addChoice("Crush",nodeCrush);
+    nodeCrush.text = "You slam your paw down hard, crushing " + foe.description("the") + " like a bug";
+    nodeCrush.requirements.push( function(attacker, defender) {
+      return defender.flags.shrunk == true;
+    });
   }
 }
 

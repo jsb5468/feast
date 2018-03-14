@@ -267,6 +267,24 @@ function shrunkSwallow(attacker) {
   };
 }
 
+function shrunkStomp(attacker) {
+  return {
+    name: "Stomp",
+    desc: "Stomp on your shrunken prey",
+    attack: function(defender) {
+      let success = statCheck(attacker, defender, "dex") || statCheck(attacker, defender, "dex") || defender.stamina == 0;
+      defender.stamina = 0;
+      defender.health = Math.max(0, defender.health - 50);
+      return "Your paw comes crashing down on " + defender.description("the") + ", burying them under your heavy toes and pinning them down hard.";
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && defender.flags.grappled != true && defender.flags.shrunk == true;
+      }
+    ]
+  };
+}
+
 function flee(attacker) {
   return {
     name: "Flee",

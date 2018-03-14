@@ -65,6 +65,7 @@ function Player(name = "Player") {
 
   this.attacks.push(new shrunkGrapple(this));
   this.attacks.push(new shrunkSwallow(this));
+  this.attacks.push(new shrunkStomp(this));
 
   this.attacks.push(new flee(this));
 
