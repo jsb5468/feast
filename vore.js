@@ -37,6 +37,12 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.clear = function() {
     this.flags = {};
   };
+
+  this.prefs = {
+    prey: true,
+    scat: true,
+    analVore: true
+  }
 }
 
 function Player(name = "Player") {
@@ -56,6 +62,10 @@ function Player(name = "Player") {
 
   this.attacks.push(new grappledStruggle(this));
   this.attacks.push(new grappledReverse(this));
+
+  this.attacks.push(new shrunkGrapple(this));
+  this.attacks.push(new shrunkSwallow(this));
+
   this.attacks.push(new flee(this));
 
   this.backupAttack = new pass(this);

@@ -26,16 +26,21 @@ function Geta() {
   this.struggles = [];
 
   this.struggles.push(new rub(this));
+
+  this.prefs.analVore = false;
 }
 
 function getaShrink(attacker) {
   return {
     attackPlayer: function(defender) {
-      let success = true;
+      let success = Math.random() < 0.5;
 
       if (success) {
         defender.flags.shrunk = true;
         return attacker.description() + " pulls a strange device from his pocket and points it at you. A blinding flash envelops your vision...and as your sight returns, you find yourself shrunken down to no more than two inches tall.";
+      } else {
+        attacker.flags.shrunk = true;
+        return attacker.description() + " pulls a strange device from his pocket and points it at you. A blinding flash envelops your vision...and as your sight returns, you see that he's shrunk himself!";
       }
     },
     requirements: [
@@ -55,7 +60,7 @@ function getaGrab(attacker) {
     },
     conditions: [
       function(prefs) {
-        return prefs.player.prey;
+        return prefs.prey;
       }
     ],
     requirements: [

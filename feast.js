@@ -15,12 +15,6 @@ let playerAttacks = [];
 
 let respawnRoom;
 
-let prefs = {
-  player: {
-    prey: true
-  }
-};
-
 function join(things) {
   if (things.length == 1) {
     return things[0].description("a");
@@ -58,7 +52,7 @@ function pick(list, attacker, defender) {
 }
 
 function filterValid(options, attacker, defender) {
-  let filtered = options.filter(option => option.conditions == undefined || option.conditions.reduce((result, test) => result && test(prefs, attacker === player), true));
+  let filtered = options.filter(option => option.conditions == undefined || option.conditions.reduce((result, test) => result && test(attacker, defender), true));
   return filtered.filter(option => option.requirements == undefined || option.requirements.reduce((result, test) => result && test(attacker, defender), true));
 }
 
@@ -82,7 +76,7 @@ function updateExploreCompass() {
       button.classList.add("inactive-button");
       button.innerHTML = "";
     } else {
-      if (currentRoom.exits[i].conditions.reduce((result, test) => result && test(prefs), true)) {
+      if (currentRoom.exits[i].conditions.reduce((result, test) => result && test(player.prefs), true)) {
         button.disabled = false;
         button.classList.add("active-button");
         button.innerHTML = currentRoom.exits[i].name;
@@ -208,7 +202,7 @@ function updateDisplay() {
   document.getElementById("stat-health").innerHTML = "Health: " + round(player.health,0) + "/" + round(player.maxHealth,0);
   document.getElementById("stat-stamina").innerHTML = "Stamina: " + round(player.stamina,0) + "/" + round(player.maxStamina,0);
   document.getElementById("stat-fullness").innerHTML = "Fullness: " + round(player.fullness(),0);
-  if (prefs.player.scat) {
+  if (player.prefs.scat) {
     document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness,0);
   } else {
     document.getElementById("stat-bowels").innerHTML = "";
@@ -252,7 +246,7 @@ function moveTo(room,desc="You go places lol") {
 
   currentRoom.objects.forEach(function (object) {
     object.actions.forEach(function (action) {
-      if (action.conditions == undefined || action.conditions.reduce((result, cond) => result && cond(prefs), true))
+      if (action.conditions == undefined || action.conditions.reduce((result, cond) => result && cond(player.prefs), true))
         actions.push(action);
     });
   });
@@ -315,7 +309,7 @@ function applySettings(settings) {
     if (settings.hasOwnProperty(key)) {
       if (key.match(/prefs/)) {
         let tokens = key.split("-");
-        let pref = prefs;
+        let pref = player.prefs;
         pref = tokens.slice(1,-1).reduce((pref, key) => pref[key], pref);
         pref[tokens.slice(-1)[0]] = settings[key];
       }
@@ -396,7 +390,7 @@ function attackClicked(index) {
 
     if (player.health <= 0) {
       update(["You die..."]);
-      if (prefs.player.prey) {
+      if (player.prefs.prey) {
         changeMode("eaten");
       } else {
         respawn(respawnRoom);
@@ -419,7 +413,7 @@ function struggleClicked(index) {
   if (result.escape) {
     changeMode("explore");
   } else {
-    let digest = pick(filterValid(currentFoe.digests, currentFoe, player), currentFoe, player);
+    let digest = pick(filterValid(currentFoe.digests, FurrentFoe, player), currentFoe, player);
 
     if (digest == null) {
       digest = currentFoe.backupDigest;

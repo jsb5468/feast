@@ -122,9 +122,9 @@ function grappleDevour(attacker) {
         return attacker.description("The") + " tries to swallow you down, but you manage to resist their hunger.";
       }
     }, requirements: [
-      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; }
     ], conditions: [
-      function(prefs, player=false) { return player || prefs.player.prey; }
+      function(attacker, defender) { return defender.prefs.prey; }
     ],
     priority: 1,
   };
@@ -145,9 +145,9 @@ function grappleAnalVore(attacker) {
         return "Your grasp and shove " + defender.description("the") + ", but they manage to avoid becoming " + attacker.species + " chow.";
       }
     }, requirements: [
-      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true ; }
     ], conditions: [
-      function(prefs, player=false) { return player || prefs.player.prey; }
+      function(attacker, defender) { return defender.prefs.prey && defender.prefs.analVore; }
     ],
     priority: 1,
   };
@@ -227,6 +227,46 @@ function grappledReverse(attacker) {
   };
 }
 
+function shrunkGrapple(attacker) {
+  return {
+    name: "Grab",
+    desc: "Grab this fun-sized snack",
+    attack: function(defender) {
+      let success = statCheck(attacker, defender, "dex") || statCheck(attacker, defender, "dex");
+      if (success) {
+        defender.flags.grappled = true;
+        return "You snatch up " + defender.description("the");
+      } else {
+        return "You try to grab " + defender.description("the") + ", but they elude your grasp.";
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && defender.flags.grappled != true && defender.flags.shrunk == true;
+      }
+    ],
+    priority: 2
+  };
+}
+
+function shrunkSwallow(attacker) {
+  return {
+    name: "Swallow",
+    desc: "Swallow your prey",
+    attack: function(defender) {
+      changeMode("explore");
+      attacker.stomach.feed(defender);
+      return "With a light swallow, " + defender.description("the") + " is dragged down to your sloppy guts.";
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && defender.flags.grappled == true && defender.flags.shrunk == true;
+      }
+    ],
+    priority: 2
+  };
+}
+
 function flee(attacker) {
   return {
     name: "Flee",
@@ -234,7 +274,7 @@ function flee(attacker) {
     attack: function(defender) {
       let success = statCheck(attacker, defender, "dex");
       if (success) {
-        attacker.flags.grappled = false;
+        attacker.clear();
         changeMode("explore");
         return "You successfully run away.";
       } else {
@@ -265,7 +305,7 @@ function devourPlayer(attacker) {
     name: "Devours YOU!",
     desc: "You won't see this",
     conditions: [
-      function(prefs) { return prefs.player.prey; }
+      function(attacker, defender) { return defender.prefs.prey; }
     ],
     requirements: [
       function(attacker, defender) { return attacker.leering == true; }

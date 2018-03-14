@@ -57,7 +57,7 @@ function Toilet() {
     },
     "conditions": [
       function(prefs) {
-        return prefs.player.scat == true;
+        return prefs.scat == true;
       }
     ]
   });
