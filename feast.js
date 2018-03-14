@@ -21,6 +21,25 @@ let prefs = {
   }
 };
 
+function pick(list) {
+  if (list.length == 0)
+    return null;
+  else {
+    let sum = list.reduce((sum, choice) => choice.weight == undefined ? 1 : choice.weight() + sum, 0);
+
+    let target = Math.random() * sum;
+
+    for (let i = 0; i < list.length; i++) {
+      sum -= list[i].weight == undefined ? 1 : list[i].weight();
+      if (sum <= target) {
+        return list[i];
+      }
+    }
+
+    return list[list.length-1];
+  }
+}
+
 function filterValid(options, attacker, defender) {
   let filtered = options.filter(option => option.conditions == undefined || option.conditions.reduce((result, test) => result && test(prefs, attacker === player), true));
   return filtered.filter(option => option.requirements == undefined || option.requirements.reduce((result, test) => result && test(attacker, defender), true));

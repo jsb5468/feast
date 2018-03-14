@@ -1,12 +1,5 @@
 "use strict";
 
-function pick(list) {
-  if (list.length == 0)
-    return null;
-  else
-    return list[Math.floor(Math.random()*list.length)];
-}
-
 function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.name = name;
 
@@ -99,7 +92,7 @@ function Anthro() {
 }
 
 function Fen() {
-  Anthro.call(this, name);
+  Anthro.call(this, name, 1000000, 1099900, 1000000);
 
   this.build = "loomy";
   this.species = "crux";
@@ -117,6 +110,7 @@ function Fen() {
   this.digests = [];
 
   this.digests.push(new digestPlayerStomach(this,50));
+  this.digests.push(new instakillPlayerStomach(this));
 
   this.backupDigest = new digestPlayerStomach(this,50);
 }

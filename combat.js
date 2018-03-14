@@ -14,6 +14,21 @@ function isGrappled(entity) {
   return entity.grappled == true;
 }
 
+function doComp(attackStat, defendStat) {
+  return Math.random() * attackStat > Math.random() * defendStat;
+}
+
+function statCheck(attacker, defender, stat) {
+  return doComp(attacker[stat], defender[stat]);
+}
+
+function statHealthCheck(attacker, defender, stat) {
+  let attackerPercent = attacker.health / attacker.maxHealth;
+  let defenderPercent = defender.health / defender.maxHealth;
+
+  return doComp(attacker[stat] * attackerPercent, defender[stat] * defenderPercent);
+}
+
 function punchAttack(attacker) {
   return {
     name: "Punch",
@@ -51,7 +66,7 @@ function grapple(attacker) {
     name: "Grapple",
     desc: "Try to grab your opponent",
     attack: function(defender) {
-      let success = Math.random() < 0.5;
+      let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         defender.grappled = true;
         return "You charge at the " + defender.description() + ", tackling them and knocking them to the ground.";
@@ -80,7 +95,7 @@ function grappleDevour(attacker) {
     name: "Devour",
     desc: "Try to consume your grappled opponent",
     attack: function(defender) {
-      let success = Math.random() < 0.25 + (1 - defender.health / defender.maxHealth) * 0.75;
+      let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         attacker.stomach.feed(defender);
         defender.grappled = false;
@@ -91,7 +106,7 @@ function grappleDevour(attacker) {
       }
     },
     attackPlayer: function(defender) {
-      let success = Math.random() < 0.5 + (1 - defender.health / defender.maxHealth)*0.5 && Math.random() < 0.5;
+      let success = statHealthCheck(attacker, defender, "str");
       if(success) {
         defender.grappled = false;
         changeMode("eaten");
@@ -113,7 +128,7 @@ function grappleAnalVore(attacker) {
     name: "Anal Vore",
     desc: "Try to shove your opponent up your ass.",
     attack: function(defender) {
-      let success = Math.random() < 0.25 + (1 - defender.health / defender.maxHealth) * 0.75;
+      let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         attacker.butt.feed(defender);
         defender.grappled = false;
@@ -150,7 +165,7 @@ function grappledStruggle(attacker) {
     name: "Struggle",
     desc: "Try to break your opponent's pin",
     attack: function(defender) {
-      let success = Math.random() < 0.5 + (1 - defender.health / defender.maxHealth)*0.5;
+      let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         attacker.grappled = false;
         return "You struggle and shove the " + defender.description() + " off of you.";
@@ -159,7 +174,7 @@ function grappledStruggle(attacker) {
       }
     },
     attackPlayer: function(defender) {
-      let success = Math.random() < 0.5 + (1 - defender.health / defender.maxHealth)*0.5 && Math.random() < 0.5;
+      let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         attacker.grappled = false;
         return "Your prey shoves you back, breaking your grapple!";
@@ -179,7 +194,7 @@ function grappledReverse(attacker) {
     name: "Reversal",
     desc: "Try to pin your grappler. Less likely to work than struggling.",
     attack: function(defender) {
-      let success = Math.random() < 0.25 + (1 - defender.health / defender.maxHealth) * 0.5;
+      let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         attacker.grappled = false;
         defender.grappled = true;
@@ -189,7 +204,7 @@ function grappledReverse(attacker) {
       }
     },
     attackPlayer: function(defender) {
-      let success = Math.random() < 0.5 + (1 - defender.health / defender.maxHealth)*0.5 && Math.random() < 0.5;
+      let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         attacker.grappled = false;
         defender.grappled = true;
@@ -270,5 +285,16 @@ function digestPlayerStomach(predator,damage=20) {
       return "The " + predator.description() + "'s stomach grinds over your body, swiftly digesting you.";
     },
     priority: 1,
+  };
+}
+
+function instakillPlayerStomach(pedator) {
+  return {
+    digest: function(player) {
+      player.health = -100;
+      return "The stomach walls churn, clench, and swiftly crush you into nothingnes.";
+    },
+    priority: 1,
+    weight: function(attacker, defender) { return 1/3 },
   };
 }
