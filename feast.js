@@ -21,6 +21,10 @@ let prefs = {
   }
 };
 
+function pickRandom(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+
 function pick(list, attacker, defender) {
   if (list.length == 0)
     return null;

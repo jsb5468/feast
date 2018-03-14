@@ -52,20 +52,38 @@ function Player(name = "Player") {
   this.backupAttack = new pass(this);
 }
 
-function Anthro() {
-  Creature.call(this, name);
+function Anthro(name="Anthro") {
+  this.build = pickRandom(["skinny", "fat", "muscular", "sickly", "ordinary"]);
 
-  this.mass = 80 * (Math.random()/2 - 0.25 + 1);
-  this.build = "ordinary";
-  if (this.mass < 70) {
-    this.build = "skinny";
-  } else if (this.mass > 90) {
-    this.build = "fat";
+  switch(this.build) {
+    case "skinny":
+      Creature.call(this, name, 8, 12, 8);
+      this.mass *= ( Math.random() * 0.2 + 0.7 );
+      break;
+    case "fat":
+      Creature.call(this, name, 10, 7, 15);
+      this.mass *= ( Math.random() * 0.4 + 1.1);
+      break;
+    case "muscular":
+      Creature.call(this, name, 13, 11, 13);
+      this.mass *= ( Math.random() * 0.1 + 1.1);
+      break;
+    case "sickly":
+      Creature.call(this, name, 6, 8, 6);
+      this.mass *= ( Math.random() * 0.2 + 0.6 );
+      break;
+    case "ordinary":
+      Creature.call(this, name, 10, 10, 10);
+      break;
+
   }
 
-  this.species = pick(["dog","cat","lizard","deer","wolf","fox"]);
+  this.species = pickRandom(["dog","cat","lizard","deer","wolf","fox"]);
   this.description = function() {
-    return this.build + " " + this.species;
+    if (this.build == "")
+      return this.species;
+    else
+      return this.build + " " + this.species;
   };
 
   this.attacks.push(new punchAttack(this));
