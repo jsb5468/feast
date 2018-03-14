@@ -13,6 +13,8 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.dex = dex;
   this.con = con;
 
+  this.hasName = false;
+
   Object.defineProperty(this, "maxHealth", {get: function() { return this.str * 5 + this.con * 10 }});
   this.health = this.maxHealth;
   Object.defineProperty(this, "maxStamina", {get: function() { return this.dex * 5 + this.con * 10 }});
@@ -80,11 +82,20 @@ function Anthro(name="Anthro") {
   }
 
   this.species = pickRandom(["dog","cat","lizard","deer","wolf","fox"]);
-  this.description = function() {
+
+  // todo better lol
+
+  this.description = function(prefix="") {
     if (this.build == "")
-      return this.species;
+      if (prefix == "")
+        return this.species;
+      else
+        return prefix + " " + this.species;
     else
-      return this.build + " " + this.species;
+      if (prefix == "")
+        return this.build + " " + this.species;
+      else
+        return prefix + " " + this.build + " " + this.species;
   };
 
   this.attacks.push(new punchAttack(this));
@@ -215,15 +226,15 @@ class Stomach extends Container {
   }
 
   describeDamage(prey) {
-    return "Your guts gurgle and churn, slowly wearing down the " + prey.description() + " trapped within.";
+    return "Your guts gurgle and churn, slowly wearing down " + prey.description("the") + " trapped within.";
   }
 
   describeKill(prey) {
-    return "The " + prey.description() + "'s struggles wane as your stomach overpowers them.";
+    return prey.description("The") + "'s struggles wane as your stomach overpowers them.";
   }
 
   describeFinish(prey) {
-    return "Your churning guts have reduced a " + prey.description() + " to meaty chyme.";
+    return "Your churning guts have reduced " + prey.description("a") + " to meaty chyme.";
   }
 
   fill(amount) {
@@ -253,7 +264,7 @@ class Butt extends Container {
 
     pushed.forEach(function(x) {
       this.stomach.feed(x);
-      lines.push("Your winding guts squeeze the " + x.description() + " into your stomach.");
+      lines.push("Your winding guts squeeze " + x.description("the") + " into your stomach.");
     },this);
 
     this.contents = this.contents.filter(prey => prey.timeInButt < 60 * 30);
@@ -262,11 +273,11 @@ class Butt extends Container {
   }
 
   describeDamage(prey) {
-    return "Your bowels gurgle and squeeze, working to wear down the " + prey.description() + " trapped in those musky confines.";
+    return "Your bowels gurgle and squeeze, working to wear down " + prey.description("the") + " trapped in those musky confines.";
   }
 
   describeKill(prey) {
-    return "The " + prey.description() + " abruptly stops struggling, overpowered by your winding intestines.";
+    return prey.description("The") + " abruptly stops struggling, overpowered by your winding intestines.";
   }
 
   describeFinish(prey) {
@@ -319,12 +330,12 @@ function plead(predator) {
       if (escape) {
         return {
           "escape": escape,
-          "lines": ["You plead for the " + predator.description() + " to let you free, and they begrudingly agree, horking you up and leaving you shivering on the ground"]
+          "lines": ["You plead for " + predator.description("the") + " to let you free, and they begrudingly agree, horking you up and leaving you shivering on the ground"]
         };
       } else {
         return {
           "escape": escape,
-          "lines": ["You plead with the " + predator.description() + " to let you go, but they refuse."]
+          "lines": ["You plead with " + predator.description("the") + " to let you go, but they refuse."]
         };
       }
     }
@@ -341,12 +352,12 @@ function struggle(predator) {
       if (escape) {
         return {
           "escape": escape,
-          "lines": ["You struggle and squirm, forcing the " + predator.description() + " to hork you up. They groan and stumble away, exhausted by your efforts."]
+          "lines": ["You struggle and squirm, forcing " + predator.description("the") + " to hork you up. They groan and stumble away, exhausted by your efforts."]
         };
       } else {
         return {
           "escape": escape,
-          "lines": ["You squirm and writhe within the " + predator.description() + " to no avail."]
+          "lines": ["You squirm and writhe within " + predator.description("the") + " to no avail."]
         };
       }
     }
@@ -360,7 +371,7 @@ function rub(predator) {
     struggle: function(player) {
       return {
         "escape": false,
-        "lines": ["You rub the walls of your predator's belly. At least the " + predator.description() + " is getting something out of this."]
+        "lines": ["You rub the walls of your predator's belly. At least " + predator.description("the") + " is getting something out of this."]
       };
     }
   };

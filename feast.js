@@ -23,13 +23,13 @@ let prefs = {
 
 function join(things) {
   if (things.length == 1) {
-    return "a " + things[0].description();
+    return things[0].description("a");
   } else if (things.length == 2) {
-    return "a " + things[0].description() + " and a " + things[1].description();
+    return things[0].description("a") + " and " + things[1].description("a");
   } else {
     let line = "";
-    line = things.slice(0,-1).reduce((line, prey) => line + "a " + prey.description() + ", ", line);
-    line += " and a " + things[things.length-1].description();
+    line = things.slice(0,-1).reduce((line, prey) => line + prey.description("a") + ", ", line);
+    line += " and " + things[things.length-1].description("a");
     return line;
   }
 }
@@ -375,14 +375,14 @@ function respawn(respawnRoom) {
 function startCombat(opponent) {
   currentFoe = opponent;
   changeMode("combat");
-  update(["Oh shit it's a " + opponent.description()]);
+  update(["Oh shit it's " + opponent.description("a")]);
 }
 
 function attackClicked(index) {
   update([playerAttacks[index].attack(currentFoe)]);
 
   if (currentFoe.health <= 0) {
-    update(["The " + currentFoe.description() + " falls to the ground!"]);
+    update([currentFoe.description("The") + " falls to the ground!"]);
     startDialog(new FallenFoe(currentFoe));
   } else if (mode == "combat") {
     let attack = pick(filterPriority(filterValid(currentFoe.attacks, currentFoe, player)), currentFoe, player);
@@ -427,7 +427,7 @@ function struggleClicked(index) {
     update([digest.digest(player)]);
 
     if (player.health <= -100) {
-      update(["You digest in the depths of the " + currentFoe.description()]);
+      update(["You digest in the depths of " + currentFoe.description("the")]);
       respawn(respawnRoom);
     }
   }
@@ -449,7 +449,7 @@ function dialogClicked(index) {
   currentDialog = currentDialog.choices[index].node;
   update([currentDialog.text]);
   currentDialog.visit();
-  if (currentDialog.choices.length == 0) {
+  if (currentDialog.choices.length == 0 && mode == "dialog") {
     changeMode("explore");
     updateDisplay();
   }

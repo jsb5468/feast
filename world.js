@@ -169,7 +169,8 @@ let locationsSrc = [
       }
     ],
     "objs": [
-      NatureTrailExercise
+      NatureTrailExercise,
+      GetaObj
     ]
   },
   {

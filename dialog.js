@@ -21,7 +21,7 @@ function EatDude() {
 
   let nerd = new Anthro();
 
-  this.text = "You approach the " + nerd.description();
+  this.text = "You approach " + nerd.description("the");
 
   let eatHim = new DialogNode();
 

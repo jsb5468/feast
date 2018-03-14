@@ -34,10 +34,10 @@ function punchAttack(attacker) {
     name: "Punch",
     desc: "Punch a nerd",
     attack: function(defender) {
-      return "You punch the " + defender.description() + " for " + attack(attacker, defender, attacker.str) + " damage";
+      return "You punch " + defender.description("the") + " for " + attack(attacker, defender, attacker.str) + " damage";
     },
     attackPlayer: function(defender) {
-      return "The " + attacker.description() + " punches you for " + attack(attacker, defender, attacker.str) + " damage";
+      return attacker.description("The") + " punches you for " + attack(attacker, defender, attacker.str) + " damage";
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ],
@@ -51,10 +51,10 @@ function flankAttack(attacker) {
     name: "Flank",
     desc: "Be sneaky",
     attack: function(defender) {
-      return "You run around the " + defender.description() + " and attack for " + attack(attacker, defender, attacker.dex) + " damage";
+      return "You run around " + defender.description("the") + " and attack for " + attack(attacker, defender, attacker.dex) + " damage";
     },
     attackPlayer: function(defender) {
-      return "The " + attacker.description() + " runs past you, then turns and hits you for " + attack(attacker, defender, attacker.str) + " damage";
+      return attacker.description("The") + " runs past you, then turns and hits you for " + attack(attacker, defender, attacker.str) + " damage";
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ],
@@ -71,18 +71,18 @@ function grapple(attacker) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         defender.grappled = true;
-        return "You charge at the " + defender.description() + ", tackling them and knocking them to the ground.";
+        return "You charge at " + defender.description("the") + ", tackling them and knocking them to the ground.";
       } else {
-        return "You charge at the " + defender.description() + ", but they dodge out of the way!";
+        return "You charge at " + defender.description("the") + ", but they dodge out of the way!";
       }
     },
     attackPlayer: function(defender) {
       let success = Math.random() < 0.5;
       if (success) {
         defender.grappled = true;
-        return "The " + attacker.description() + " lunges at you, pinning you to the floor!";
+        return attacker.description("The") + " lunges at you, pinning you to the floor!";
       } else {
-        return "The " + attacker.description() + " tries to tackle you, but you deftly avoid them.";
+        return attacker.description("The") + " tries to tackle you, but you deftly avoid them.";
       }
     },
     requirements: [
@@ -103,9 +103,9 @@ function grappleDevour(attacker) {
         attacker.stomach.feed(defender);
         defender.grappled = false;
         changeMode("explore");
-        return "You open your jaws wide, stuffing the " + defender.description() + "'s head into your gullet and greedily wolfing them down. Delicious.";
+        return "You open your jaws wide, stuffing " + defender.description("the") + "'s head into your gullet and greedily wolfing them down. Delicious.";
       } else {
-        return "Your jaws open wide, but the " + defender.description() + " manages to avoid becoming " + attacker.species + " chow.";
+        return "Your jaws open wide, but " + defender.description("the") + " manages to avoid becoming " + attacker.species + " chow.";
       }
     },
     attackPlayer: function(defender) {
@@ -113,9 +113,9 @@ function grappleDevour(attacker) {
       if(success) {
         defender.grappled = false;
         changeMode("eaten");
-        return "The " + attacker.description() + " forces your head into their sloppy jaws, devouring you despite your frantic struggles. Glp.";
+        return attacker.description("The") + " forces your head into their sloppy jaws, devouring you despite your frantic struggles. Glp.";
       } else {
-        return "The " + attacker.description() + " tries to swallow you down, but you manage to resist their hunger.";
+        return attacker.description("The") + " tries to swallow you down, but you manage to resist their hunger.";
       }
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
@@ -136,9 +136,9 @@ function grappleAnalVore(attacker) {
         attacker.butt.feed(defender);
         defender.grappled = false;
         changeMode("explore");
-        return "You shove the " + defender.description() + " between your cheeks. Their head slips into your ass with a wet <i>shlk</i>, and the rest of their body follows suit. You moan and gasp, working them deeper and deeper...";
+        return "You shove " + defender.description("the") + " between your cheeks. Their head slips into your ass with a wet <i>shlk</i>, and the rest of their body follows suit. You moan and gasp, working them deeper and deeper...";
       } else {
-        return "Your grasp and shove the " + defender.description() + ", but they manage to avoid becoming " + attacker.species + " chow.";
+        return "Your grasp and shove " + defender.description("the") + ", but they manage to avoid becoming " + attacker.species + " chow.";
       }
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
@@ -155,7 +155,7 @@ function grappleRelease(attacker) {
     desc: "Release your opponent",
     attack: function(defender) {
       defender.grappled = false;
-      return "You throw the " + defender.description() + " back, dealing " + attack(attacker, defender, attacker.str*1.5) + " damage";
+      return "You throw " + defender.description("the") + " back, dealing " + attack(attacker, defender, attacker.str*1.5) + " damage";
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
     ],
@@ -171,7 +171,7 @@ function grappledStruggle(attacker) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         attacker.grappled = false;
-        return "You struggle and shove the " + defender.description() + " off of you.";
+        return "You struggle and shove " + defender.description("the") + " off of you.";
       } else {
         return "You struggle, but to no avail.";
       }
@@ -201,7 +201,7 @@ function grappledReverse(attacker) {
       if (success) {
         attacker.grappled = false;
         defender.grappled = true;
-        return "You surprise the " + defender.description() + " with a burst of strength, flipping them over and pinning them.";
+        return "You surprise " + defender.description("the") + " with a burst of strength, flipping them over and pinning them.";
       } else {
         return "You try to throw your opponent off of you, but fail.";
       }
@@ -250,7 +250,7 @@ function pass(attacker) {
       return "You do nothing.";
     },
     attackPlayer: function(defender) {
-      return "The " + attacker.description() + " does nothing.";
+      return attacker.description("The") + " does nothing.";
     },
     priority: 0,
   };
@@ -280,7 +280,7 @@ function leer(attacker) {
     desc: "Leer at something",
     attackPlayer: function(defender) {
       attacker.leering = true;
-      return "The " + attacker.description() + " leers at you.";
+      return attacker.description("The") + " leers at you.";
     },
     requirements: [
       function(attacker, defender) { return attacker.leering != true && attacker.grappled != true; }
@@ -294,7 +294,7 @@ function poke(attacker) {
     name: "Poke",
     desc: "Poke a nerd",
     attackPlayer: function(defender) {
-      return "The " + attacker.description() + " pokes you on the snout for " + attack(attacker, defender, 1e12) + " damage";
+      return attacker.description("The") + " pokes you on the snout for " + attack(attacker, defender, 1e12) + " damage";
     },
     priority: 1,
   };
@@ -304,7 +304,7 @@ function digestPlayerStomach(predator,damage=20) {
   return {
     digest: function(player) {
       attack(predator, player, damage);
-      return "The " + predator.description() + "'s stomach grinds over your body, swiftly digesting you.";
+      return predator.description("The") + "'s stomach grinds over your body, swiftly digesting you.";
     },
     priority: 1,
   };
