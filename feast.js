@@ -395,7 +395,7 @@ function attackClicked(index) {
     update([attack.attackPlayer(player)]);
 
     if (player.health <= 0) {
-      update(["You fall to the ground..."]);
+      update(["You die..."]);
       if (prefs.player.prey) {
         changeMode("eaten");
       } else {

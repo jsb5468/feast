@@ -15,6 +15,9 @@ function Geta() {
   this.attacks.push(new getaSalivaSwallow(this));
   this.attacks.push(new getaSwallow(this));
 
+  this.attacks.push(new getaStomp(this));
+  this.attacks.push(new getaStompFinish(this));
+
   this.backupAttack = new pass(this);
 
   this.digests = [];
@@ -50,10 +53,15 @@ function getaGrab(attacker) {
       defender.flags.grappled = true;
       return attacker.description() + " leans down and snatches you up, stuffing you into his maw.";
     },
+    conditions: [
+      function(prefs) {
+        return prefs.player.prey;
+      }
+    ],
     requirements: [
       function(attacker, defender) {
         return isNormal(attacker) && defender.flags.shrunk == true && defender.flags.grappled != true;
-      }
+      },
     ],
     priority: 2
   };
@@ -116,6 +124,45 @@ function getaSwallow(attacker) {
       }
     ],
     priority: 2
+  };
+}
+
+function getaStomp(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statCheck(attacker, defender, "dex") || statCheck(attacker, defender, "dex") || defender.stamina == 0;
+      if (success) {
+        defender.health = Math.max(-100, defender.health - 50 - Math.round(Math.random() * 25));
+        defender.stamina = 0;
+        return attacker.description() + "'s paws comes crashing down on your little body, smashing you into the dirt.";
+      } else {
+        return "You dive away as " + attacker.description() + "'s paw slams down, narrowly missing your little body.";
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && defender.flags.shrunk == true && defender.flags.grappled != true;
+      }
+    ],
+    priority: 2,
+  };
+}
+
+function getaStompFinish(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      defender.health = -100;
+      return attacker.description() + " looms over your stunned body. You can only watch as his toes flex, squeeze...and come down hard. The fox's paw crushes you like an insect, tearing you open and spilling your guts across the dusty trail. He grinds you a few times more for good measure, leaving a disfigured, broken mess in your place.";
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && defender.flags.shrunk == true && defender.flags.grappled != true;
+      },
+      function(attacker, defender) {
+        return defender.stamina <= 0;
+      }
+    ],
+    priority: 3,
   };
 }
 
