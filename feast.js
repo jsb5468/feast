@@ -388,8 +388,11 @@ function attackClicked(index) {
 
     update([attack.attackPlayer(player)]);
 
-    if (player.health <= 0) {
+    if (player.health <= -100) {
       update(["You die..."]);
+      respawn(respawnRoom);
+    } else if (player.health <= 0) {
+      update(["You fall to the ground..."]);
       if (player.prefs.prey) {
         changeMode("eaten");
       } else {
