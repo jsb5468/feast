@@ -59,8 +59,8 @@ function getaGrab(attacker) {
       return attacker.description() + " leans down and snatches you up, stuffing you into his maw.";
     },
     conditions: [
-      function(prefs) {
-        return prefs.prey;
+      function(attacker, defender) {
+        return defender.prefs.prey;
       }
     ],
     requirements: [
@@ -165,6 +165,11 @@ function getaStompFinish(attacker) {
       },
       function(attacker, defender) {
         return defender.stamina <= 0;
+      }
+    ],
+    conditions: [
+      function(attacker, defender) {
+        return defender.prefs.gore;
       }
     ],
     priority: 3,

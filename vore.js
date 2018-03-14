@@ -41,8 +41,9 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.prefs = {
     prey: true,
     scat: true,
-    analVore: true
-  }
+    analVore: true,
+    gore: true
+  };
 }
 
 function Player(name = "Player") {
