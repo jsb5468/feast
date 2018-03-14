@@ -142,3 +142,7 @@ button {
 #character-form-list {
   list-style-type: none;
 }
+
+#character-form {
+  font-size: 20pt;
+}

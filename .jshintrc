@@ -2,5 +2,7 @@
   "indent": 1,
   "esversion": 6,
   "node": true,
-  "sub": true
+  "sub": true,
+  "-W117": false,
+  "-W083": false
 }

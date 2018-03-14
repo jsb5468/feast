@@ -34,6 +34,33 @@ function Toilet() {
       update(["You admire the toilet."]);
     }
   });
+  this.actions.push({
+    "name": "Use toilet",
+    "action": function() {
+      let lines = [];
+
+      lines.push("You sit down on the toilet.");
+
+      if (player.bowels.fullness == 0) {
+        lines.push("But nothing happens.");
+      } else {
+        lines.push("You grunt and clench, squeezing out the remains of your former prey.");
+      }
+
+      if (player.bowels.contents.length > 0) {
+        lines.push("The remains of " + join(player.bowels.contents) + " empty into the sewers as you flush them away.");
+      }
+
+      player.bowels.contents = [];
+
+      update(lines);
+    },
+    "conditions": [
+      function(prefs) {
+        return prefs.player.scat == true;
+      }
+    ]
+  });
 }
 
 function TV() {

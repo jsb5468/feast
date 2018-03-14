@@ -21,6 +21,19 @@ let prefs = {
   }
 };
 
+function join(things) {
+  if (things.length == 1) {
+    return "a " + things[0].description();
+  } else if (things.length == 2) {
+    return "a " + things[0].description() + " and a " + things[1].description();
+  } else {
+    let line = "";
+    line = things.slice(0,-1).reduce((line, prey) => line + "a " + prey.description() + ", ", line);
+    line += " and a " + things[things.length-1].description();
+    return line;
+  }
+}
+
 function pickRandom(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
@@ -195,6 +208,11 @@ function updateDisplay() {
   document.getElementById("stat-health").innerHTML = "Health: " + round(player.health,0) + "/" + round(player.maxHealth,0);
   document.getElementById("stat-stamina").innerHTML = "Stamina: " + round(player.stamina,0) + "/" + round(player.maxStamina,0);
   document.getElementById("stat-fullness").innerHTML = "Fullness: " + round(player.fullness(),0);
+  if (prefs.player.scat) {
+    document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness,0);
+  } else {
+    document.getElementById("stat-bowels").innerHTML = "";
+  }
 }
 
 function advanceTime(amount) {
@@ -234,7 +252,8 @@ function moveTo(room,desc="You go places lol") {
 
   currentRoom.objects.forEach(function (object) {
     object.actions.forEach(function (action) {
-      actions.push(action);
+      if (action.conditions == undefined || action.conditions.reduce((result, cond) => result && cond(prefs), true))
+        actions.push(action);
     });
   });
 
