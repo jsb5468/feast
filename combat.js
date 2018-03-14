@@ -223,6 +223,25 @@ function grappledReverse(attacker) {
   };
 }
 
+function flee(attacker) {
+  return {
+    name: "Flee",
+    desc: "Try to run away",
+    attack: function(defender) {
+      let success = statCheck(attacker, defender, "dex");
+      if (success) {
+        attacker.grappled = false;
+        changeMode("explore");
+        return "You successfully run away.";
+      } else {
+        return "You can't escape!";
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && !attacker.isGrappling; }
+    ]
+  };
+}
 function pass(attacker) {
   return {
     name: "Pass",

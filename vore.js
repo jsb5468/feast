@@ -48,6 +48,7 @@ function Player(name = "Player") {
 
   this.attacks.push(new grappledStruggle(this));
   this.attacks.push(new grappledReverse(this));
+  this.attacks.push(new flee(this));
 
   this.backupAttack = new pass(this);
 }
