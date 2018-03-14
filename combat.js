@@ -42,6 +42,7 @@ function punchAttack(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ],
     priority: 1,
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
   };
 }
 
@@ -58,6 +59,7 @@ function flankAttack(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ],
     priority: 1,
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
   };
 }
 
@@ -87,6 +89,7 @@ function grapple(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ],
     priority: 1,
+    weight: function(attacker, defender) { return 1 - defender.health / defender.maxHealth; }
   };
 }
 
@@ -295,6 +298,6 @@ function instakillPlayerStomach(pedator) {
       return "The stomach walls churn, clench, and swiftly crush you into nothingnes.";
     },
     priority: 1,
-    weight: function(attacker, defender) { return 1/3 },
+    weight: function(attacker, defender) { return 1/3; },
   };
 }

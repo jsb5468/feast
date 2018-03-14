@@ -21,16 +21,16 @@ let prefs = {
   }
 };
 
-function pick(list) {
+function pick(list, attacker, defender) {
   if (list.length == 0)
     return null;
   else {
-    let sum = list.reduce((sum, choice) => choice.weight == undefined ? 1 : choice.weight() + sum, 0);
+    let sum = list.reduce((sum, choice) => choice.weight == undefined ? 1 : choice.weight(attacker, defender) + sum, 0);
 
     let target = Math.random() * sum;
 
     for (let i = 0; i < list.length; i++) {
-      sum -= list[i].weight == undefined ? 1 : list[i].weight();
+      sum -= list[i].weight == undefined ? 1 : list[i].weight(attacker, defender);
       if (sum <= target) {
         return list[i];
       }
@@ -341,6 +341,8 @@ function changeMode(newMode) {
 
 function respawn(respawnRoom) {
   moveTo(respawnRoom,"You drift through space and time...");
+  player.stomach.contents = [];
+  player.butt.contents = [];
   advanceTime(86400/2);
   changeMode("explore");
   player.health = 100;
@@ -360,7 +362,7 @@ function attackClicked(index) {
     update(["The " + currentFoe.description() + " falls to the ground!"]);
     startDialog(new FallenFoe(currentFoe));
   } else if (mode == "combat") {
-    let attack = pick(filterPriority(filterValid(currentFoe.attacks, currentFoe, player)));
+    let attack = pick(filterPriority(filterValid(currentFoe.attacks, currentFoe, player)), currentFoe, player);
 
     if (attack == null) {
       attack = currentFoe.backupAttack;
@@ -393,7 +395,7 @@ function struggleClicked(index) {
   if (result.escape) {
     changeMode("explore");
   } else {
-    let digest = pick(filterValid(currentFoe.digests, currentFoe, player));
+    let digest = pick(filterValid(currentFoe.digests, currentFoe, player), currentFoe, player);
 
     if (digest == null) {
       digest = currentFoe.backupDigest;
