@@ -330,7 +330,8 @@ function WasteContainer(name) {
   };
 
   this.finish = function(prey) {
-    this.contents.push(prey);
+    if (prey.prefs.scat)
+      this.contents.push(prey);
   };
 }
 

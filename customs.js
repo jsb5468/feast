@@ -27,6 +27,7 @@ function Geta() {
 
   this.struggles.push(new rub(this));
 
+  this.prefs.scat = false;
   this.prefs.analVore = false;
 }
 
