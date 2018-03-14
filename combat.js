@@ -7,11 +7,15 @@ function attack(attacker, defender, baseDamage) {
 }
 
 function isNormal(entity) {
-  return entity.grappled != true;
+  return entity.flags.grappled != true && entity.flags.shrunk != true;
+}
+
+function isNormalSize(entity) {
+  return entity.flags.shrunk != true;
 }
 
 function isGrappled(entity) {
-  return entity.grappled == true;
+  return entity.flags.grappled == true;
 }
 
 function doComp(attackStat, defendStat) {
@@ -70,7 +74,7 @@ function grapple(attacker) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
-        defender.grappled = true;
+        defender.flags.grappled = true;
         return "You charge at " + defender.description("the") + ", tackling them and knocking them to the ground.";
       } else {
         return "You charge at " + defender.description("the") + ", but they dodge out of the way!";
@@ -79,7 +83,7 @@ function grapple(attacker) {
     attackPlayer: function(defender) {
       let success = Math.random() < 0.5;
       if (success) {
-        defender.grappled = true;
+        defender.flags.grappled = true;
         return attacker.description("The") + " lunges at you, pinning you to the floor!";
       } else {
         return attacker.description("The") + " tries to tackle you, but you deftly avoid them.";
@@ -101,7 +105,7 @@ function grappleDevour(attacker) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         attacker.stomach.feed(defender);
-        defender.grappled = false;
+        defender.flags.grappled = false;
         changeMode("explore");
         return "You open your jaws wide, stuffing " + defender.description("the") + "'s head into your gullet and greedily wolfing them down. Delicious.";
       } else {
@@ -111,7 +115,7 @@ function grappleDevour(attacker) {
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if(success) {
-        defender.grappled = false;
+        defender.flags.grappled = false;
         changeMode("eaten");
         return attacker.description("The") + " forces your head into their sloppy jaws, devouring you despite your frantic struggles. Glp.";
       } else {
@@ -134,7 +138,7 @@ function grappleAnalVore(attacker) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         attacker.butt.feed(defender);
-        defender.grappled = false;
+        defender.flags.grappled = false;
         changeMode("explore");
         return "You shove " + defender.description("the") + " between your cheeks. Their head slips into your ass with a wet <i>shlk</i>, and the rest of their body follows suit. You moan and gasp, working them deeper and deeper...";
       } else {
@@ -154,7 +158,7 @@ function grappleRelease(attacker) {
     name: "Release",
     desc: "Release your opponent",
     attack: function(defender) {
-      defender.grappled = false;
+      defender.flags.grappled = false;
       return "You throw " + defender.description("the") + " back, dealing " + attack(attacker, defender, attacker.str*1.5) + " damage";
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
@@ -170,7 +174,7 @@ function grappledStruggle(attacker) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
-        attacker.grappled = false;
+        attacker.flags.grappled = false;
         return "You struggle and shove " + defender.description("the") + " off of you.";
       } else {
         return "You struggle, but to no avail.";
@@ -179,14 +183,14 @@ function grappledStruggle(attacker) {
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
-        attacker.grappled = false;
+        attacker.flags.grappled = false;
         return "Your prey shoves you back, breaking your grapple!";
       } else {
         return "Your prey squirms, but remains pinned.";
       }
     },
     requirements: [
-      function(attacker, defender) { return isGrappled(attacker) && isNormal(defender); }
+      function(attacker, defender) { return isGrappled(attacker) && isNormalSize(attacker) && isNormal(defender); }
     ],
     priority: 1,
   };
@@ -199,8 +203,8 @@ function grappledReverse(attacker) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
-        attacker.grappled = false;
-        defender.grappled = true;
+        attacker.flags.grappled = false;
+        defender.flags.grappled = true;
         return "You surprise " + defender.description("the") + " with a burst of strength, flipping them over and pinning them.";
       } else {
         return "You try to throw your opponent off of you, but fail.";
@@ -209,15 +213,15 @@ function grappledReverse(attacker) {
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
-        attacker.grappled = false;
-        defender.grappled = true;
+        attacker.flags.grappled = false;
+        defender.flags.grappled = true;
         return "Your prey suddenly grabs hold and flips you over, pinning you!";
       } else {
         return "Your prey tries to grab at you, but you keep them under  control.";
       }
     },
     requirements: [
-      function(attacker, defender) { return isGrappled(attacker) && isNormal(defender); }
+      function(attacker, defender) { return isGrappled(attacker) && isNormalSize(attacker) && isNormal(defender); }
     ],
     priority: 1,
   };
@@ -230,7 +234,7 @@ function flee(attacker) {
     attack: function(defender) {
       let success = statCheck(attacker, defender, "dex");
       if (success) {
-        attacker.grappled = false;
+        attacker.flags.grappled = false;
         changeMode("explore");
         return "You successfully run away.";
       } else {
@@ -283,7 +287,7 @@ function leer(attacker) {
       return attacker.description("The") + " leers at you.";
     },
     requirements: [
-      function(attacker, defender) { return attacker.leering != true && attacker.grappled != true; }
+      function(attacker, defender) { return attacker.leering != true && attacker.flags.grappled != true; }
     ],
     priority: 1,
   };

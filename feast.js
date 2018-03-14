@@ -42,7 +42,7 @@ function pick(list, attacker, defender) {
   if (list.length == 0)
     return null;
   else {
-    let sum = list.reduce((sum, choice) => choice.weight == undefined ? 1 : choice.weight(attacker, defender) + sum, 0);
+    let sum = list.reduce((sum, choice) => choice.weight == undefined ? sum + 1 : sum + choice.weight(attacker, defender) + sum, 0);
 
     let target = Math.random() * sum;
 
@@ -364,6 +364,7 @@ function changeMode(newMode) {
 
 function respawn(respawnRoom) {
   moveTo(respawnRoom,"You drift through space and time...");
+  player.clear();
   player.stomach.contents = [];
   player.butt.contents = [];
   advanceTime(86400/2);

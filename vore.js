@@ -31,6 +31,12 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.restoreStamina = function(time) {
     this.stamina = Math.min(this.maxStamina, this.stamina + this.maxStamina * time * this.staminaRate);
   };
+
+  this.flags = {};
+
+  this.clear = function() {
+    this.flags = {};
+  };
 }
 
 function Player(name = "Player") {
@@ -126,6 +132,8 @@ function Fen() {
 
   this.build = "loomy";
   this.species = "crux";
+
+  this.description = function(prefix) { return "Fen"; };
 
   this.attacks = [];
 
