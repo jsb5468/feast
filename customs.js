@@ -208,3 +208,32 @@ function GetaDialog() {
     this.addChoice("Leave him be", nodeIgnore);
   }
 }
+
+/* TRANCE */
+
+function Trance() {
+  Creature.call(this, "Trance", 20, 15, 20);
+
+  this.hasName = true;
+
+  this.description = function() { return "Trance"; };
+
+  this.attacks.push(new punchAttack(this));
+
+  this.attacks.push(new grapple(this));
+  this.attacks.push(new grappleDevour(this));
+
+  this.attacks.push(new grappledDevour(this));
+
+  this.backupAttack = new pass(this);
+
+  this.digests = [];
+
+  this.digests.push(new digestPlayerStomach(this,50));
+  this.struggles = [];
+
+  this.struggles.push(new struggle(this));
+
+  this.startCombat = function() { return ["You yelp and turn around as hot breath spills over your shoulder. A massive sergal has crept up on you...and he looks <i>hungry</i>"]; };
+  this.digestFinish = function() { return ["The sergal's crushing guts reduce you to a pool of chyme..."]; };
+}

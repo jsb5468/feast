@@ -391,7 +391,7 @@ function respawn(respawnRoom) {
 function startCombat(opponent) {
   currentFoe = opponent;
   changeMode("combat");
-  update(["Oh shit it's " + opponent.description("a")]);
+  update(opponent.startCombat());
 }
 
 function attackClicked(index) {
@@ -446,7 +446,7 @@ function struggleClicked(index) {
     update([digest.digest(player)]);
 
     if (player.health <= -100) {
-      update(["You digest in the depths of " + currentFoe.description("the")]);
+      update(currentFoe.finishDigest());
       respawn(respawnRoom);
     }
   }

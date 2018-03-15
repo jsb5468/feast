@@ -131,6 +131,28 @@ function grappleDevour(attacker) {
   };
 }
 
+function grappledDevour(attacker) {
+  return {
+    name: "Devour",
+    desc: "Try to consume your grappling opponent",
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if(success) {
+        defender.flags.grappled = false;
+        changeMode("eaten");
+        return [attacker.description("The") + " breaks your pin and crams your upper body into their maw, swallowing you down in seconds."];
+      } else {
+        return [attacker.description("The") + " thrashes at you in an attempt to devour you, but you avoid their jaws."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isGrappled(attacker) && isNormal(defender) && attacker.flags.shrunk != true; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; }
+    ],
+    priority: 1,
+  };
+}
+
 function grappleAnalVore(attacker) {
   return {
     name: "Anal Vore",
@@ -332,7 +354,7 @@ function devourPlayer(attacker) {
     ],
     attackPlayer: function(defender) {
       changeMode("eaten");
-      return ["The voracious " + attacker.description() + " pins you down and devours you in seconds."];
+      return ["The voracious " + attacker.description() + " pins you down, his slimy maw spreading wide and engulfing your upper body with ease. He swallows and shoves you deeper, cramming your succulent frame into churning, crushing depths in seconds. A lazy, drawn-out <i>belch</i> escapes his gullet, his hunger briefly sated...and your existence now in inescapable peril."];
     },
     priority: 1,
   };

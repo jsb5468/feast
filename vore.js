@@ -46,6 +46,12 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
   };
 
   this.cash = Math.floor(Math.random() * 10 + 5);
+
+  this.text = {};
+
+  this.startCombat = function() { return [this.description("A") + " appears. It's a fight!"]; };
+
+  this.finishDigest = function() { return [this.description("The") + " digests you..."]; };
 }
 
 function Player(name = "Player") {

@@ -138,7 +138,7 @@ function WildernessExplore(natureTrail) {
       if (outcome < 0.25) {
         moveToByName("Nature Trail", "You find your way back");
       } else if (outcome < 0.5) {
-        startCombat(new Anthro());
+        startCombat(new Trance());
       } else {
         update(["You wander around for a bit, but haven't found anything."]);
       }
