@@ -368,6 +368,8 @@ function plead(predator) {
       }
 
       if (escape) {
+        player.clear();
+        predator.clear();
         return {
           "escape": "escape",
           "lines": ["You plead for " + predator.description("the") + " to let you free, and they begrudingly agree, horking you up and leaving you shivering on the ground"]
@@ -393,6 +395,8 @@ function struggle(predator) {
       }
 
       if (escape) {
+        player.clear();
+        predator.clear();
         return {
           "escape": "escape",
           "lines": ["You struggle and squirm, forcing " + predator.description("the") + " to hork you up. They groan and stumble away, exhausted by your efforts."]
@@ -418,6 +422,8 @@ function struggleStay(predator) {
       }
 
       if (escape) {
+        player.clear();
+        predator.clear();
         return {
           "escape": "stay",
           "lines": ["You struggle and squirm, forcing " + predator.description("the") + " to hork you up. They're not done with you yet..."]
