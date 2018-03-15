@@ -220,11 +220,13 @@ function Trance() {
 
   this.attacks.push(new punchAttack(this));
   this.attacks.push(new tranceKick(this));
+  this.attacks.push(new tranceStomp(this));
 
-  this.attacks.push(new grapple(this));
-  this.attacks.push(new grappleDevour(this));
+  this.attacks.push(new tranceGrapple(this));
+  this.attacks.push(new tranceGrappleDevour(this));
   this.attacks.push(new grappleSubdue(this));
   this.attacks.push(new tranceGrappleMaul(this));
+  this.attacks.push(new tranceGrappleThroat(this));
 
   this.attacks.push(new grappledReverse(this));
   this.attacks.push(new grappledDevour(this));
@@ -257,11 +259,44 @@ function tranceKick(attacker) {
       function(attacker, defender) { return defender.prefs.gore; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return 0.5 * defender.health / defender.maxHealth; }
   };
 }
 
-function grappleDevour(attacker) {
+function tranceGrapple(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        defender.flags.grappled = true;
+        return [attacker.description("The") + " lunges at you, pinning you to the floor!"];
+      } else {
+        return [attacker.description("The") + " tries to tackle you, but you deftly avoid them."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 3 - 2 * defender.health / defender.maxHealth; }
+  };
+}
+
+function tranceStomp(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      return [attacker.description("The") + " shoves you to the ground, planting one foot on your chest and crushing your entire head beneath the other, crippling you and dealing " + attack(attacker, defender, attacker.str * 8) + " damage"];
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.gore; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 0.5 * defender.health / defender.maxHealth; }
+  };
+}
+
+function tranceGrappleDevour(attacker) {
   return {
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
@@ -278,7 +313,7 @@ function grappleDevour(attacker) {
       function(attacker, defender) { return defender.prefs.prey; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1 - defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return 3 - 2 * defender.health / defender.maxHealth; }
   };
 }
 
@@ -294,6 +329,28 @@ function tranceGrappleMaul(attacker) {
     ],
     priority: 1,
     weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
+  };
+}
+
+function tranceGrappleThroat(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        defender.health = 0;
+        defender.stamina = 0;
+        return ["Trance's pointed snout lunges for your throat, crushing jaws sinking in deep and ripping out your windpipe. He grins and swallows his mouthful of meat...and you fall limp."];
+      } else {
+        return ["The sergal lunges for your throat, but you manage to keep his terrifying jaws at bay."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && isGrappled(defender);
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
   };
 }
 

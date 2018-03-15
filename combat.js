@@ -67,7 +67,7 @@ function flankAttack(attacker) {
   };
 }
 
-function grapple(attacker) {
+function grapple(attacker, weightFactor = 1) {
   return {
     name: "Grapple",
     desc: "Try to grab your opponent",
@@ -81,7 +81,7 @@ function grapple(attacker) {
       }
     },
     attackPlayer: function(defender) {
-      let success = Math.random() < 0.5;
+      let success = statHealthCheck(attacker, defender, "str");
       if (success) {
         defender.flags.grappled = true;
         return [attacker.description("The") + " lunges at you, pinning you to the floor!"];
@@ -93,7 +93,7 @@ function grapple(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1 - defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return weightFactor - weightFactor * defender.health / defender.maxHealth; }
   };
 }
 

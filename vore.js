@@ -51,6 +51,8 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
 
   this.startCombat = function() { return [this.description("A") + " appears. It's a fight!"]; };
 
+  this.finishCombat = function() { return [this.description("The") + " scoops up your limp body and gulps you down."]; };
+
   this.finishDigest = function() { return [this.description("The") + " digests you..."]; };
 
   this.defeated = function() { startDialog(new FallenFoe(this)); };
