@@ -125,3 +125,23 @@ function VendingMachine() {
     }
   });
 }
+
+function WildernessExplore(natureTrail) {
+  GameObject.call(this, "Explore the Wilderness");
+
+  this.actions.push({
+    "name": "Explore",
+    "action": function() {
+      let outcome = Math.random();
+      advanceTime(60*15);
+
+      if (outcome < 0.25) {
+        moveToByName("Nature Trail", "You find your way back");
+      } else if (outcome < 0.5) {
+        startCombat(new Anthro());
+      } else {
+        update(["You wander around for a bit, but haven't found anything."]);
+      }
+    }
+  });
+}

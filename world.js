@@ -12,8 +12,6 @@ let SOUTH_WEST = 5;
 let WEST = 6;
 let NORTH_WEST = 7;
 
-let startLocation = "Bedroom";
-
 let locations = {};
 
 let locationsSrc = [
@@ -190,11 +188,26 @@ let locationsSrc = [
         "name": "South Street",
         "dir": NORTH,
         "desc": "You return to town."
+      },
+      {
+        "name": "Wilderness",
+        "dir": SOUTH,
+        "desc": "You wander into the wilderness...and immediately get lost."
       }
     ],
     "objs": [
       NatureTrailExercise,
       GetaObj
+    ]
+  },
+  {
+    "name": "Wilderness",
+    "desc": "Pretty spooky",
+    "conn": [
+
+    ],
+    "objs": [
+      WildernessExplore
     ]
   },
   {
@@ -313,5 +326,5 @@ function createWorld() {
     }
   }
 
-  return locations[startLocation];
+  return locations;
 }

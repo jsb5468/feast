@@ -1,3 +1,4 @@
+let world = null;
 
 let currentRoom = null;
 let currentDialog = null;
@@ -251,6 +252,10 @@ function move(direction) {
   moveTo(target,currentRoom.exitDescs[direction]);
 }
 
+function moveToByName(roomName, desc="You go places lol") {
+  moveTo(world[roomName], desc);
+}
+
 function moveTo(room,desc="You go places lol") {
   actions = [];
   currentRoom = room;
@@ -279,7 +284,8 @@ function start() {
   loadActions();
   loadCompass();
   loadDialog();
-  currentRoom = createWorld();
+  world = createWorld();
+  currentRoom = world["Bedroom"];
   respawnRoom = currentRoom;
   moveTo(currentRoom);
   updateDisplay();
