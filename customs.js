@@ -212,7 +212,7 @@ function GetaDialog() {
 /* TRANCE */
 
 function Trance() {
-  Creature.call(this, "Trance", 20, 15, 20);
+  Creature.call(this, "Trance", 25, 20, 25);
 
   this.hasName = true;
 
@@ -245,7 +245,7 @@ function Trance() {
 
   this.startCombat = function() { return ["You yelp and turn around as hot breath spills over your shoulder. A massive sergal has crept up on you...and he looks <i>hungry</i>"]; };
   this.finishDigest = function() { return ["The sergal's crushing guts reduce you to a pool of chyme..."]; };
-  this.defeated = function() { changeMode("explore"); update(["The sergal winces and stumbles, grabbing a thick branch to steady himself...and snapping in half like a twig. You decide discretion is the better part of valor and run while you can."]); };
+  this.defeated = function() { changeMode("explore"); update(["The sergal winces and stumbles, grabbing a thick branch to steady himself...and snapping it in half like a twig. You decide discretion is the better part of valor and run while you can."]); };
   this.prefs.prey = false;
 }
 
@@ -278,21 +278,26 @@ function tranceGrapple(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 3 - 2 * defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return 7 - 6 * defender.health / defender.maxHealth; }
   };
 }
 
 function tranceStomp(attacker) {
   return {
     attackPlayer: function(defender) {
-      return [attacker.description("The") + " shoves you to the ground, planting one foot on your chest and crushing your entire head beneath the other, crippling you and dealing " + attack(attacker, defender, attacker.str * 8) + " damage"];
+      let result = [attacker.description("The") + " shoves you to the ground, planting one foot on your chest and crushing your entire head beneath the other, crippling you and dealing " + attack(attacker, defender, attacker.str * 5) + " damage"];
+      if (defender.health <= 0) {
+        result[0] += ". Your skull breaks open as his crushing weight snuffs you out like a candle, smearing your brain across the ground and splitting your jaw in half. <i>Ouch.</i>";
+        defender.health = -100;
+      }
+      return result;
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ], conditions: [
       function(attacker, defender) { return defender.prefs.gore; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 0.5 * defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return attacker.health / attacker.maxHealth > 0.5 ? 0 : 3; }
   };
 }
 
@@ -350,7 +355,7 @@ function tranceGrappleThroat(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth > attacker.health / attacker.maxHealth ? 2 : 0; }
   };
 }
 
@@ -359,7 +364,10 @@ function tranceDigest(predator,damage=50) {
     digest: function(player) {
       attack(predator, player, damage);
       player.stamina = Math.max(0,player.stamina - 50);
-      return [predator.description("The") + "'s powerful stomach grinds over your body, swiftly digesting you."];
+      return pickRandom([
+        [predator.description("The") + "'s powerful stomach grinds over your body, swiftly digesting you."],
+        ["The stomach walls clench and squeeze, smearing your squirming body in chyme and stinging acids."],
+        ["Your body is crushed and churned, ground against fleshy walls to sate the sergal's hunger."]]);
     },
     priority: 1,
     weight: function() { return 1; }
