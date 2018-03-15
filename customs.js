@@ -38,10 +38,10 @@ function getaShrink(attacker) {
 
       if (success) {
         defender.flags.shrunk = true;
-        return attacker.description() + " pulls a strange device from his pocket and points it at you. A blinding flash envelops your vision...and as your sight returns, you find yourself shrunken down to no more than two inches tall.";
+        return [attacker.description() + " pulls a strange device from his pocket and points it at you. A blinding flash envelops your vision...and as your sight returns, you find yourself shrunken down to no more than two inches tall."];
       } else {
         attacker.flags.shrunk = true;
-        return attacker.description() + " pulls a strange device from his pocket and points it at you. A blinding flash envelops your vision...and as your sight returns, you see that he's shrunk himself!";
+        return [attacker.description() + " pulls a strange device from his pocket and points it at you. A blinding flash envelops your vision...and as your sight returns, you see that he's shrunk himself!"];
       }
     },
     requirements: [
@@ -57,7 +57,7 @@ function getaGrab(attacker) {
   return {
     attackPlayer: function(defender) {
       defender.flags.grappled = true;
-      return attacker.description() + " leans down and snatches you up, stuffing you into his maw.";
+      return [attacker.description() + " leans down and snatches you up, stuffing you into his maw."];
     },
     conditions: [
       function(attacker, defender) {
@@ -77,7 +77,7 @@ function getaTease(attacker) {
   return {
     attackPlayer: function(defender) {
       defender.stamina = Math.max(defender.stamina - 25, 0);
-      return attacker.description() + " grinds you against the roof of his maw with his tongue.";
+      return [attacker.description() + " grinds you against the roof of his maw with his tongue."];
     },
     requirements: [
       function(attacker, defender) {
@@ -92,7 +92,7 @@ function getaSuckle(attacker) {
   return {
     attackPlayer: function(defender) {
       defender.stamina = Math.max(defender.stamina - 45, 0);
-      return attacker.description() + " shuts his jaws and suckles on you.";
+      return [attacker.description() + " shuts his jaws and suckles on you."];
     },
     requirements: [
       function(attacker, defender) {
@@ -107,7 +107,7 @@ function getaSalivaSwallow(attacker) {
   return {
     attackPlayer: function(defender) {
       defender.stamina = Math.max(defender.stamina - 15, 0);
-      return attacker.description() + " swallows, draining the drool from his jaws - leaving you on the precipice of his gullet.";
+      return [attacker.description() + " swallows, draining the drool from his jaws - leaving you on the precipice of his gullet."];
     },
     requirements: [
       function(attacker, defender) {
@@ -122,7 +122,7 @@ function getaSwallow(attacker) {
   return {
     attackPlayer: function(defender) {
       changeMode("eaten");
-      return attacker.description() + " shuts his jaws and swallows, dragging you down into his tight throat and dumping you into a caustic stomach.";
+      return [attacker.description() + " shuts his jaws and swallows, dragging you down into his tight throat and dumping you into a caustic stomach."];
     },
     requirements: [
       function(attacker, defender) {
@@ -140,9 +140,9 @@ function getaStomp(attacker) {
       if (success) {
         defender.health = Math.max(-100, defender.health - 50 - Math.round(Math.random() * 25));
         defender.stamina = 0;
-        return attacker.description() + "'s paw comes crashing down on your little body, smashing you into the dirt.";
+        return [attacker.description() + "'s paw comes crashing down on your little body, smashing you into the dirt."];
       } else {
-        return "You dive away as " + attacker.description() + "'s paw slams down, narrowly missing your little body.";
+        return ["You dive away as " + attacker.description() + "'s paw slams down, narrowly missing your little body."];
       }
     },
     requirements: [
@@ -158,7 +158,7 @@ function getaStompFinish(attacker) {
   return {
     attackPlayer: function(defender) {
       defender.health = -100;
-      return attacker.description() + " looms over your stunned body. You can only watch as his toes flex, squeeze...and come down hard. The fox's paw crushes you like an insect, tearing you open and spilling your guts across the dusty trail. He grinds you a few times more for good measure, leaving a disfigured, broken mess in your place.";
+      return [attacker.description() + " looms over your stunned body. You can only watch as his toes flex, squeeze...and come down hard. The fox's paw crushes you like an insect, tearing you open and spilling your guts across the dusty trail. He grinds you a few times more for good measure, leaving a disfigured, broken mess in your place."];
     },
     requirements: [
       function(attacker, defender) {
@@ -190,13 +190,13 @@ function GetaObj() {
 function GetaDialog() {
   DialogNode.call(this);
 
-  this.text = "You approach the sandy-furred fox.";
+  this.text = ["You approach the sandy-furred fox."];
 
   {
     let nodeFight = new DialogNode();
     this.addChoice("He certainly looks tasty...", nodeFight);
 
-    nodeFight.text = "You stalk up to your prey, but he sees you coming. You're going to have to fight!";
+    nodeFight.text = ["You stalk up to your prey, but he sees you coming. You're going to have to fight!"];
     nodeFight.hooks.push( function(){
       currentFoe = new Geta();
       changeMode("combat");

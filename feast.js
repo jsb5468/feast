@@ -332,6 +332,7 @@ function saveSettings() {
 function retrieveSettings() {
   return JSON.parse(window.localStorage.getItem("settings"));
 }
+
 function update(lines=[]) {
   let log = document.getElementById("log");
   for (let i=0; i<lines.length; i++) {
@@ -382,7 +383,7 @@ function startCombat(opponent) {
 }
 
 function attackClicked(index) {
-  update([playerAttacks[index].attack(currentFoe)]);
+  update(playerAttacks[index].attack(currentFoe));
 
   if (currentFoe.health <= 0) {
     update([currentFoe.description("The") + " falls to the ground!"]);
@@ -394,7 +395,7 @@ function attackClicked(index) {
       attack = currentFoe.backupAttack;
     }
 
-    update([attack.attackPlayer(player)]);
+    update(attack.attackPlayer(player));
 
     if (player.health <= -100) {
       update(["You die..."]);
@@ -446,14 +447,14 @@ function struggleHovered(index) {
 function startDialog(dialog) {
   currentDialog = dialog;
   changeMode("dialog");
-  update([currentDialog.text]);
+  update(currentDialog.text);
   currentDialog.visit();
   updateDisplay();
 }
 
 function dialogClicked(index) {
   currentDialog = currentDialog.choices[index].node;
-  update([currentDialog.text]);
+  update(currentDialog.text);
   currentDialog.visit();
   if (currentDialog.choices.length == 0 && mode == "dialog") {
     changeMode("explore");
