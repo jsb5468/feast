@@ -30,6 +30,11 @@ function statHealthCheck(attacker, defender, stat) {
   let attackerPercent = attacker.health / attacker.maxHealth;
   let defenderPercent = defender.health / defender.maxHealth;
 
+  if (attacker.stamina <= 0)
+    attackerPercent /= 2;
+  if (defender.stamina <= 0)
+    defenderPercent /= 2;
+
   return doComp(attacker[stat] * attackerPercent, defender[stat] * defenderPercent);
 }
 
@@ -38,6 +43,7 @@ function punchAttack(attacker) {
     name: "Punch",
     desc: "Punch a nerd",
     attack: function(defender) {
+
       return ["You punch " + defender.description("the") + " for " + attack(attacker, defender, attacker.str) + " damage"];
     },
     attackPlayer: function(defender) {
@@ -74,15 +80,20 @@ function grapple(attacker, weightFactor = 1) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-20);
+        defender.changeStamina(-20);
         defender.flags.grappled = true;
         return ["You charge at " + defender.description("the") + ", tackling them and knocking them to the ground."];
       } else {
+        attacker.changeStamina(-20);
         return ["You charge at " + defender.description("the") + ", but they dodge out of the way!"];
       }
     },
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-20);
+        defender.changeStamina(-20);
         defender.flags.grappled = true;
         return [attacker.description("The") + " lunges at you, pinning you to the floor!"];
       } else {
@@ -102,9 +113,13 @@ function grappleSubdue(attacker) {
     name: "Subdue",
     desc: "Try to subdue your opponent",
     attack: function(defender) {
+      attacker.changeStamina(-10);
+      defender.changeStamina(-30);
       return ["You beat on " + defender.description("the") + " for " + attack(attacker, defender, attacker.str * 2) + " damage."];
     },
     attackPlayer: function(defender) {
+      attacker.changeStamina(-10);
+      defender.changeStamina(-30);
       return [attacker.description("The") + " beats you for " + attack(attacker, defender, attacker.str * 2) + " damage"];
     },
     requirements: [
@@ -124,12 +139,16 @@ function grappleDevour(attacker) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-25);
         attacker.stomach.feed(defender);
         defender.flags.grappled = false;
         changeMode("explore");
         attacker.cash += defender.cash;
         return ["You open your jaws wide, stuffing " + defender.description("the") + "'s head into your gullet and greedily wolfing them down. Delicious.", newline, "You hack up their wallet with $" + defender.cash + " inside a moment later. Nice!"];
       } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-10);
         return ["Your jaws open wide, but " + defender.description("the") + " manages to avoid becoming " + attacker.species + " chow."];
       }
     },
@@ -163,6 +182,7 @@ function grappledDevour(attacker) {
         changeMode("eaten");
         return [attacker.description("The") + " breaks your pin and crams your upper body into their maw, swallowing you down in seconds."];
       } else {
+        attacker.changeStamina(-10);
         return [attacker.description("The") + " thrashes at you in an attempt to devour you, but you avoid their jaws."];
       }
     }, requirements: [
@@ -181,12 +201,16 @@ function grappleAnalVore(attacker) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-25);
         attacker.butt.feed(defender);
         defender.flags.grappled = false;
         attacker.cash += defender.cash;
         changeMode("explore");
         return ["You shove " + defender.description("the") + " between your cheeks. Their head slips into your ass with a wet <i>shlk</i>, and the rest of their body follows suit. You moan and gasp, working them deeper and deeper.", newline, "You notice their wallet with $" + defender.cash + " lying on the ground. Score!"];
       } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-10);
         return ["Your grasp and shove " + defender.description("the") + ", but they manage to avoid becoming " + attacker.species + " chow."];
       }
     }, requirements: [
@@ -204,6 +228,7 @@ function grappleRelease(attacker) {
     desc: "Release your opponent",
     attack: function(defender) {
       defender.flags.grappled = false;
+        defender.changeStamina(-15);
       return ["You throw " + defender.description("the") + " back, dealing " + attack(attacker, defender, attacker.str*1.5) + " damage"];
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); }
@@ -219,18 +244,26 @@ function grappledStruggle(attacker) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-25);
         attacker.flags.grappled = false;
         return ["You struggle and shove " + defender.description("the") + " off of you."];
       } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-10);
         return ["You struggle, but to no avail."];
       }
     },
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-25);
         attacker.flags.grappled = false;
         return ["Your prey shoves you back, breaking your grapple!"];
       } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-10);
         return ["Your prey squirms, but remains pinned."];
       }
     },
@@ -248,20 +281,26 @@ function grappledReverse(attacker) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-35);
         attacker.flags.grappled = false;
         defender.flags.grappled = true;
         return ["You surprise " + defender.description("the") + " with a burst of strength, flipping them over and pinning them."];
       } else {
+        attacker.changeStamina(-35);
         return ["You try to throw your opponent off of you, but fail."];
       }
     },
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-35);
         attacker.flags.grappled = false;
         defender.flags.grappled = true;
         return ["Your prey suddenly grabs hold and flips you over, pinning you!"];
       } else {
+        attacker.changeStamina(-35);
         return ["Your prey tries to grab at you, but you keep them under  control."];
       }
     },
@@ -279,6 +318,7 @@ function shrunkGrapple(attacker) {
     attack: function(defender) {
       let success = statCheck(attacker, defender, "dex") || statCheck(attacker, defender, "dex");
       if (success) {
+        defender.changeStamina(-25);
         defender.flags.grappled = true;
         return ["You snatch up " + defender.description("the")];
       } else {
@@ -299,6 +339,7 @@ function shrunkSwallow(attacker) {
     name: "Swallow",
     desc: "Swallow your prey",
     attack: function(defender) {
+      defender.changeStamina(-50);
       changeMode("explore");
       attacker.stomach.feed(defender);
       return ["With a light swallow, " + defender.description("the") + " is dragged down to your sloppy guts."];
@@ -337,10 +378,13 @@ function flee(attacker) {
     attack: function(defender) {
       let success = statCheck(attacker, defender, "dex");
       if (success) {
+        attacker.changeStamina(-25);
         attacker.clear();
         changeMode("explore");
         return ["You successfully run away."];
       } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-25);
         return ["You can't escape!"];
       }
     },
@@ -387,6 +431,7 @@ function leer(attacker) {
     desc: "Leer at something",
     attackPlayer: function(defender) {
       attacker.leering = true;
+      defender.changeStamina(-100);
       return [attacker.description("The") + " leers at you."];
     },
     requirements: [
@@ -410,6 +455,7 @@ function poke(attacker) {
 function digestPlayerStomach(predator,damage=20) {
   return {
     digest: function(player) {
+      defender.changeStamina(-25);
       attack(predator, player, damage);
       return [predator.description("The") + "'s stomach grinds over your body, swiftly digesting you."];
     },

@@ -252,6 +252,8 @@ function Trance() {
 function tranceKick(attacker) {
   return {
     attackPlayer: function(defender) {
+      attacker.changeStamina(-25);
+      defender.changeStamina(-50);
       return [attacker.description("The") + " leaps at you, lashing out with sharp-clawed paws and goring you for " + attack(attacker, defender, attacker.str * 3) + " damage"];
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
@@ -268,9 +270,13 @@ function tranceGrapple(attacker) {
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-15);
+        defender.changeStamina(-50);
         defender.flags.grappled = true;
         return [attacker.description("The") + " lunges at you, pinning you to the floor!"];
       } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-15);
         return [attacker.description("The") + " tries to tackle you, but you deftly avoid them."];
       }
     },
@@ -285,6 +291,8 @@ function tranceGrapple(attacker) {
 function tranceStomp(attacker) {
   return {
     attackPlayer: function(defender) {
+      attacker.changeStamina(-10);
+      defender.changeStamina(-100);
       let result = [attacker.description("The") + " shoves you to the ground, planting one foot on your chest and crushing your head beneath the other, crippling you and dealing " + attack(attacker, defender, attacker.str * 5) + " damage"];
       if (defender.health <= 0) {
         result[0] += ". Your skull breaks open as his crushing weight snuffs you out like a candle, smearing your brain across the ground and splitting your jaw in half. <i>Ouch.</i>";
@@ -306,10 +314,14 @@ function tranceGrappleDevour(attacker) {
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if(success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-50);
         defender.flags.grappled = false;
         changeMode("eaten");
         return [attacker.description("The") + " forces your head into their sloppy jaws, devouring you despite your frantic struggles. Glp."];
       } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-25);
         return [attacker.description("The") + " tries to swallow you down, but you manage to resist their hunger."];
       }
     }, requirements: [
@@ -325,6 +337,8 @@ function tranceGrappleDevour(attacker) {
 function tranceGrappleMaul(attacker) {
   return {
     attackPlayer: function(defender) {
+      attacker.changeStamina(-25);
+      defender.changeStamina(-50);
       return [attacker.description("The") + " digs into you with his claws and jaws, ripping you apart for " + attack(attacker, defender, attacker.str * 4) + " damage"];
     },
     requirements: [
@@ -347,6 +361,7 @@ function tranceGrappleThroat(attacker) {
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
+        attacker.changeStamina(-10);
         defender.health = 0;
         defender.stamina = 0;
         return ["Trance's pointed snout lunges for your throat, crushing jaws sinking in deep and ripping out your windpipe. He grins and swallows his mouthful of meat...and you fall limp."];
@@ -373,7 +388,7 @@ function tranceDigest(predator,damage=50) {
   return {
     digest: function(player) {
       attack(predator, player, damage);
-      player.stamina = Math.max(0,player.stamina - 50);
+      player.changeStamina(-50);
       return pickRandom([
         [predator.description("The") + "'s powerful stomach grinds over your body, swiftly digesting you."],
         ["The stomach walls clench and squeeze, smearing your squirming body in chyme and stinging acids."],
@@ -388,7 +403,7 @@ function tranceDigestCrush(predator, damage=75) {
   return {
     digest: function(player) {
       attack(predator, player, damage);
-      player.stamina = Math.max(0,player.stamina - 100);
+      player.changeStamina(-125);
       return ["Trance's belly clenches, crushing your body between walls of ruthless muscle. Bones snap and tendons strain. The chyme floods your mouth."];
     },
     conditions: [
