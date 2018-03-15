@@ -455,7 +455,7 @@ function poke(attacker) {
 function digestPlayerStomach(predator,damage=20) {
   return {
     digest: function(player) {
-      defender.changeStamina(-25);
+      player.changeStamina(-25);
       attack(predator, player, damage);
       return [predator.description("The") + "'s stomach grinds over your body, swiftly digesting you."];
     },
