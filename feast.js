@@ -11,11 +11,15 @@ let actionButtons = [];
 let mode = "explore";
 let actions = [];
 let time = 9*60*60;
+let date = 1;
 let newline = "&nbsp;";
 
 let player = new Player();
 let playerAttacks = [];
 
+let killingBlow = null;
+
+let deaths = [];
 let respawnRoom;
 
 function join(things) {
@@ -210,6 +214,7 @@ function updateDisplay() {
   }
 
   document.getElementById("time").innerHTML = "Time: " + renderTime(time);
+  document.getElementById("date").innerHTML = "Day " + date;
   document.getElementById("stat-name").innerHTML = "Name: " + player.name;
   document.getElementById("stat-health").innerHTML = "Health: " + round(player.health,0) + "/" + round(player.maxHealth,0);
   document.getElementById("stat-cash").innerHTML = "Cash: $" + round(player.cash,0);
@@ -223,7 +228,12 @@ function updateDisplay() {
 }
 
 function advanceTime(amount) {
-  time = (time + amount) % 86400;
+  time = (time + amount);
+
+  date += Math.floor(time / 86400);
+
+  time = time % 86400;
+
   player.restoreHealth(amount);
   player.restoreStamina(amount);
   update(player.stomach.digest(amount));
@@ -378,11 +388,23 @@ function changeMode(newMode) {
 }
 
 function respawn(respawnRoom) {
+
+  if (killingBlow.gameover == undefined) {
+    if (player.prefs.prey) {
+      deaths.push("Digested by " + currentFoe.description("a") + " at " + renderTime(time) + " on day " + date);
+    } else {
+      deaths.push("Defeated by " + currentFoe.description("a") + " at " + renderTime(time) + " on day " + date);
+    }
+  }
+
+
   moveTo(respawnRoom,"You drift through space and time...");
   player.clear();
   player.stomach.contents = [];
   player.butt.contents = [];
-  advanceTime(86400/2);
+  player.bowels.contents = [];
+  player.bowels.fullness = 0;
+  advanceTime(Math.floor(86400 / 2 * (Math.random() * 0.5 - 0.25 + 1)));
   changeMode("explore");
   player.health = 100;
   update(["You wake back up in your bed."]);
@@ -409,6 +431,7 @@ function attackClicked(index) {
     update(attack.attackPlayer(player));
 
     if (player.health <= -100) {
+      killingBlow = attack;
       update(["You die..."]);
       respawn(respawnRoom);
     } else if (player.health <= 0) {
@@ -416,6 +439,8 @@ function attackClicked(index) {
       if (player.prefs.prey) {
         changeMode("eaten");
       } else {
+        killingBlow = attack;
+        update(["You die..."]);
         respawn(respawnRoom);
       }
     }
@@ -447,6 +472,7 @@ function struggleClicked(index) {
     update([digest.digest(player)]);
 
     if (player.health <= -100) {
+      killingBlow = digest;
       update(currentFoe.finishDigest());
       respawn(respawnRoom);
     }

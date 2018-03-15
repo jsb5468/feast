@@ -285,7 +285,7 @@ function tranceGrapple(attacker) {
 function tranceStomp(attacker) {
   return {
     attackPlayer: function(defender) {
-      let result = [attacker.description("The") + " shoves you to the ground, planting one foot on your chest and crushing your entire head beneath the other, crippling you and dealing " + attack(attacker, defender, attacker.str * 5) + " damage"];
+      let result = [attacker.description("The") + " shoves you to the ground, planting one foot on your chest and crushing your head beneath the other, crippling you and dealing " + attack(attacker, defender, attacker.str * 5) + " damage"];
       if (defender.health <= 0) {
         result[0] += ". Your skull breaks open as his crushing weight snuffs you out like a candle, smearing your brain across the ground and splitting your jaw in half. <i>Ouch.</i>";
         defender.health = -100;
@@ -332,6 +332,11 @@ function tranceGrappleMaul(attacker) {
         return isNormal(attacker) && isGrappled(defender);
       }
     ],
+    conditions: [
+      function(attacker, defender) {
+        return defender.prefs.gore;
+      }
+    ],
     priority: 1,
     weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
   };
@@ -349,6 +354,11 @@ function tranceGrappleThroat(attacker) {
         return ["The sergal lunges for your throat, but you manage to keep his terrifying jaws at bay."];
       }
     },
+    conditions: [
+      function(attacker, defender) {
+        return defender.prefs.gore;
+      }
+    ],
     requirements: [
       function(attacker, defender) {
         return isNormal(attacker) && isGrappled(defender);

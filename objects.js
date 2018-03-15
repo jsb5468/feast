@@ -96,6 +96,19 @@ function Bed() {
   });
 }
 
+function Journal() {
+  GameObject.call(this, "Journal");
+  this.actions.push({
+    "name": "Read Journal",
+    "action": function() {
+      if (deaths.length == 0)
+        update(["You pick up the journal and read it.",newline,"It's empty."]);
+      else
+        update(["You pick up the journal and read it.",newline].concat(deaths));
+    }
+  });
+}
+
 function Sofa() {
   GameObject.call(this, "Sofa");
   this.actions.push({
