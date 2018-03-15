@@ -157,7 +157,7 @@ function VendingMachinePurchase() {
     });
 
     nodeCandy.requirements.push(function(player) {
-      return player.cash > 2;
+      return player.cash >= 2;
     });
   }
 
@@ -171,7 +171,7 @@ function VendingMachinePurchase() {
     });
 
     nodeSoda.requirements.push(function(player) {
-      return player.cash > 2;
+      return player.cash >= 2;
     });
   }
 
@@ -187,7 +187,7 @@ function VendingMachinePurchase() {
     });
 
     nodeMicro.requirements.push(function(player) {
-      return player.cash > 10;
+      return player.cash >= 10;
     });
   }
 

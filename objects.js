@@ -45,6 +45,7 @@ function Toilet() {
         lines.push("But nothing happens.");
       } else {
         lines.push("You grunt and clench, squeezing out the remains of your former prey.");
+        player.bowels.fullness = 0;
       }
 
       if (player.bowels.contents.length > 0) {
