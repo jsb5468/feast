@@ -1,4 +1,4 @@
-/* AEZNON COMMISSION */
+/* AEZNON GETA COMMISSION */
 
 function Geta() {
   Creature.call(this, "Geta", 5, 15, 10);

@@ -114,3 +114,14 @@ function NatureTrailExercise() {
     }
   });
 }
+
+function VendingMachine() {
+  GameObject.call(this, "Vending Machine");
+
+  this.actions.push({
+    "name": "Use the vending machine",
+    "action": function() {
+      startDialog(new VendingMachinePurchase());
+    }
+  });
+}

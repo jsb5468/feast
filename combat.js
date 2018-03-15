@@ -107,7 +107,8 @@ function grappleDevour(attacker) {
         attacker.stomach.feed(defender);
         defender.flags.grappled = false;
         changeMode("explore");
-        return "You open your jaws wide, stuffing " + defender.description("the") + "'s head into your gullet and greedily wolfing them down. Delicious.";
+        attacker.cash += defender.cash;
+        return "You open your jaws wide, stuffing " + defender.description("the") + "'s head into your gullet and greedily wolfing them down. Delicious. You hack up their wallet with $" + defender.cash + " inside a moment later. Nice!";
       } else {
         return "Your jaws open wide, but " + defender.description("the") + " manages to avoid becoming " + attacker.species + " chow.";
       }
@@ -139,8 +140,9 @@ function grappleAnalVore(attacker) {
       if (success) {
         attacker.butt.feed(defender);
         defender.flags.grappled = false;
+        attacker.cash += defender.cash;
         changeMode("explore");
-        return "You shove " + defender.description("the") + " between your cheeks. Their head slips into your ass with a wet <i>shlk</i>, and the rest of their body follows suit. You moan and gasp, working them deeper and deeper...";
+        return "You shove " + defender.description("the") + " between your cheeks. Their head slips into your ass with a wet <i>shlk</i>, and the rest of their body follows suit. You moan and gasp, working them deeper and deeper...and noticing their wallet with $" + defender.cash + " on the ground. Score!";
       } else {
         return "Your grasp and shove " + defender.description("the") + ", but they manage to avoid becoming " + attacker.species + " chow.";
       }

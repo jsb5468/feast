@@ -44,6 +44,8 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
     analVore: true,
     gore: true
   };
+
+  this.cash = Math.floor(Math.random() * 10 + 5);
 }
 
 function Player(name = "Player") {
@@ -71,6 +73,8 @@ function Player(name = "Player") {
   this.attacks.push(new flee(this));
 
   this.backupAttack = new pass(this);
+
+  this.cash = 100;
 }
 
 function Anthro(name="Anthro") {
@@ -172,8 +176,11 @@ function Micro() {
   this.mass = 0.1 * (Math.random()/2 - 0.25 + 1);
 
   this.species = pick(["dog","cat","lizard","deer","wolf","fox"]);
-  this.description = function() {
-    return "micro " + this.species;
+  this.description = function(prefix = "") {
+    if (prefix == "")
+      return "micro " + this.species;
+    else
+      return prefix + " micro " + this.species;
   };
 }
 

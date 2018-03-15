@@ -71,7 +71,12 @@ function FallenFoe(foe) {
   {
     let nodeEat = new DialogNode();
     this.addChoice("Devour!",nodeEat);
-    nodeEat.text = "You grab your helpless prey and force them down your gullet.";
+    nodeEat.text = "You grab your helpless prey and force them down your gullet. You hack up their wallet a minute later, finding $" + foe.cash + " inside.";
+
+    nodeEat.hooks.push(function() {
+      player.cash += foe.cash;
+    });
+
     nodeEat.hooks.push(function() {
       player.stomach.feed(foe);
     })
@@ -80,7 +85,11 @@ function FallenFoe(foe) {
   {
     let nodeSpare = new DialogNode();
     this.addChoice("Spare",nodeSpare);
-    nodeSpare.text = "You decide to leave your foe uneaten.";
+    nodeSpare.text = "You decide to leave your foe uneaten. You do help yourself to the $" + foe.cash + " in their pockets, though.";
+
+    nodeSpare.hooks.push(function() {
+      player.cash += foe.cash;
+    });
   }
 
   {
@@ -126,5 +135,61 @@ function NatureExercise() {
       player.con += 1;
       advanceTime(60*30);
     });
+  }
+}
+
+function VendingMachinePurchase() {
+  DialogNode.call(this);
+
+  this.text = "You walk up to the vending machine. A variety of foodstuffs and drinks are on display...along with some more unconventional items.";
+
+  {
+    let nodeCandy = new DialogNode();
+    this.addChoice("Buy a candy bar ($2)", nodeCandy);
+    nodeCandy.text = "You insert two dollar bills into the machine and select the candy bar. Chocolate and nougat, mmm.";
+
+    nodeCandy.hooks.push(function() {
+      player.cash -= 2;
+    });
+
+    nodeCandy.requirements.push(function(player) {
+      return player.cash > 2;
+    });
+  }
+
+  {
+    let nodeSoda = new DialogNode();
+    this.addChoice("Buy a soda ($2)", nodeSoda);
+    nodeSoda.text = "You insert a dollar and coins, then select a soda. You're pretty you saw something on the news about it turning people purple, but you can't resist that delicious Citrus Substitute Flavor&trade;";
+
+    nodeSoda.hooks.push(function() {
+      player.cash -= 2;
+    });
+
+    nodeSoda.requirements.push(function(player) {
+      return player.cash > 2;
+    });
+  }
+
+  {
+    let prey = new Micro();
+    let nodeMicro = new DialogNode();
+    this.addChoice("Buy a micro ($10)", nodeMicro);
+    nodeMicro.text = "You stuff a wad of bills into the machine. " + prey.description("A") + " tumbles into the vending slot; you scoop them up and stuff them into your jaws without a second thought. Tasty.";
+
+    nodeMicro.hooks.push(function() {
+      player.stomach.feed(prey);
+      player.cash -= 10;
+    });
+
+    nodeMicro.requirements.push(function(player) {
+      return player.cash > 10;
+    });
+  }
+
+  {
+    let nodeCancel = new DialogNode();
+    this.addChoice("Nevermind", nodeCancel);
+    nodeCancel.text = "You decide to not purchase anything.";
   }
 }

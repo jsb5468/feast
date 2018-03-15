@@ -55,9 +55,9 @@ let locationsSrc = [
     "desc": "A bare living room",
     "conn": [
       {
-        "name": "North Street",
-        "dir": WEST,
-        "desc": "You step outside."
+        "name": "Lobby",
+        "dir": NORTH,
+        "desc": "You leave your apartment and head to the lobby."
       },
       {
         "name": "Bedroom",
@@ -80,9 +80,9 @@ let locationsSrc = [
         "desc": "You wander into the dark alley"
       },
       {
-        "name": "Living Room",
+        "name": "Lobby",
         "dir": EAST,
-        "desc": "You step back into your apartment"
+        "desc": "You step into your apartment's lobby"
       },
       {
         "name": "Crossroads",
@@ -97,6 +97,25 @@ let locationsSrc = [
     ],
     "objs": [
       Nerd
+    ]
+  },
+  {
+    "name": "Lobby",
+    "desc": "The modest lobby of your modest apartment complex",
+    "conn": [
+      {
+        "name": "North Street",
+        "dir": WEST,
+        "desc": "You walk out into the street"
+      },
+      {
+        "name": "Living Room",
+        "dir": SOUTH,
+        "desc": "You walk back into your apartment"
+      }
+    ],
+    "objs": [
+      VendingMachine
     ]
   },
   {
@@ -139,6 +158,11 @@ let locationsSrc = [
         "name": "South Street",
         "dir": SOUTH,
         "desc": "You walk south"
+      },
+      {
+        "name": "Corner Mart",
+        "dir": SOUTH_EAST,
+        "desc": "You walk into the convenience store"
       }
     ]
   },
@@ -207,6 +231,17 @@ let locationsSrc = [
     "hooks": [
       function() {
         startCombat(new Fen());
+      }
+    ]
+  },
+  {
+    "name": "Corner Mart",
+    "desc": "A convenience store with a variety of snacks and supplies",
+    "conn": [
+      {
+        "name": "Crossroads",
+        "dir": NORTH_WEST,
+        "desc": "You leave the store."
       }
     ]
   }
