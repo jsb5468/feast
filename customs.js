@@ -238,4 +238,7 @@ function Trance() {
 
   this.startCombat = function() { return ["You yelp and turn around as hot breath spills over your shoulder. A massive sergal has crept up on you...and he looks <i>hungry</i>"]; };
   this.digestFinish = function() { return ["The sergal's crushing guts reduce you to a pool of chyme..."]; };
+  this.defeated = function() { changeMode("explore"); update(["The sergal winces and stumbles, grabbing a thick branch to steady himself...and snapping in half like a twig. You decide discretion is the better part of valor and run while you can."]); };
+  this.prefs.prey = false;
+
 }

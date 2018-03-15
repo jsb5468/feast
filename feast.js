@@ -398,8 +398,7 @@ function attackClicked(index) {
   update(playerAttacks[index].attack(currentFoe));
 
   if (currentFoe.health <= 0) {
-    update([currentFoe.description("The") + " falls to the ground!"]);
-    startDialog(new FallenFoe(currentFoe));
+    currentFoe.defeated();
   } else if (mode == "combat") {
     let attack = pick(filterPriority(filterValid(currentFoe.attacks, currentFoe, player)), currentFoe, player);
 

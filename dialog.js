@@ -66,12 +66,16 @@ function PhoneCall() {
 function FallenFoe(foe) {
   DialogNode.call(this);
 
-  this.text = ["What do you want to do with your enemy?"];
+  this.text = [foe.description("The") + " falls to the ground!", newline, "What do you want to do with your enemy?"];
 
   {
     let nodeEat = new DialogNode();
     this.addChoice("Devour!",nodeEat);
     nodeEat.text = ["You grab your helpless prey and force them down your gullet. You hack up their wallet a minute later, finding $" + foe.cash + " inside."];
+
+    nodeEat.requirements.push( function(attacker, defender) {
+      return defender.prefs.prey;
+    });
 
     nodeEat.hooks.push(function() {
       player.cash += foe.cash;
