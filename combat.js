@@ -344,7 +344,7 @@ function leer(attacker) {
     desc: "Leer at something",
     attackPlayer: function(defender) {
       attacker.leering = true;
-      return attacker.description("The") + " leers at you.";
+      return [attacker.description("The") + " leers at you."];
     },
     requirements: [
       function(attacker, defender) { return attacker.leering != true && attacker.flags.grappled != true; }

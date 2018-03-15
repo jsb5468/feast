@@ -144,7 +144,7 @@ function Anthro(name="Anthro") {
 }
 
 function Fen() {
-  Anthro.call(this, name, 1000000, 1099900, 1000000);
+  Creature.call(this, name, 1000000, 1099900, 1000000);
 
   this.build = "loomy";
   this.species = "crux";
@@ -354,6 +354,9 @@ function plead(predator) {
     desc: "Ask very, very nicely for the predator to let you go. More effective if you haven't hurt your predator.",
     struggle: function(player) {
       let escape = Math.random() < predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
 
       if (escape) {
         return {
@@ -376,6 +379,9 @@ function struggle(predator) {
     desc: "Try to squirm free. More effective if you've hurt your predator.",
     struggle: function(player) {
       let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
 
       if (escape) {
         return {

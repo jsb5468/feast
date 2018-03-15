@@ -106,9 +106,18 @@ button {
   overflow: auto;
 }
 
-#stats {
+.stats {
   float: right;
   flex: 1;
+}
+
+#player-stats {
+  height: 50%;
+}
+
+#foe-stats {
+  display: none;
+  height: 50%;
 }
 
 .stat-line {

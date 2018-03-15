@@ -155,6 +155,10 @@ function updateCombat() {
     li.appendChild(button);
     list.appendChild(li);
   }
+
+  document.getElementById("stat-foe-name").innerHTML = "Name: " + currentFoe.name;
+  document.getElementById("stat-foe-health").innerHTML = "Health: " + currentFoe.health + "/" + currentFoe.maxHealth;
+  document.getElementById("stat-foe-stamina").innerHTML = "Stamina: " + currentFoe.stamina + "/" + currentFoe.maxStamina;
 }
 
 function updateDialog() {
@@ -348,6 +352,7 @@ function update(lines=[]) {
 function changeMode(newMode) {
   mode = newMode;
   let body = document.querySelector("body");
+  document.getElementById("foe-stats").style.display = "none";
   body.className = "";
   switch(mode) {
     case "explore":
@@ -356,6 +361,7 @@ function changeMode(newMode) {
       break;
     case "combat":
       body.classList.add("combat");
+      document.getElementById("foe-stats").style.display = "block";
       break;
     case "eaten":
       body.classList.add("eaten");
