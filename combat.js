@@ -113,7 +113,7 @@ function grappleSubdue(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1 - defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
   };
 }
 
@@ -148,7 +148,7 @@ function grappleDevour(attacker) {
       function(attacker, defender) { return defender.prefs.prey; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return 1 - defender.health / defender.maxHealth; }
   };
 }
 

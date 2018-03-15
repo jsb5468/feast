@@ -39,7 +39,7 @@ function pick(list, attacker, defender) {
   if (list.length == 0)
     return null;
   else {
-    let sum = list.reduce((sum, choice) => choice.weight == undefined ? sum + 1 : sum + choice.weight(attacker, defender) + sum, 0);
+    let sum = list.reduce((sum, choice) => choice.weight == undefined ? sum + 1 : sum + choice.weight(attacker, defender), 0);
 
     let target = Math.random() * sum;
 

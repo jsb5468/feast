@@ -219,10 +219,12 @@ function Trance() {
   this.description = function() { return "Trance"; };
 
   this.attacks.push(new punchAttack(this));
+  this.attacks.push(new tranceKick(this));
 
   this.attacks.push(new grapple(this));
   this.attacks.push(new grappleDevour(this));
   this.attacks.push(new grappleSubdue(this));
+  this.attacks.push(new tranceGrappleMaul(this));
 
   this.attacks.push(new grappledReverse(this));
   this.attacks.push(new grappledDevour(this));
@@ -231,14 +233,111 @@ function Trance() {
 
   this.digests = [];
 
-  this.digests.push(new digestPlayerStomach(this,50));
+  this.digests.push(new tranceDigest(this,50));
+  this.digests.push(new tranceDigestCrush(this,75));
+  this.digests.push(new tranceDigestInstakill(this,75));
+
   this.struggles = [];
 
   this.struggles.push(new struggleStay(this));
 
   this.startCombat = function() { return ["You yelp and turn around as hot breath spills over your shoulder. A massive sergal has crept up on you...and he looks <i>hungry</i>"]; };
-  this.digestFinish = function() { return ["The sergal's crushing guts reduce you to a pool of chyme..."]; };
+  this.finishDigest = function() { return ["The sergal's crushing guts reduce you to a pool of chyme..."]; };
   this.defeated = function() { changeMode("explore"); update(["The sergal winces and stumbles, grabbing a thick branch to steady himself...and snapping in half like a twig. You decide discretion is the better part of valor and run while you can."]); };
   this.prefs.prey = false;
+}
 
+function tranceKick(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      return [attacker.description("The") + " leaps at you, lashing out with sharp-clawed paws and goring you for " + attack(attacker, defender, attacker.str * 3) + " damage"];
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.gore; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
+  };
+}
+
+function grappleDevour(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if(success) {
+        defender.flags.grappled = false;
+        changeMode("eaten");
+        return [attacker.description("The") + " forces your head into their sloppy jaws, devouring you despite your frantic struggles. Glp."];
+      } else {
+        return [attacker.description("The") + " tries to swallow you down, but you manage to resist their hunger."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1 - defender.health / defender.maxHealth; }
+  };
+}
+
+function tranceGrappleMaul(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      return [attacker.description("The") + " digs into you with his claws and jaws, ripping you apart for " + attack(attacker, defender, attacker.str * 4) + " damage"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && isGrappled(defender);
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
+  };
+}
+
+function tranceDigest(predator,damage=50) {
+  return {
+    digest: function(player) {
+      attack(predator, player, damage);
+      player.stamina = Math.max(0,player.stamina - 50);
+      return [predator.description("The") + "'s powerful stomach grinds over your body, swiftly digesting you."];
+    },
+    priority: 1,
+    weight: function() { return 1; }
+  };
+}
+
+function tranceDigestCrush(predator, damage=75) {
+  return {
+    digest: function(player) {
+      attack(predator, player, damage);
+      player.stamina = Math.max(0,player.stamina - 100);
+      return ["Trance's belly clenches, crushing your body between walls of ruthless muscle. Bones snap and tendons strain. The chyme floods your mouth."];
+    },
+    conditions: [
+      function(attacker, defender) {
+        return defender.prefs.gore;
+      }
+    ],
+    priority: 1,
+    weight: function() { return 0.5; }
+  };
+}
+
+function tranceDigestInstakill(predator) {
+  return {
+    digest: function(player) {
+      player.health = -100;
+      return ["A ripple of muscle catches your head in just the right way, crushing your skull like a grape. Your lifeless body slumps in the caustic pit of slime and acid...and you melt away."];
+    },
+    conditions: [
+      function(attacker, defender) {
+        return defender.prefs.gore;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.stamina <= 0 ? 5 : 0.1; }
+  };
 }

@@ -390,7 +390,7 @@ function struggle(predator) {
     desc: "Try to squirm free. More effective if you've hurt your predator.",
     struggle: function(player) {
       let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
-      if (player.health <= 0) {
+      if (player.health <= 0 || player.stamina <= 0) {
         escape = escape && Math.random() < 0.25;
       }
 
@@ -417,7 +417,7 @@ function struggleStay(predator) {
     desc: "Try to squirm free. More effective if you've hurt your predator.",
     struggle: function(player) {
       let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
-      if (player.health <= 0) {
+      if (player.health <= 0 || player.stamina <= 0) {
         escape = escape && Math.random() < 0.25;
       }
 
