@@ -65,6 +65,7 @@ function Player(name = "Player") {
   this.attacks.push(new flankAttack(this));
 
   this.attacks.push(new grapple(this));
+  this.attacks.push(new grappleSubdue(this));
   this.attacks.push(new grappleDevour(this));
   this.attacks.push(new grappleAnalVore(this));
   this.attacks.push(new grappleRelease(this));
@@ -366,12 +367,12 @@ function plead(predator) {
 
       if (escape) {
         return {
-          "escape": escape,
+          "escape": "escape",
           "lines": ["You plead for " + predator.description("the") + " to let you free, and they begrudingly agree, horking you up and leaving you shivering on the ground"]
         };
       } else {
         return {
-          "escape": escape,
+          "escape": "stuck",
           "lines": ["You plead with " + predator.description("the") + " to let you go, but they refuse."]
         };
       }
@@ -391,12 +392,12 @@ function struggle(predator) {
 
       if (escape) {
         return {
-          "escape": escape,
+          "escape": "escape",
           "lines": ["You struggle and squirm, forcing " + predator.description("the") + " to hork you up. They groan and stumble away, exhausted by your efforts."]
         };
       } else {
         return {
-          "escape": escape,
+          "escape": "stuck",
           "lines": ["You squirm and writhe within " + predator.description("the") + " to no avail."]
         };
       }
@@ -404,13 +405,39 @@ function struggle(predator) {
   };
 }
 
+function struggleStay(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
+
+      if (escape) {
+        return {
+          "escape": "stay",
+          "lines": ["You struggle and squirm, forcing " + predator.description("the") + " to hork you up. They're not done with you yet..."]
+        };
+      } else {
+        return {
+          "escape": "stuck",
+          "lines": ["You squirm and writhe within " + predator.description("the") + " to no avail."]
+        };
+      }
+    }
+  };
+}
+
+
 function rub(predator) {
   return {
     name: "Rub",
     desc: "Rub rub rub",
     struggle: function(player) {
       return {
-        "escape": false,
+        "escape": "stuck",
         "lines": ["You rub the walls of your predator's belly. At least " + predator.description("the") + " is getting something out of this."]
       };
     }

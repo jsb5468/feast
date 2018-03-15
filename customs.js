@@ -222,7 +222,9 @@ function Trance() {
 
   this.attacks.push(new grapple(this));
   this.attacks.push(new grappleDevour(this));
+  this.attacks.push(new grappleSubdue(this));
 
+  this.attacks.push(new grappledReverse(this));
   this.attacks.push(new grappledDevour(this));
 
   this.backupAttack = new pass(this);
@@ -232,7 +234,7 @@ function Trance() {
   this.digests.push(new digestPlayerStomach(this,50));
   this.struggles = [];
 
-  this.struggles.push(new struggle(this));
+  this.struggles.push(new struggleStay(this));
 
   this.startCombat = function() { return ["You yelp and turn around as hot breath spills over your shoulder. A massive sergal has crept up on you...and he looks <i>hungry</i>"]; };
   this.digestFinish = function() { return ["The sergal's crushing guts reduce you to a pool of chyme..."]; };

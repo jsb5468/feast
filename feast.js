@@ -434,7 +434,9 @@ function struggleClicked(index) {
 
   update([result.lines]);
 
-  if (result.escape) {
+  if (result.escape == "stay") {
+    changeMode("combat");
+  } else if (result.escape == "escape") {
     changeMode("explore");
   } else {
     let digest = pick(filterValid(currentFoe.digests, currentFoe, player), currentFoe, player);

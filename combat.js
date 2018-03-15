@@ -97,6 +97,26 @@ function grapple(attacker) {
   };
 }
 
+function grappleSubdue(attacker) {
+  return {
+    name: "Subdue",
+    desc: "Try to subdue your opponent",
+    attack: function(defender) {
+      return ["You beat on " + defender.description("the") + " for " + attack(attacker, defender, attacker.str * 2) + " damage."];
+    },
+    attackPlayer: function(defender) {
+      return [attacker.description("The") + " beats you for " + attack(attacker, defender, attacker.str * 2) + " damage"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && isGrappled(defender);
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1 - defender.health / defender.maxHealth; }
+  };
+}
+
 function grappleDevour(attacker) {
   return {
     name: "Devour",
@@ -128,6 +148,7 @@ function grappleDevour(attacker) {
       function(attacker, defender) { return defender.prefs.prey; }
     ],
     priority: 1,
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
   };
 }
 
