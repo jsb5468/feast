@@ -512,7 +512,7 @@ function taluthusGrabDevour(attacker) {
         attacker.changeStamina(-10);
         defender.changeStamina(-50);
         defender.flags.grappled = false;
-        defender.flags.grappleType = "belly";
+        attacker.flags.grappleType = "belly";
         changeMode("eaten");
         return ["Taluthus forces your head into his glowing throat, swallowing forcefully to pull you down to his predatory depths."];
       } else {
@@ -539,7 +539,7 @@ function taluthusTailDevour(attacker) {
         attacker.changeStamina(-15);
         defender.changeStamina(-50);
         attacker.flags.grappleType = "tail";
-        attacker.flags.tailSwallowsLeft = 3;
+        attacker.flags.tailSwallows = 3;
         defender.flags.grappled = true;
         changeMode("eaten");
         return ["You yelp as one of the kitsune's massive tails snakes up, maw splitting wide open and taking you in with ease."];
@@ -581,9 +581,9 @@ function taluthusTailSwallow(predator,damage=50) {
       if (success) {
         predator.changeStamina(-5);
         player.changeStamina(-25);
-        predator.flags.tailSwallowsLeft -= 1;
+        predator.flags.tailSwallows -= 1;
 
-        if (predator.flags.tailSwallowsLeft == 0) {
+        if (predator.flags.tailSwallows == 0) {
           player.flags.grappled = false;
           predator.flags.grappleType = "belly";
           return ["A powerful swallow drags you into Taluthus' stomach. You curl up in the bioluminescent prison as it begins to <i>squeeze.</i>"];
@@ -641,7 +641,12 @@ function taluthusBellyStruggle(predator) {
           "lines": ["You squirm and writhe within " + predator.description("the") + " to no avail."]
         };
       }
-    }
+    },
+    requirements: [
+      function(predator, player) {
+        return predator.flags.grappleType == "belly";
+      }
+    ]
   };
 }
 
@@ -655,6 +660,23 @@ function taluthusTailStruggle(predator) {
         escape = escape && Math.random() < 0.25;
       }
 
+      let position = "";
+
+      switch(predator.flags.tailSwallows) {
+        case 1:
+          position = "You're one good swallow away from being dragged into Tal's stomach.";
+          break;
+        case 2:
+          position = "Your bulge is perilously deep in the kitsune's tail, hanging close to the ground.";
+          break;
+        case 3:
+          position = "You're halfway down the beast's tail, utterly smothered by heat and muscle.";
+          break;
+        case 4:
+          position = "You're close to freedom, your paws hanging from that wretched tailmaw.";
+          break;
+      }
+
       if (escape) {
         predator.flags.tailSwallows += 1;
 
@@ -666,14 +688,13 @@ function taluthusTailStruggle(predator) {
         } else {
           return {
             "escape": "stuck",
-            "lines": ["You struggle and squirm, inching closer to freedom."]
+            "lines": ["You struggle and squirm, inching closer to freedom.", newline, position]
           };
         }
-
       } else {
         return {
           "escape": "stuck",
-          "lines": ["You squirm and writhe within Tal's tail, to no avail."]
+          "lines": ["You squirm and writhe within Tal's tail, to no avail.", newline, position]
         };
       }
     },

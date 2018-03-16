@@ -461,7 +461,7 @@ function struggleClicked(index) {
 
   let result = struggle.struggle(player);
 
-  update([result.lines]);
+  update(result.lines.concat([newline]));
 
   if (result.escape == "stay") {
     changeMode("combat");
