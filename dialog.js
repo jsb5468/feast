@@ -149,11 +149,12 @@ function VendingMachinePurchase() {
 
   {
     let nodeCandy = new DialogNode();
-    this.addChoice("Buy a candy bar ($2)", nodeCandy);
+    this.addChoice("Buy a candy bar ($2, +50 stamina)", nodeCandy);
     nodeCandy.text = ["You insert two dollar bills into the machine and select the candy bar. Chocolate and nougat, mmm."];
 
     nodeCandy.hooks.push(function() {
       player.cash -= 2;
+      player.changeStamina(50);
     });
 
     nodeCandy.requirements.push(function(player) {
@@ -163,11 +164,12 @@ function VendingMachinePurchase() {
 
   {
     let nodeSoda = new DialogNode();
-    this.addChoice("Buy a soda ($2)", nodeSoda);
+    this.addChoice("Buy a soda ($4, +150 stamina)", nodeSoda);
     nodeSoda.text = ["You insert a dollar and coins, then select a soda. You're pretty you saw something on the news about it turning people purple, but you can't resist that delicious Citrus Substitute Flavor&trade;"];
 
     nodeSoda.hooks.push(function() {
       player.cash -= 2;
+      player.changeStamina(150);
     });
 
     nodeSoda.requirements.push(function(player) {

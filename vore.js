@@ -5,8 +5,8 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
 
   this.mass = 80;
   this.bowels = new Bowels();
-  this.stomach = new Stomach(this.bowels);
-  this.butt = new Butt(this.bowels,this.stomach);
+  this.stomach = new Stomach(this,this.bowels);
+  this.butt = new Butt(this,this.bowels,this.stomach);
   this.attacks = [];
 
   this.str = str;
@@ -21,8 +21,8 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.stamina = this.maxStamina;
 
   // fraction of max health per second
-  this.healthRate = 1 / 86400 * 12;
-  this.staminaRate = 1 / 86400 * 48;
+  this.healthRate = 1 / 86400 * 4;
+  this.staminaRate = 1 / 86400 * 6;
 
   this.restoreHealth = function(time) {
     this.health = Math.min(this.maxHealth, this.health + this.maxHealth * time * this.healthRate);
@@ -204,9 +204,8 @@ function Micro() {
 // vore stuff here
 
 class Container {
-  constructor(name) {
-    this.name = name;
-
+  constructor(owner) {
+    this.owner = owner;
     this.contents = [];
     // health/sec
     this.damageRate = 15*100/86400;
@@ -237,6 +236,8 @@ class Container {
 
         prey.mass -= digested;
 
+        this.owner.changeStamina(digested*10);
+
         this.fill(digested);
       }
 
@@ -264,8 +265,8 @@ class Container {
 }
 
 class Stomach extends Container {
-  constructor(bowels) {
-    super();
+  constructor(owner,bowels) {
+    super(owner);
     this.bowels = bowels;
   }
 
@@ -291,8 +292,8 @@ class Stomach extends Container {
 }
 
 class Butt extends Container {
-  constructor(bowels, stomach) {
-    super();
+  constructor(owner, bowels, stomach) {
+    super(owner);
     this.bowels = bowels;
     this.stomach = stomach;
   }
