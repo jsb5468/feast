@@ -885,7 +885,7 @@ function Selicia() {
   this.finishDigest = function() {
     switch(this.flags.voreType) {
       case "stomach": return ["The dragoness's belly breaks you down..."];
-      case "womb": return ["The dragoness's womb melts you down into femcum..."];
+      case "womb": return ["Your struggles slow, then stop, as your body is broken down to slick femcum by the dragoness's greedy womb. She quivers and groans with pent-up lust, grinding against the wall to set herself off - bringing forth a flood of hot, clingy nectar from her depths. The eruption sprays over the wall and ground, gushing in great spurts as she pants and thrusts with tail held high.",newline,"You were nothing but an orgasm..."];
     }
 
     return ["The dragoness digests you..."];
@@ -903,6 +903,7 @@ function Selicia() {
 
   this.attacks.push(seliciaGrab(this));
   this.attacks.push(seliciaGrabSwallow(this));
+  this.attacks.push(seliciaGrabUnbirth(this));
 
   this.attacks.push(seliciaPin(this));
   this.attacks.push(seliciaPinUnbirth(this));
@@ -997,6 +998,26 @@ function seliciaGrabSwallow(attacker) {
   };
 }
 
+function seliciaGrabUnbirth(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.changeStamina(-10);
+      defender.changeStamina(-75);
+      attacker.flags.voreType = "womb";
+      changeMode("eaten");
+      return ["Selicia rolls onto her back, curls up, and opens her jaws. You briefly think you're free...and then, your plunge into her nethers, dragged all the way into her womb by a massive <i>gulp</i> of greedy, overwheling muscle."];
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
+      function(attacker, defender) { return attacker.flags.voreType == "stomach"; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+
 function seliciaPin(attacker) {
   return {
     attackPlayer: function(defender) {
@@ -1049,17 +1070,25 @@ function seliciaPinUnbirth(attacker) {
 function seliciaUnbirthPull(predator) {
   return {
     digest: function(player) {
-      let success = statHealthCheck(predator, player, "str");
-      if (success) {
-        predator.changeStamina(-5);
-        player.changeStamina(-25);
-        predator.flags.voreType = "womb";
-        return ["A powerful swallow drags you into the slick, luminescent womb of Selicia. The walls clench and squeeze over your tender body, coaxing you to <i>melt.</i>"];
+      let pull = Math.random() >= player.stamina / player.maxStamina;
+      if (pull) {
+        let success = statHealthCheck(predator, player, "str") || player.stamina <= 0;
+        if (success) {
+          predator.changeStamina(-5);
+          player.changeStamina(-25);
+          predator.flags.voreType = "womb";
+          return ["A powerful swallow drags you into the slick, luminescent womb of Selicia. The walls clench and squeeze over your tender body, coaxing you to <i>melt.</i>"];
+        } else {
+          predator.changeStamina(-15);
+          player.changeStamina(-25);
+          return ["You grit your teeth and shove yourself back, resisting the powerful pull of the dragon's depths."];
+        }
       } else {
-        predator.changeStamina(-15);
-        player.changeStamina(-25);
-        return ["You grit your teeth and shove yourself back, resisting the powerful pull of the dragon's depths."];
+        predator.changeStamina(-25);
+        player.changeStamina(-150);
+        return ["Selicia shoves her hips against the cave wall, grinding you into her nethers - then relaxing, and letting you slide back. Being used as her toy exhausts you..."];
       }
+
     },
     requirements: [
       function(attacker, defender) { return attacker.flags.voreType == "unbirth"; }
@@ -1080,7 +1109,8 @@ function seliciaStomachDigest(predator) {
       function(attacker, defender) { return attacker.flags.voreType == "stomach"; }
     ],
     priority: 1,
-    weight: function() { return 1; }
+    weight: function() { return 1; },
+    gameover: function() { return "Digested in the depths of Selicia"; }
   };
 }
 
@@ -1090,16 +1120,24 @@ function seliciaWombDigest(predator) {
       attack(predator, player, 50);
       predator.changeStamina(-5);
       player.changeStamina(-25);
-      return ["Selicia's womb-walls ripple and knead, softening your body bit-by-bit."];
+
+      let lines = ["Selicia's womb-walls ripple and knead, softening your body bit-by-bit."];
+
+      if (Math.random() < 0.25 && player.health > 0) {
+        predator.flags.voreType = "unbirth";
+        lines = lines.concat([newline,"A powerful clench of muscle forces you out of her womb! You're still stuck in her snatch, though..."]);
+      }
+
+      return lines;
     },
     requirements: [
       function(attacker, defender) { return attacker.flags.voreType == "womb"; }
     ],
     priority: 1,
-    weight: function() { return 1; }
+    weight: function() { return 1; },
+    gameover: function() { return "Melted into femcum by Selicia"; }
   };
 }
-
 
 function seliciaStomachStruggle(predator) {
   return {
@@ -1173,6 +1211,8 @@ function seliciaUnbirthStruggle(predator) {
       }
 
       if (escape) {
+        player.clear();
+        predator.clear();
         return {
           "escape": "stay",
           "lines": ["With a mighty shove, you pop free of the dragoness's cooch - a loud, lewd <i>shllk</i> announcing your return to the world."]
