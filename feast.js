@@ -17,6 +17,8 @@ let newline = "&nbsp;";
 let player = new Player();
 let playerAttacks = [];
 
+let struggles = [];
+
 let killingBlow = null;
 
 let deaths = [];
@@ -124,11 +126,12 @@ function updateEaten() {
     list.removeChild(list.firstChild);
   }
 
-  for (let i = 0; i < currentFoe.struggles.length; i++) {
+  struggles = filterValid(currentFoe.struggles, currentFoe, player);
+  for (let i = 0; i < struggles.length; i++) {
     let li = document.createElement("li");
     let button = document.createElement("button");
     button.classList.add("eaten-button");
-    button.innerHTML = currentFoe.struggles[i].name;
+    button.innerHTML = struggles[i].name;
     button.addEventListener("click", function() { struggleClicked(i); } );
     button.addEventListener("mouseover", function() { struggleHovered(i); } );
     button.addEventListener("mouseout", function() { document.getElementById("eaten-desc").innerHTML = ""; } );
@@ -454,7 +457,7 @@ function attackHovered(index) {
 }
 
 function struggleClicked(index) {
-  let struggle = currentFoe.struggles[index];
+  let struggle = struggles[index];
 
   let result = struggle.struggle(player);
 

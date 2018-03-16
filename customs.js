@@ -454,16 +454,17 @@ function Taluthus() {
   this.attacks.push(taluthusGrab(this));
   this.attacks.push(taluthusGrabDevour(this));
 
-  //this.attacks.push(taluthusTailDevour(this));
-  //this.attacks.push(taluthusTailSwallow(this));
+  this.attacks.push(taluthusTailDevour(this));
 
   this.digests = [];
 
   this.digests.push(taluthusDigest(this));
+  this.digests.push(taluthusTailSwallow(this));
 
   this.struggles = [];
 
-  this.struggles.push(rub(this));
+  this.struggles.push(taluthusBellyStruggle(this));
+  this.struggles.push(taluthusTailStruggle(this));
 }
 
 function taluthusPunchAttack(attacker) {
@@ -486,6 +487,7 @@ function taluthusGrab(attacker) {
       if (success) {
         attacker.changeStamina(-15);
         defender.changeStamina(-50);
+        attacker.flags.grappleType = "hands";
         defender.flags.grappled = true;
         return ["The kitsune snatches you up in his stocky grip, lifting you off the ground and cramming your head into his sloppy maw!"];
       } else {
@@ -510,6 +512,7 @@ function taluthusGrabDevour(attacker) {
         attacker.changeStamina(-10);
         defender.changeStamina(-50);
         defender.flags.grappled = false;
+        defender.flags.grappleType = "belly";
         changeMode("eaten");
         return ["Taluthus forces your head into his glowing throat, swallowing forcefully to pull you down to his predatory depths."];
       } else {
@@ -518,12 +521,39 @@ function taluthusGrabDevour(attacker) {
         return ["The kitsune forces your head into his gullet, but you manage to pry yourself free before peristalsis can claim you."];
       }
     }, requirements: [
-      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; }
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; },
+      function(attacker, defender) { return attacker.flags.grappleType == "hands"; }
     ], conditions: [
       function(attacker, defender) { return defender.prefs.prey; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 3 - 2 * defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function taluthusTailDevour(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        attacker.changeStamina(-15);
+        defender.changeStamina(-50);
+        attacker.flags.grappleType = "tail";
+        attacker.flags.tailSwallowsLeft = 3;
+        defender.flags.grappled = true;
+        changeMode("eaten");
+        return ["You yelp as one of the kitsune's massive tails snakes up, maw splitting wide open and taking you in with ease."];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-15);
+        return ["You leap back as one of the kitsune's huge tails tries to make a meal of you, narrowly escaping the gaping maw."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 7 - 6 * defender.health / defender.maxHealth; }
   };
 }
 
@@ -536,7 +566,121 @@ function taluthusDigest(predator,damage=50) {
         ["Powerful stomach muscles grind at your body, swiftly digesting you."]
       ]);
     },
+    requirements: [
+      function(attacker, defender) { return attacker.flags.grappleType == "belly"; }
+    ],
     priority: 1,
     weight: function() { return 1; }
+  };
+}
+
+function taluthusTailSwallow(predator,damage=50) {
+  return {
+    digest: function(player) {
+      let success = statHealthCheck(predator, player, "str");
+      if (success) {
+        predator.changeStamina(-5);
+        player.changeStamina(-25);
+        predator.flags.tailSwallowsLeft -= 1;
+
+        if (predator.flags.tailSwallowsLeft == 0) {
+          player.flags.grappled = false;
+          predator.flags.grappleType = "belly";
+          return ["A powerful swallow drags you into Taluthus' stomach. You curl up in the bioluminescent prison as it begins to <i>squeeze.</i>"];
+        } else {
+          return ["A powerful swallow pulls you deeper, further from the world and closer to the kitsune's greedy guts."];
+        }
+      } else {
+        predator.changeStamina(-15);
+        player.changeStamina(-25);
+        return ["You brace yourself against the walls of the tail's throat, holding yourself in place as a wave of peristalsis rolls past."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return attacker.flags.grappleType == "tail"; }
+    ],
+    priority: 1,
+    weight: function() { return 1; }
+  };
+}
+
+function taluthusTailCrush(predator,damage=20) {
+  return {
+    digest: function(player) {
+      attack(predator, player, damage);
+      player.changeStamina(-50);
+      return pickRandom([
+        ["The kitsune's tail squeezes and grinds your body."]
+      ]);
+    },
+    priority: 1,
+    weight: function() { return 1; }
+  };
+}
+
+function taluthusBellyStruggle(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0 || player.stamina <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
+
+      if (escape) {
+        player.clear();
+        predator.clear();
+        return {
+          "escape": "stay",
+          "lines": ["You struggle and squirm, forcing " + predator.description("the") + " to hork you up. They're not done with you yet..."]
+        };
+      } else {
+        return {
+          "escape": "stuck",
+          "lines": ["You squirm and writhe within " + predator.description("the") + " to no avail."]
+        };
+      }
+    }
+  };
+}
+
+function taluthusTailStruggle(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0 || player.stamina <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
+
+      if (escape) {
+        predator.flags.tailSwallows += 1;
+
+        if (predator.flags.tailSwallows > 4) {
+          return {
+            "escape": "stay",
+            "lines": ["You struggle and squirm, forcing your way out from the kitsune's voracious tail."]
+          };
+        } else {
+          return {
+            "escape": "stuck",
+            "lines": ["You struggle and squirm, inching closer to freedom."]
+          };
+        }
+
+      } else {
+        return {
+          "escape": "stuck",
+          "lines": ["You squirm and writhe within Tal's tail, to no avail."]
+        };
+      }
+    },
+    requirements: [
+      function(predator, player) {
+        return predator.flags.grappleType == "tail" && predator.flags.tailSwallows > 0;
+      }
+    ]
   };
 }
