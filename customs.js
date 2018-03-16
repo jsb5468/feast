@@ -884,11 +884,11 @@ function Selicia() {
   this.startCombat = function() { return ["You stumble across a small cave. Stepping closer to investigate, you find yourself face-to-face with a glossy, slender dragon! Her ten-foot body is matched by a tail that's nearly as long, and she looms over you, devious blue eyes framed by curved horns."]; };
   this.finishDigest = function() {
     switch(this.flags.voreType) {
-      case "stomach": return ["The dragon's belly breaks you down..."];
-      case "womb": return ["The dragon's womb melts you down into femcum..."];
+      case "stomach": return ["The dragoness's belly breaks you down..."];
+      case "womb": return ["The dragoness's womb melts you down into femcum..."];
     }
 
-    return ["The kitsune digests you..."];
+    return ["The dragoness digests you..."];
   };
 
   this.defeated = function() { startDialog(FallenFoe(this)); };
@@ -909,15 +909,15 @@ function Selicia() {
 
   this.digests = [];
 
-  //this.digests.push(seliciaStomachDigest(this));
+  this.digests.push(seliciaStomachDigest(this));
   this.digests.push(seliciaUnbirthPull(this));
   this.digests.push(seliciaWombDigest(this));
 
   this.struggles = [];
 
-  //this.struggles.push(seliciaStomachStruggle(this));
-  //this.struggles.push(seliciaUnbirthStruggle(this));
-  //this.struggles.push(seliciaWombStruggle(this));
+  this.struggles.push(seliciaStomachStruggle(this));
+  this.struggles.push(seliciaUnbirthStruggle(this));
+  this.struggles.push(seliciaWombStruggle(this));
   this.struggles.push(submit(this));
 }
 
@@ -1069,6 +1069,21 @@ function seliciaUnbirthPull(predator) {
   };
 }
 
+function seliciaStomachDigest(predator) {
+  return {
+    digest: function(player) {
+      attack(predator, player, 50);
+      player.changeStamina(-20);
+      return ["Selicia's stomach clenches and grinds, dousing you in her acids."];
+    },
+    requirements: [
+      function(attacker, defender) { return attacker.flags.voreType == "stomach"; }
+    ],
+    priority: 1,
+    weight: function() { return 1; }
+  };
+}
+
 function seliciaWombDigest(predator) {
   return {
     digest: function(player) {
@@ -1082,5 +1097,97 @@ function seliciaWombDigest(predator) {
     ],
     priority: 1,
     weight: function() { return 1; }
+  };
+}
+
+
+function seliciaStomachStruggle(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0 || player.stamina <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
+
+      if (escape) {
+        return {
+          "escape": "stay",
+          "lines": ["Your struggles force Selicia to hork you up, leaving you dazed and confused on the ground."]
+        };
+      } else {
+        return {
+          "escape": "stuck",
+          "lines": ["You squirm and writhe, to no avail. The stomach walls squeeze tighter."]
+        };
+      }
+    },
+    requirements: [
+      function(predator, player) {
+        return predator.flags.voreType == "stomach";
+      }
+    ]
+  };
+}
+
+function seliciaWombStruggle(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0 || player.stamina <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
+
+      if (escape) {
+        predator.flags.voreType = "unbirth";
+        return {
+          "escape": "stuck",
+          "lines": ["Your struggles force the dragon to let you out of her womb...but you're still stuck in her snatch."]
+        };
+      } else {
+        return {
+          "escape": "stuck",
+          "lines": ["You squirm and writhe within the velvety walls of Selicia's womb, to no avail."]
+        };
+      }
+    },
+    requirements: [
+      function(predator, player) {
+        return predator.flags.voreType == "womb";
+      }
+    ]
+  };
+}
+
+function seliciaUnbirthStruggle(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0 || player.stamina <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
+
+      if (escape) {
+        return {
+          "escape": "stay",
+          "lines": ["With a mighty shove, you pop free of the dragoness's cooch - a loud, lewd <i>shllk</i> announcing your return to the world."]
+        };
+      } else {
+        return {
+          "escape": "stuck",
+          "lines": ["You squirm and writhe, to no avail."]
+        };
+      }
+    },
+    requirements: [
+      function(predator, player) {
+        return predator.flags.voreType == "unbirth";
+      }
+    ]
   };
 }
