@@ -395,6 +395,8 @@ function respawn(respawnRoom) {
     } else {
       deaths.push("Defeated by " + currentFoe.description("a") + " at " + renderTime(time) + " on day " + date);
     }
+  } else {
+    deaths.push(killingBlow.gameover() + " at " + renderTime(time) + " on day " + date);
   }
 
 

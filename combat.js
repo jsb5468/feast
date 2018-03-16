@@ -460,6 +460,7 @@ function digestPlayerStomach(predator,damage=20) {
       return [predator.description("The") + "'s stomach grinds over your body, swiftly digesting you."];
     },
     priority: 1,
+    gameover: function() { return "Digested by " + predator.description("a"); }
   };
 }
 
@@ -471,5 +472,6 @@ function instakillPlayerStomach(pedator) {
     },
     priority: 1,
     weight: function(attacker, defender) { return 1/3; },
+    gameover: function() { return "Digested by " + predator.description("a"); }
   };
 }

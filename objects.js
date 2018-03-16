@@ -5,17 +5,6 @@ function GameObject(name="Potato") {
   this.actions = [];
 }
 
-function Burger() {
-  GameObject.call(this, "Burger");
-  this.actions.push({
-    "name": "Punch Burger",
-    "action": function() {
-      player.health += 10;
-      update(["You punch the hamburger."]);
-    }
-  });
-}
-
 function Nerd() {
   GameObject.call(this, "Nerd");
   this.actions.push({
