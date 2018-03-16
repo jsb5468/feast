@@ -445,7 +445,14 @@ function Taluthus() {
   this.description = function() { return "Taluthus"; };
 
   this.startCombat = function() { return ["You jump back as a hulking kitsune leaps out at you, his four massive tails swaying as he sizes you up."]; };
-  this.finishDigest = function() { return ["The kitsune's guts melt you down..."]; };
+  this.finishDigest = function() {
+    switch(this.flags.grappleType) {
+      case "belly": return ["The kitsune's guts break you down..."];
+      case "balls": return ["The kitsune melts you down into cum..."];
+    }
+
+    return ["The kitsune digests you..."];
+  };
   this.defeated = function() { changeMode("explore"); moveToByName("Nature Trail"); update(["The kitsune growls and vanishes in a blinding flash of light. You pass out, eventually coming to in the woods."]); };
   this.prefs.prey = false;
 
@@ -453,6 +460,7 @@ function Taluthus() {
 
   this.attacks.push(taluthusGrab(this));
   this.attacks.push(taluthusGrabDevour(this));
+  this.attacks.push(taluthusGrabCockVore(this));
 
   this.attacks.push(taluthusTailDevour(this));
 
@@ -460,11 +468,15 @@ function Taluthus() {
 
   this.digests.push(taluthusDigest(this));
   this.digests.push(taluthusTailSwallow(this));
+  this.digests.push(taluthusCockSwallow(this));
+  this.digests.push(taluthusBallsDigest(this));
 
   this.struggles = [];
 
+  this.struggles.push(taluthusBallStruggle(this));
   this.struggles.push(taluthusBellyStruggle(this));
   this.struggles.push(taluthusTailStruggle(this));
+  this.struggles.push(taluthusCockStruggle(this));
 }
 
 function taluthusPunchAttack(attacker) {
@@ -531,6 +543,34 @@ function taluthusGrabDevour(attacker) {
   };
 }
 
+function taluthusGrabCockVore(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if(success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-50);
+        defender.flags.grappled = true;
+        attacker.flags.grappleType = "cock";
+        attacker.flags.cockSwallows = 4;
+        changeMode("eaten");
+        return ["Taluthus abruptly shoves you downward, enveloping your feet in his black shaft."];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-25);
+        return ["The kitsune tries to force you into his cock, but you keep your feet free."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; },
+      function(attacker, defender) { return attacker.flags.grappleType == "hands"; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
 function taluthusTailDevour(attacker) {
   return {
     attackPlayer: function(defender) {
@@ -570,7 +610,26 @@ function taluthusDigest(predator,damage=50) {
       function(attacker, defender) { return attacker.flags.grappleType == "belly"; }
     ],
     priority: 1,
-    weight: function() { return 1; }
+    weight: function() { return 1; },
+    gameover: function() { return "Digested in the glowing gut of Taluthus"; }
+  };
+}
+
+function taluthusBallsDigest(predator,damage=50) {
+  return {
+    digest: function(player) {
+      attack(predator, player, damage);
+      player.changeStamina(-50);
+      return pickRandom([
+        ["Thick, musky cum smears over your body, steadily breaking you down into seed."]
+      ]);
+    },
+    requirements: [
+      function(attacker, defender) { return attacker.flags.grappleType == "balls"; }
+    ],
+    priority: 1,
+    weight: function() { return 1; },
+    gameover: function() { return "Dissolved into cum by Taluthus"; }
   };
 }
 
@@ -604,15 +663,31 @@ function taluthusTailSwallow(predator,damage=50) {
   };
 }
 
-function taluthusTailCrush(predator,damage=20) {
+function taluthusCockSwallow(predator) {
   return {
     digest: function(player) {
-      attack(predator, player, damage);
-      player.changeStamina(-50);
-      return pickRandom([
-        ["The kitsune's tail squeezes and grinds your body."]
-      ]);
+      let success = statHealthCheck(predator, player, "str");
+      if (success) {
+        predator.changeStamina(-5);
+        player.changeStamina(-25);
+        predator.flags.cockSwallows -= 1;
+
+        if (predator.flags.cockSwallows == 0) {
+          player.flags.grappled = false;
+          predator.flags.grappleType = "balls";
+          return ["A final clench drags you all the way into the kitsune's balls. Your body is roughly crammed into a lake of blue cum, squeezed on all sides by hot, musky flesh."];
+        } else {
+          return ["A powerful swallow pulls you deeper into Taluthus' shaft."];
+        }
+      } else {
+        predator.changeStamina(-15);
+        player.changeStamina(-25);
+        return ["You brace yourself against the walls of the crushing shaft, holding yourself in place as he clenches."];
+      }
     },
+    requirements: [
+      function(attacker, defender) { return attacker.flags.grappleType == "cock"; }
+    ],
     priority: 1,
     weight: function() { return 1; }
   };
@@ -645,6 +720,38 @@ function taluthusBellyStruggle(predator) {
     requirements: [
       function(predator, player) {
         return predator.flags.grappleType == "belly";
+      }
+    ]
+  };
+}
+
+function taluthusBallStruggle(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0 || player.stamina <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
+
+      if (escape) {
+        player.clear();
+        predator.clear();
+        return {
+          "escape": "stay",
+          "lines": ["You struggle and squirm, forcing Tal to let you out of his cock. He's not done with you yet..."]
+        };
+      } else {
+        return {
+          "escape": "stuck",
+          "lines": ["You squirm and writhe within Tal's balls, to no avail."]
+        };
+      }
+    },
+    requirements: [
+      function(predator, player) {
+        return predator.flags.grappleType == "balls";
       }
     ]
   };
@@ -701,6 +808,62 @@ function taluthusTailStruggle(predator) {
     requirements: [
       function(predator, player) {
         return predator.flags.grappleType == "tail" && predator.flags.tailSwallows > 0;
+      }
+    ]
+  };
+}
+
+function taluthusCockStruggle(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    struggle: function(player) {
+      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
+      if (player.health <= 0 || player.stamina <= 0) {
+        escape = escape && Math.random() < 0.25;
+      }
+
+      let position = "";
+
+      switch(predator.flags.cockSwallows) {
+        case 1:
+          position = "You're one clench away from being dragged into Tal's balls, utterly lost inside that throbbing cock.";
+          break;
+        case 2:
+          position = "Your face is grinding against the tip of the sune's shaft.";
+          break;
+        case 3:
+          position = "Your upper body is still hanging outside of Tal's cock.";
+          break;
+        case 4:
+          position = "You're almost free - only your legs are trapped in that tight sune cock.";
+          break;
+      }
+
+      if (escape) {
+        predator.flags.tailSwallows += 1;
+
+        if (predator.flags.tailSwallows > 4) {
+          return {
+            "escape": "stay",
+            "lines": ["You struggle and squirm, forcing your way out from the kitsune's voracious shaft."]
+          };
+        } else {
+          return {
+            "escape": "stuck",
+            "lines": ["You struggle and squirm, inching closer to freedom.", newline, position]
+          };
+        }
+      } else {
+        return {
+          "escape": "stuck",
+          "lines": ["You squirm and writhe within Tal's shaft, to no avail.", newline, position]
+        };
+      }
+    },
+    requirements: [
+      function(predator, player) {
+        return predator.flags.grappleType == "cock" && predator.flags.cockSwallows > 0;
       }
     ]
   };
