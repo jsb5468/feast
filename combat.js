@@ -101,7 +101,8 @@ function grapple(attacker, weightFactor = 1) {
       }
     },
     requirements: [
-      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); },
+      function(attacker, defender) { return defender.flags.grapple; }
     ],
     priority: 1,
     weight: function(attacker, defender) { return weightFactor - weightFactor * defender.health / defender.maxHealth; }
@@ -305,7 +306,8 @@ function grappledReverse(attacker) {
       }
     },
     requirements: [
-      function(attacker, defender) { return isGrappled(attacker) && isNormalSize(attacker) && isNormal(defender); }
+      function(attacker, defender) { return isGrappled(attacker) && isNormalSize(attacker) && isNormal(defender); },
+      function(attacker, defender) { return defender.flags.grapple; }
     ],
     priority: 1,
   };
@@ -393,6 +395,7 @@ function flee(attacker) {
     ]
   };
 }
+
 function pass(attacker) {
   return {
     name: "Pass",

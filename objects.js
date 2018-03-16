@@ -156,4 +156,11 @@ function WildernessExplore(natureTrail) {
       startCombat(new Taluthus());
     }
   });
+
+  this.actions.push({
+    "name": "Selicia",
+    "action": function() {
+      startCombat(new Selicia());
+    }
+  });
 }

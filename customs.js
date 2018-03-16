@@ -242,6 +242,7 @@ function Trance() {
   this.struggles = [];
 
   this.struggles.push(new struggleStay(this));
+  this.struggles.push(submit(this));
 
   this.startCombat = function() { return ["You yelp and turn around as hot breath spills over your shoulder. A massive sergal has crept up on you...and he looks <i>hungry</i>"]; };
   this.finishDigest = function() { return ["The sergal's crushing guts reduce you to a pool of chyme..."]; };
@@ -454,7 +455,9 @@ function Taluthus() {
     return ["The kitsune digests you..."];
   };
   this.defeated = function() { changeMode("explore"); moveToByName("Nature Trail"); update(["The kitsune growls and vanishes in a blinding flash of light. You pass out, eventually coming to in the woods."]); };
+
   this.prefs.prey = false;
+  this.prefs.grapple = false;
 
   this.attacks.push(taluthusPunchAttack(this));
 
@@ -477,6 +480,7 @@ function Taluthus() {
   this.struggles.push(taluthusBellyStruggle(this));
   this.struggles.push(taluthusTailStruggle(this));
   this.struggles.push(taluthusCockStruggle(this));
+  this.struggles.push(submit(this));
 }
 
 function taluthusPunchAttack(attacker) {
@@ -866,5 +870,217 @@ function taluthusCockStruggle(predator) {
         return predator.flags.grappleType == "cock" && predator.flags.cockSwallows > 0;
       }
     ]
+  };
+}
+
+/* SELICIA */
+function Selicia() {
+  Creature.call(this, "Selicia", 25, 25, 25);
+
+  this.hasName = true;
+
+  this.description = function() { return "Selicia"; };
+
+  this.startCombat = function() { return ["You stumble across a small cave. Stepping closer to investigate, you find yourself face-to-face with a glossy, slender dragon! Her ten-foot body is matched by a tail that's nearly as long, and she looms over you, devious blue eyes framed by curved horns."]; };
+  this.finishDigest = function() {
+    switch(this.flags.voreType) {
+      case "stomach": return ["The dragon's belly breaks you down..."];
+      case "womb": return ["The dragon's womb melts you down into femcum..."];
+    }
+
+    return ["The kitsune digests you..."];
+  };
+
+  this.defeated = function() { startDialog(FallenFoe(this)); };
+
+  this.prefs.scat = false;
+  this.prefs.analVore = false;
+
+  this.attacks = [];
+
+  this.attacks.push(seliciaBite(this));
+  this.attacks.push(seliciaTailSlap(this));
+
+  this.attacks.push(seliciaGrab(this));
+  this.attacks.push(seliciaGrabSwallow(this));
+
+  this.attacks.push(seliciaPin(this));
+  this.attacks.push(seliciaPinUnbirth(this));
+
+  this.digests = [];
+
+  //this.digests.push(seliciaStomachDigest(this));
+  this.digests.push(seliciaUnbirthPull(this));
+  this.digests.push(seliciaWombDigest(this));
+
+  this.struggles = [];
+
+  //this.struggles.push(seliciaStomachStruggle(this));
+  //this.struggles.push(seliciaUnbirthStruggle(this));
+  //this.struggles.push(seliciaWombStruggle(this));
+  this.struggles.push(submit(this));
+}
+
+function seliciaBite(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let damage = attack(attacker, defender, attacker.str);
+      return ["Selicia lunges, biting you for " + damage + " damage"];
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
+  };
+}
+
+function seliciaTailSlap(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let damage = attack(attacker, defender, attacker.dex * 1.5);
+      return ["Selicia's tail sweeps around, slapping you for " + damage + " damage"];
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
+  };
+}
+
+function seliciaGrab(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        attacker.changeStamina(-15);
+        defender.changeStamina(-50);
+        attacker.flags.voreType = "stomach";
+        defender.flags.grappled = true;
+        return ["The dragoness's jaws splay wide, glowing flesh entrancing you...and then enveloping you. She takes your upper body into her maw with ease."];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-15);
+        return ["Selicia tries to snatch you up in her maw, but you manage to dive out of the way."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 7 - 6 * defender.health / defender.maxHealth; }
+  };
+}
+
+function seliciaGrabSwallow(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if(success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-50);
+        defender.flags.grappled = false;
+        changeMode("eaten");
+        return ["Selicia tips her head back and swallows, dragging your body down her long throat and into her empty stomach."];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-25);
+        return ["The dragoness tilts back her head and swallows. You manage to resist the pull, hanging on with your legs dangling from her jaws."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
+      function(attacker, defender) { return attacker.flags.voreType == "stomach"; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function seliciaPin(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "dex");
+      if (success) {
+        attacker.changeStamina(-15);
+        defender.changeStamina(-50);
+        attacker.flags.voreType = "unbirth";
+        defender.flags.grappled = true;
+        return ["The beast lunges, bowling you over. She leaps up, spinning about mid-air, and lands hard on your prone body, grinding her hips - and her glistening nethers - over your face."];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-15);
+        return ["Selicia leaps at you, forcing you to stumble backwards to avoid being crushed!"];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 7 - 6 * defender.health / defender.maxHealth; }
+  };
+}
+
+function seliciaPinUnbirth(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if(success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-50);
+        changeMode("eaten");
+        return ["Selicia's hips slam down, forcing your head into her cooch. Rippling muscle yanks you in up to your hips, leaving your flailing legs hanging from her nethers."];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-25);
+        return ["The dragoness grinds on your face, trying to force it into her snatch - but you manage to resist, for now."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
+      function(attacker, defender) { return attacker.flags.voreType == "unbirth"; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function seliciaUnbirthPull(predator) {
+  return {
+    digest: function(player) {
+      let success = statHealthCheck(predator, player, "str");
+      if (success) {
+        predator.changeStamina(-5);
+        player.changeStamina(-25);
+        predator.flags.voreType = "womb";
+        return ["A powerful swallow drags you into the slick, luminescent womb of Selicia. The walls clench and squeeze over your tender body, coaxing you to <i>melt.</i>"];
+      } else {
+        predator.changeStamina(-15);
+        player.changeStamina(-25);
+        return ["You grit your teeth and shove yourself back, resisting the powerful pull of the dragon's depths."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return attacker.flags.voreType == "unbirth"; }
+    ],
+    priority: 1,
+    weight: function() { return 1; }
+  };
+}
+
+function seliciaWombDigest(predator) {
+  return {
+    digest: function(player) {
+      attack(predator, player, 50);
+      predator.changeStamina(-5);
+      player.changeStamina(-25);
+      return ["Selicia's womb-walls ripple and knead, softening your body bit-by-bit."];
+    },
+    requirements: [
+      function(attacker, defender) { return attacker.flags.voreType == "womb"; }
+    ],
+    priority: 1,
+    weight: function() { return 1; }
   };
 }

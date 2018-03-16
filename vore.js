@@ -42,7 +42,8 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
     prey: true,
     scat: true,
     analVore: true,
-    gore: true
+    gore: true,
+    grapple: true
   };
 
   this.cash = Math.floor(Math.random() * 10 + 5);
@@ -87,6 +88,7 @@ function Player(name = "Player") {
   this.attacks.push(new shrunkSwallow(this));
   this.attacks.push(new shrunkStomp(this));
 
+  this.attacks.push(new pass(this));
   this.attacks.push(new flee(this));
 
   this.backupAttack = new pass(this);
@@ -152,6 +154,7 @@ function Anthro(name="Anthro") {
 
   this.struggles.push(new plead(this));
   this.struggles.push(new struggle(this));
+  this.struggles.push(new submit(this));
 
   this.digests = [];
 
@@ -456,6 +459,19 @@ function rub(predator) {
       return {
         "escape": "stuck",
         "lines": ["You rub the walls of your predator's belly. At least " + predator.description("the") + " is getting something out of this."]
+      };
+    }
+  };
+}
+
+function submit(predator) {
+  return {
+    name: "Submit",
+    desc: "Do nothing",
+    struggle: function(player) {
+      return {
+        "escape": "stuck",
+        "lines": ["You do nothing."]
       };
     }
   };
