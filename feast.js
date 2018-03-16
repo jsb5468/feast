@@ -384,6 +384,7 @@ function changeMode(newMode) {
       break;
     case "eaten":
       body.classList.add("eaten");
+      document.getElementById("foe-stats").style.display = "block";
       break;
   }
 
@@ -422,7 +423,7 @@ function startCombat(opponent) {
 }
 
 function attackClicked(index) {
-  update(playerAttacks[index].attack(currentFoe));
+  update(playerAttacks[index].attack(currentFoe).concat([newline]));
 
   if (currentFoe.health <= 0) {
     currentFoe.defeated();
@@ -433,7 +434,7 @@ function attackClicked(index) {
       attack = currentFoe.backupAttack;
     }
 
-    update(attack.attackPlayer(player));
+    update(attack.attackPlayer(player).concat([newline]));
 
     if (player.health <= -100) {
       killingBlow = attack;
@@ -474,11 +475,11 @@ function struggleClicked(index) {
       digest = currentFoe.backupDigest;
     }
 
-    update([digest.digest(player)]);
+    update(digest.digest(player).concat([newline]));
 
     if (player.health <= -100) {
       killingBlow = digest;
-      update(currentFoe.finishDigest());
+      update(currentFoe.finishDigest().concat([newline]));
       respawn(respawnRoom);
     }
   }

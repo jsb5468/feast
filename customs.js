@@ -901,6 +901,10 @@ function Selicia() {
   this.attacks.push(seliciaBite(this));
   this.attacks.push(seliciaTailSlap(this));
 
+  this.attacks.push(seliciaTailGrab(this));
+  this.attacks.push(seliciaTailCrush(this));
+  this.attacks.push(seliciaTailUnbirth(this));
+
   this.attacks.push(seliciaGrab(this));
   this.attacks.push(seliciaGrabSwallow(this));
   this.attacks.push(seliciaGrabUnbirth(this));
@@ -945,6 +949,74 @@ function seliciaTailSlap(attacker) {
     ],
     priority: 1,
     weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
+  };
+}
+
+function seliciaTailGrab(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        attacker.changeStamina(-15);
+        defender.changeStamina(-25);
+        defender.flags.grappled = true;
+        attacker.flags.voreType = "tail";
+        return ["Selicia's thick tail whips around, curling around your body and hoisting you into the air!"];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-15);
+        return ["Selicia's tail whips at you. You deflect it with your arms, keeping it from coiling around your chest."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 7 - 6 * defender.health / defender.maxHealth; }
+  };
+}
+
+function seliciaTailCrush(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.changeStamina(-15);
+      defender.changeStamina(-50);
+      attack(attacker, defender, attacker.str*2);
+      defender.flags.grappled = true;
+      return ["Selicia's thick tail crushes you, squeezing the air from your lungs."];
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
+      function(attacker, defender) { return attacker.flags.voreType == "tail"; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function seliciaTailUnbirth(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "dex");
+      if (success) {
+        attacker.changeStamina(-15);
+        defender.changeStamina(-25);
+        attacker.flags.voreType = "unbirth";
+        defender.flags.grappled = false;
+        changeMode("eaten");
+        return ["Your world spins as that thick dragon-tail delivers you head-first to a slick, greedy slit - cramming you in waist-deep and slowly withdrawing, leaving you behind as her latest toy."];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-15);
+        return ["Selicia grinds your face against her slit, but you stay free of her greedy confines."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
+      function(attacker, defender) { return attacker.flags.voreType == "tail"; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
   };
 }
 
@@ -1005,7 +1077,7 @@ function seliciaGrabUnbirth(attacker) {
       defender.changeStamina(-75);
       attacker.flags.voreType = "womb";
       changeMode("eaten");
-      return ["Selicia rolls onto her back, curls up, and opens her jaws. You briefly think you're free...and then, your plunge into her nethers, dragged all the way into her womb by a massive <i>gulp</i> of greedy, overwheling muscle."];
+      return ["Selicia rolls onto her back, curls up, and opens her jaws. You briefly think you're free...and then, your slide down into her nethers, dragged all the way into her womb by a massive <i>gulp</i> of greedy, overwheling muscle."];
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
       function(attacker, defender) { return attacker.flags.voreType == "stomach"; }
@@ -1142,12 +1214,9 @@ function seliciaWombDigest(predator) {
 function seliciaStomachStruggle(predator) {
   return {
     name: "Struggle",
-    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    desc: "Try to squirm out of Selicia's stomach. More effective if you've hurt your predator.",
     struggle: function(player) {
-      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
-      if (player.health <= 0 || player.stamina <= 0) {
-        escape = escape && Math.random() < 0.25;
-      }
+      let escape = statHealthCheck(player, predator, "str");
 
       if (escape) {
         return {
@@ -1172,12 +1241,9 @@ function seliciaStomachStruggle(predator) {
 function seliciaWombStruggle(predator) {
   return {
     name: "Struggle",
-    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    desc: "Try to push yourself from the dragoness's womb. More effective if you've hurt your predator.",
     struggle: function(player) {
-      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
-      if (player.health <= 0 || player.stamina <= 0) {
-        escape = escape && Math.random() < 0.25;
-      }
+      let escape = statHealthCheck(player, predator, "str");
 
       if (escape) {
         predator.flags.voreType = "unbirth";
@@ -1203,12 +1269,9 @@ function seliciaWombStruggle(predator) {
 function seliciaUnbirthStruggle(predator) {
   return {
     name: "Struggle",
-    desc: "Try to squirm free. More effective if you've hurt your predator.",
+    desc: "Try to pull yourself free. More effective if you've hurt your predator.",
     struggle: function(player) {
-      let escape = Math.random() > predator.health / predator.maxHealth && Math.random() < 0.33;
-      if (player.health <= 0 || player.stamina <= 0) {
-        escape = escape && Math.random() < 0.25;
-      }
+      let escape = statHealthCheck(player, predator, "str");
 
       if (escape) {
         player.clear();
