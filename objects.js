@@ -83,6 +83,22 @@ function Bed() {
       updateDisplay();
     }
   });
+  this.actions.push({
+    "name": "Save Game",
+    "action": function() {
+      saveGame();
+      update(["Game saved."]);
+      updateDisplay();
+    }
+  });
+  this.actions.push({
+    "name": "Load Game",
+    "action": function() {
+      loadGame();
+      update(["Game loaded."]);
+      updateDisplay();
+    }
+  });
 }
 
 function Journal() {

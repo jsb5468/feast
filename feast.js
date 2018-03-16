@@ -265,14 +265,16 @@ function move(direction) {
   moveTo(target,currentRoom.exitDescs[direction]);
 }
 
-function moveToByName(roomName, desc="You go places lol") {
-  moveTo(world[roomName], desc);
+function moveToByName(roomName, desc="You go places lol", loading=false) {
+  moveTo(world[roomName], desc, loading);
 }
 
-function moveTo(room,desc="You go places lol") {
+function moveTo(room,desc="You go places lol", loading=false) {
   actions = [];
   currentRoom = room;
-  advanceTime(30);
+
+  if (!loading)
+    advanceTime(30);
 
   currentRoom.objects.forEach(function (object) {
     object.actions.forEach(function (action) {
@@ -354,6 +356,15 @@ function saveSettings() {
 
 function retrieveSettings() {
   return JSON.parse(window.localStorage.getItem("settings"));
+}
+
+function clearScreen() {
+  let log = document.getElementById("log");
+  let child = log.firstChild;
+  while (child != null) {
+    log.removeChild(child);
+    child = log.firstChild;
+  }
 }
 
 function update(lines=[]) {
@@ -564,4 +575,75 @@ function loadCompass() {
 
 function look() {
   update([currentRoom.description]);
+}
+
+let toSave = ["str","dex","con","name","species"];
+
+function saveGame() {
+  let save = {};
+
+  save.player = JSON.stringify(player, function(key, value) {
+    if (toSave.includes(key) || key == "") {
+      return value;
+    } else {
+      return undefined;
+    }
+  });
+
+  save.position = currentRoom.name;
+
+  save.deaths = deaths;
+
+  let stringified = JSON.stringify(save);
+
+  window.localStorage.setItem("save", stringified);
+}
+
+function loadGame() {
+  changeMode("explore");
+  let save = JSON.parse(window.localStorage.getItem("save"));
+
+  let playerSave = JSON.parse(save.player);
+
+  for (let key in playerSave) {
+    if (playerSave.hasOwnProperty(key)) {
+      player[key] = playerSave[key];
+    }
+  }
+
+  deaths = save.deaths;
+
+  clearScreen();
+  moveToByName(save.position, "");
+}
+
+// wow polyfills
+
+if (![].includes) {
+  Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {
+    'use strict';
+    var O = Object(this);
+    var len = parseInt(O.length) || 0;
+    if (len === 0) {
+      return false;
+    }
+    var n = parseInt(arguments[1]) || 0;
+    var k;
+    if (n >= 0) {
+      k = n;
+    } else {
+      k = len + n;
+      if (k < 0) {k = 0;}
+    }
+    var currentElement;
+    while (k < len) {
+      currentElement = O[k];
+      if (searchElement === currentElement ||
+         (searchElement !== searchElement && currentElement !== currentElement)) {
+        return true;
+      }
+      k++;
+    }
+    return false;
+  };
 }
