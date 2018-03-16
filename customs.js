@@ -1085,7 +1085,7 @@ function seliciaGrabUnbirth(attacker) {
       function(attacker, defender) { return defender.prefs.prey; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return 2; }
   };
 }
 
@@ -1175,7 +1175,13 @@ function seliciaStomachDigest(predator) {
     digest: function(player) {
       attack(predator, player, 50);
       player.changeStamina(-20);
-      return ["Selicia's stomach clenches and grinds, dousing you in her acids."];
+      return [pickRandom([
+        ["Selicia's stomach clenches and grinds, dousing you in her acids."],
+        ["Crass gurgles and groans overwhelm you, the gastric prison steadily wearing you down..."],
+        ["You thump on the fleshy walls, eliciting a muffled <i>urrph</i> from your captor"],
+        ["You squirm and writhe, distending the dragoness's sagging belly."],
+        ["Your slimy confines squeeze tigether as you try to resist...and fail."]
+      ])];
     },
     requirements: [
       function(attacker, defender) { return attacker.flags.voreType == "stomach"; }
@@ -1193,12 +1199,14 @@ function seliciaWombDigest(predator) {
       predator.changeStamina(-5);
       player.changeStamina(-25);
 
-      let lines = ["Selicia's womb-walls ripple and knead, softening your body bit-by-bit."];
-
-      if (Math.random() < 0.25 && player.health > 0) {
-        predator.flags.voreType = "unbirth";
-        lines = lines.concat([newline,"A powerful clench of muscle forces you out of her womb! You're still stuck in her snatch, though..."]);
-      }
+      let lines = [pickRandom([
+        ["Selicia's womb-walls ripple and knead, softening your body bit-by-bit."],
+        ["Your body bends at the whims of the dragoness's powerful nethers, mashed and squeezed with terrifying ease."],
+        ["You groan and whimper, head spinning and skin tingling as Selicia breaks you down."],
+        ["Everthing is getting heavy. You squirm and press at the walls of the dragoness's womb, causing her to moan in pleasure."],
+        ["<i>Grrrrgle-glorp</i> - you're melting in the dragoness's womb."],
+        ["Your prison is as loud as a full belly, grrrgle-gushes of femcum sloshing and spraying as you writhe."]
+      ])];
 
       return lines;
     },
