@@ -434,3 +434,109 @@ function tranceDigestInstakill(predator) {
     weight: function(attacker, defender) { return defender.stamina <= 0 ? 5 : 0.1; }
   };
 }
+
+/* TALUTHUS */
+
+function Taluthus() {
+  Creature.call(this, "Taluthus", 40, 40, 60);
+
+  this.hasName = true;
+
+  this.description = function() { return "Taluthus"; };
+
+  this.startCombat = function() { return ["You jump back as a hulking kitsune leaps out at you, his four massive tails swaying as he sizes you up."]; };
+  this.finishDigest = function() { return ["The kitsune's guts melt you down..."]; };
+  this.defeated = function() { changeMode("explore"); moveToByName("Nature Trail"); update(["The kitsune growls and vanishes in a blinding flash of light. You pass out, eventually coming to in the woods."]); };
+  this.prefs.prey = false;
+
+  this.attacks.push(taluthusPunchAttack(this));
+
+  this.attacks.push(taluthusGrab(this));
+  this.attacks.push(taluthusGrabDevour(this));
+
+  //this.attacks.push(taluthusTailDevour(this));
+  //this.attacks.push(taluthusTailSwallow(this));
+
+  this.digests = [];
+
+  this.digests.push(taluthusDigest(this));
+
+  this.struggles = [];
+
+  this.struggles.push(rub(this));
+}
+
+function taluthusPunchAttack(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let damage = attack(attacker, defender, attacker.str);
+      return ["Taluthus lunges, striking you for " + damage + " damage"];
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth; }
+  };
+}
+
+function taluthusGrab(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        attacker.changeStamina(-15);
+        defender.changeStamina(-50);
+        defender.flags.grappled = true;
+        return ["The kitsune snatches you up in his stocky grip, lifting you off the ground and cramming your head into his sloppy maw!"];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-15);
+        return ["Taluthus tries to grab you, but you manage to avoid his grasp."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 7 - 6 * defender.health / defender.maxHealth; }
+  };
+}
+
+function taluthusGrabDevour(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if(success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-50);
+        defender.flags.grappled = false;
+        changeMode("eaten");
+        return ["Taluthus forces your head into his glowing throat, swallowing forcefully to pull you down to his predatory depths."];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-25);
+        return ["The kitsune forces your head into his gullet, but you manage to pry yourself free before peristalsis can claim you."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 3 - 2 * defender.health / defender.maxHealth; }
+  };
+}
+
+function taluthusDigest(predator,damage=50) {
+  return {
+    digest: function(player) {
+      attack(predator, player, damage);
+      player.changeStamina(-50);
+      return pickRandom([
+        ["Powerful stomach muscles grind at your body, swiftly digesting you."]
+      ]);
+    },
+    priority: 1,
+    weight: function() { return 1; }
+  };
+}

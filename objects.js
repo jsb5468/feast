@@ -138,13 +138,22 @@ function WildernessExplore(natureTrail) {
       let outcome = Math.random();
       advanceTime(60*15);
 
-      if (outcome < 0.25) {
+      if (outcome < 0.3) {
         moveToByName("Nature Trail", "You find your way back");
       } else if (outcome < 0.5) {
         startCombat(new Trance());
+      } else if (outcome < 0.7) {
+        startCombat(new Taluthus());
       } else {
         update(["You wander around for a bit, but haven't found anything."]);
       }
+    }
+  });
+
+  this.actions.push({
+    "name": "Taluthus",
+    "action": function() {
+      startCombat(new Taluthus());
     }
   });
 }
