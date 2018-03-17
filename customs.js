@@ -878,6 +878,7 @@ function Selicia() {
   Creature.call(this, "Selicia", 25, 25, 25);
 
   this.hasName = true;
+  this.mass = 400;
 
   this.description = function() { return "Selicia"; };
 
@@ -888,14 +889,15 @@ function Selicia() {
       case "womb": return ["Your struggles slow, then stop, as your body is broken down to slick femcum by the dragoness's greedy womb. She quivers and groans with pent-up lust, grinding against the wall to set herself off - bringing forth a flood of hot, clingy nectar from her depths. The eruption sprays over the wall and ground, gushing in great spurts as she pants and thrusts with tail held high.",newline,"You were nothing but an orgasm..."];
     }
 
+
     return ["The dragoness digests you..."];
   };
 
-  this.defeated = function() { startDialog(FallenFoe(this)); };
+  this.defeated = function() { player.cash += 500; changeMode("explore"); moveToByName("Nature Trail"); update(["The dragoness yelps as you land your last blow, turning tail and darting away into the forest. You duck into her cave, finding a whole <i>pile</i> of wallets. Score!"]); };
 
   this.prefs.scat = false;
   this.prefs.analVore = false;
-
+  this.prefs.prey = false;
   this.attacks = [];
 
   this.attacks.push(seliciaBite(this));

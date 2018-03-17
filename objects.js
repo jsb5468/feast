@@ -154,29 +154,18 @@ function WildernessExplore(natureTrail) {
       let outcome = Math.random();
       advanceTime(60*15);
 
-      if (outcome < 0.3) {
+      if (outcome < 0.25) {
         moveToByName("Nature Trail", "You find your way back");
-      } else if (outcome < 0.5) {
+      } else if (outcome < 0.35) {
         startCombat(new Trance());
-      } else if (outcome < 0.7) {
+      } else if (outcome < 0.45) {
         startCombat(new Taluthus());
+      } else if (outcome < 0.55) {
+        startCombat(new Selicia());
       } else {
-        update(["You wander around for a bit, but haven't found anything."]);
+        update(["You wander around for a bit, but haven't found your way out yet."]);
       }
     }
   });
 
-  this.actions.push({
-    "name": "Taluthus",
-    "action": function() {
-      startCombat(new Taluthus());
-    }
-  });
-
-  this.actions.push({
-    "name": "Selicia",
-    "action": function() {
-      startCombat(new Selicia());
-    }
-  });
 }
