@@ -78,18 +78,9 @@ function Bed() {
   this.actions.push({
     "name": "Sleep",
     "action": function() {
-      if (Math.random() < 0.5) {
-        update(["You take a nap...but you have a visitor."]);
-        startCombat(new Lalim());
-      } else if (time > 28800) {
-        update(["You take a nap."]);
-        advanceTime(7200);
-        updateDisplay();
-      } else {
-        update(["You fall asleep."]);
-        // sleep until 8 AM;
-        advanceTime(115200 - time);
-      }
+      update(["You take a nap."]);
+      advanceTime(2700);
+      updateDisplay();
     }
   });
   this.actions.push({
