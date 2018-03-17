@@ -302,7 +302,7 @@ function start() {
   world = createWorld();
   currentRoom = world["Bedroom"];
   respawnRoom = currentRoom;
-  moveTo(currentRoom);
+  moveTo(currentRoom,"");
   updateDisplay();
 }
 
