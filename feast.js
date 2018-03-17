@@ -591,6 +591,8 @@ function saveGame() {
   });
 
   save.position = currentRoom.name;
+  save.date = date;
+  save.time = time;
 
   save.deaths = deaths;
 
@@ -612,6 +614,9 @@ function loadGame() {
   }
 
   deaths = save.deaths;
+
+  date = save.date;
+  time = save.time;
 
   clearScreen();
   moveToByName(save.position, "");

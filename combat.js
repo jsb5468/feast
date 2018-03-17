@@ -102,7 +102,7 @@ function grapple(attacker, weightFactor = 1) {
     },
     requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); },
-      function(attacker, defender) { return defender.flags.grapple; }
+      function(attacker, defender) { return defender.prefs.grapple; }
     ],
     priority: 1,
     weight: function(attacker, defender) { return weightFactor - weightFactor * defender.health / defender.maxHealth; }
