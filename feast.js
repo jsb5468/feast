@@ -679,6 +679,8 @@ function saveGame() {
     }
   });
 
+  save.prefs = JSON.stringify(player.prefs);
+
   save.position = currentRoom.name;
   save.date = date;
   save.time = time;
@@ -702,6 +704,7 @@ function loadGame() {
     }
   }
 
+  player.prefs = JSON.parse(save.prefs);
   deaths = save.deaths;
 
   date = save.date;
