@@ -212,6 +212,8 @@ class Container {
     this.contents = [];
     // health/sec
     this.damageRate = 15*100/86400;
+    // health percent/sec
+    this.damageRatePercent = 1/86400;
 
     // kg/sec
     this.digestRate = 80/8640;
@@ -221,9 +223,9 @@ class Container {
     let lines = [];
     this.contents.forEach(function(prey) {
       if (prey.health > 0) {
-        let damage = Math.min(prey.health, this.damageRate * time);
+        let damage = Math.min(prey.health, this.damageRate * time + this.damageRatePercent * prey.maxHealth * time);
         prey.health -= damage;
-        time -= damage / this.damageRate;
+        time -= damage / (this.damageRate + this.damageRatePercent * prey.maxHealth);
 
         if (prey.health + damage > 50 && prey.health <= 50) {
           lines.push(this.describeDamage(prey));

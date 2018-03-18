@@ -306,6 +306,7 @@ function start() {
   applySettings(generateSettings());
   document.getElementById("create").style.display = "none";
   document.getElementById("game").style.display = "block";
+  document.getElementById("stat-button-status").addEventListener("click", status, false);
   loadActions();
   loadCompass();
   loadDialog();
@@ -589,6 +590,64 @@ function loadCompass() {
 
 function look() {
   update([currentRoom.description]);
+}
+
+function status() {
+  let lines = [];
+
+  lines.push("You are a " + player.species);
+
+  lines.push(newline);
+
+  if (player.stomach.contents.length > 0) {
+    lines.push("Your stomach bulges with prey.");
+
+    player.stomach.contents.map(function(prey) {
+      let state = "";
+      let healthRatio = prey.health / prey.maxHealth;
+
+      if (healthRatio > 0.75) {
+        state = "is thrashing in your gut";
+      } else if (healthRatio > 0.5) {
+        state = "is squirming in your belly";
+      } else if (healthRatio > 0.25) {
+        state = "is pressing out at your stomach walls";
+      } else if (healthRatio > 0) {
+        state = "is weakly squirming";
+      } else {
+        state = "has stopped moving";
+      }
+
+      lines.push(prey.description("A") + " " + state);
+    });
+    lines.push(newline);
+  }
+
+  if (player.butt.contents.length > 0) {
+    lines.push("Your bowels churn with prey.");
+
+    player.butt.contents.map(function(prey) {
+      let state = "";
+      let healthRatio = prey.health / prey.maxHealth;
+
+      if (healthRatio > 0.75) {
+        state = "is writhing in your bowels";
+      } else if (healthRatio > 0.5) {
+        state = "is struggling against your intestines";
+      } else if (healthRatio > 0.25) {
+        state = "is bulging out of your lower belly";
+      } else if (healthRatio > 0) {
+        state = "is squirming weakly, slipping deeper and deeper";
+      } else {
+        state = "has succumbed to your bowels";
+      }
+
+      lines.push(prey.description("A") + " " + state);
+    });
+    lines.push(newline);
+  }
+
+  update(lines);
 }
 
 let toSave = ["str","dex","con","name","species"];
