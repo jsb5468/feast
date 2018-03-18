@@ -1304,3 +1304,227 @@ function seliciaUnbirthStruggle(predator) {
     ]
   };
 }
+
+/* LALIM */
+
+function Lalim() {
+  Creature.call(this, "Lalim", 25, 35, 25);
+
+  this.hasName = true;
+
+  this.description = function() { return "Lalim"; };
+
+  this.startCombat = function() { return ["You awaken with a start, face to face with a grinning maw full of teeth. A massive beast - half-emerged from a swirling portal of darkness - grips you in its forepaws and pulls you from your bed, dragging you into a plane of darkness!",newline,"You groan and struggle to stand up, lungs heaving and heart hammering. Alas, this is no dream - you're faced with a waking nightmare."]; };
+  this.finishDigest = function() { return ["The slinky beast digests you..."];
+  };
+
+  this.defeated = function() { changeMode("explore"); update(["The beast yowls and recoils, leaving the portal back to your world unguarded. You take the opportunity and dive through; the rift winks shut behind you, leaving you alone. He's gone...for now."]); };
+
+  this.attacks = [];
+
+  this.attacks.push(lalimContort(this));
+
+  this.attacks.push(lalimPin(this));
+
+  this.attacks.push(lalimSwallow(this));
+
+  this.backupAttack = new pass(this);
+
+  this.digests = [];
+
+  this.digests.push(lalimDigest(this));
+  this.digests.push(lalimPull(this));
+
+  this.struggles = [];
+
+  this.struggles.push(lalimStruggle(this));
+  this.struggles.push(submit(this));
+
+  this.prefs.grapple = false;
+  this.prefs.prey = false;
+}
+
+function lalimContort(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      defender.changeStamina(-30);
+      return ["Lalim leaps over your head, then contorts and lunges at you from behind. You leap out of the way, covering your face as he leaps past again. The effort exhausts you.."];
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.stamina / defender.maxStamina; }
+  };
+}
+
+function lalimPin(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "dex");
+
+      if (success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-25);
+        defender.flags.grappled = true;
+        return ["Lalim lunges at you, knocking you to the floor. Before you can even land, his head and neck whip past; you land roughly on his translucent neck, swiftly finding yourself bound up by his slinky body."];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-15);
+        return ["The beast leaps at you; you barely manage to avoid his massive frame, tumbling and stumbling back to your feet as he hisses and snarls."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function lalimSwallow(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let success = statHealthCheck(attacker, defender, "dex");
+      if(success) {
+        attacker.changeStamina(-5);
+        defender.changeStamina(-15);
+        defender.flags.grappled = false;
+        attacker.flags.stage = 1;
+        changeMode("eaten");
+        return ["Lalim's jaws descend upon your little body, scooping you up feet-first and dragging you down with a lazy <i>glrrk</i>. You scrabble helplessly at slick flesh, sinking through his see-through throat...then halting, leaving you imprisoned in a bulging throat-pouch as your predator's forelimbs squeeze and knead over you."];
+      } else {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-5);
+        return ["The noodly beast squeezes and shoves, lashing at your lower body with his tongue, but you manage to keep your legs from being slurped into that ravenous maw."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 2 - defender.stamina / defender.maxStamina; }
+  };
+}
+
+function lalimPull(predator) {
+  return {
+    digest: function(player) {
+      let success = statHealthCheck(predator, player, "dex");
+      if (success) {
+        player.changeStamina(-10);
+        predator.flags.stage += 1;
+
+        if (predator.flags.stage == 2) {
+          return ["The rippling walls convulse, sucking you deeper into Lalim's depths. The soothing blue glow of his clear throat-pouch is replaced with a dull green haze; the walls squeeze and churn, stronger than before...but still safe, for now."];
+        } else if (predator.flags.stage == 3) {
+          return ["A crushing wave of peristalsis yanks you from the dragon's belly, pulling you into the base of his tail. What was once surprisingly safe is now...unsettling. The slick walls grind and squeeze, and you could swear your skin is <i>tingling</i>"];
+        } else if (predator.flags.stage == 4) {
+          return ["Your arms and legs are pinned as Lalim drags you deeper. You feel as if you've been dragged down miles...and as your wriggling bulge glides down his tail, a pit of fear begins to form in your gut. The walls are resilient as iron bars, squeezing and clenching and <i>bearing down</i> with incredible force - and you have no where to go but deeper still..."];
+        } else if (predator.flags.stage == 5) {
+          return ["Another clench takes you to the very end - to the tip of Lalim's tail. It will all be over soon."];
+        }
+      } else {
+        predator.changeStamina(-5);
+        player.changeStamina(-5);
+        return ["You brace yourself as a wave of peristalsis rolls past, holding your ground against the onslaught of flesh and muscle."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return attacker.flags.stage < 5; }
+    ],
+    priority: 1,
+    weight: function() { return player.stamina / player.maxStamina < (5 - predator.flags.stage) / 5 ? 3 : 0; }
+  };
+}
+
+function lalimDigest(predator) {
+  return {
+    digest: function(player) {
+      player.changeStamina(-3 * predator.flags.stage);
+      if (predator.flags.stage == 1) {
+        return ["Lalim's forepaws knead over your imprisoned body, squishing you about in a tube of soft flesh."];
+      } else if (predator.flags.stage == 2) {
+        return ["The dull green glow matches what you feel - very little. The beast's stomach walls undulate, quivering as he sprawls over your bed."];
+      } else if (predator.flags.stage == 3) {
+        return ["You're feeling a little nervous - dull red fills your eyes, and you're struggling to press back on that rippling muscle that imprisons you."];
+      } else if (predator.flags.stage == 4) {
+        attack(predator, player, 15);
+        return ["You feel yourself slowly melting - slowly fading away into the dragon's depths."];
+      } else if (predator.flags.stage == 5) {
+        attack(predator, player, 75);
+        return ["Throbbing red light fills your eyes as Lalim's tail crushes you."];
+      }
+
+    },
+    priority: 1,
+    weight: function() { return 1; }
+  };
+}
+
+function lalimStruggle(predator) {
+  return {
+    name: "Struggle",
+    desc: "Try to squirm free. Gets harder as you lose stamina. Don't get tired!",
+    struggle: function(player) {
+
+      let escape = false;
+
+      switch(predator.flags.stage) {
+        case 1:
+          escape = Math.random() < 0.1;
+          if (escape) {
+            player.clear();
+            predator.clear();
+            return {
+              "escape": "stay",
+              "lines": ["You struggle and squirm, forcing Lalim to hork you up."]
+            };
+          } else {
+            line = "You're so close to freedom that you can taste it...and the beast denies you, gulping you back into his bulging throat";
+          }
+          break;
+        case 2:
+          escape = Math.random() < 0.5;
+          if (escape)
+            line = "You push against slick flesh, forcing yourself back into Lalim's neck. You can see the portal to your dimly-lit bedroom again...and those kneading, squeezing paws.";
+          else
+            line = "You try to claw your way back up to the beast's throat...but a lazy ripple of stomach-muscle throws you back down, thumping you against the hard, shadowy ground under the beast's distended belly.";
+          break;
+        case 3:
+          escape = Math.random() < 0.5;
+          if (escape)
+            line = "It's hard to tell just how deep you are...but you're back in the comforting green glow, far from that dreadful tail.";
+          else
+            line = "The tail won't let you go - you squirm and writhe, to no avail.";
+          break;
+        case 4:
+          escape = Math.random() < 0.33;
+          if (escape)
+            line = "The tingling lessens as you force yourself into the base of Lalim's tail.";
+          else
+            line = "Your heart pounds as your struggles take you <i>nowhere</i>. Your body slowly digests in the ever-tightening tail.";
+          break;
+        case 5:
+          escape = Math.random() < 0.2;
+          if (escape)
+            line = "You drag yourself from certain doom, clawing your way out of the crushing, deadly tail-tip.";
+          else
+            line = "There is no hope of escape. You thrash and squirm, but Lalim's tail has you.";
+          break;
+        }
+
+        if (escape) {
+          predator.flags.stage -= 1;
+        }
+
+        return {
+          "escape": "stuck",
+          "lines": [line]
+        };
+    },
+    requirements: [
+
+    ]
+  };
+}
