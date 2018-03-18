@@ -165,7 +165,8 @@ function grappleDevour(attacker) {
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.prey; }
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.oral > 0; }
     ],
     priority: 1,
     weight: function(attacker, defender) { return 1 - defender.health / defender.maxHealth; }
@@ -189,7 +190,8 @@ function grappledDevour(attacker) {
     }, requirements: [
       function(attacker, defender) { return isGrappled(attacker) && isNormal(defender) && attacker.flags.shrunk != true; }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.prey; }
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.oral > 0; }
     ],
     priority: 1,
   };
@@ -217,7 +219,8 @@ function grappleAnalVore(attacker) {
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true ; }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.prey && defender.prefs.analVore; }
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.anal > 0; }
     ],
     priority: 1,
   };
@@ -307,7 +310,7 @@ function grappledReverse(attacker) {
     },
     requirements: [
       function(attacker, defender) { return isGrappled(attacker) && isNormalSize(attacker) && isNormal(defender); },
-      function(attacker, defender) { return defender.flags.grapple; }
+      function(attacker, defender) { return attacker.flags.grappled; }
     ],
     priority: 1,
   };
@@ -350,6 +353,9 @@ function shrunkSwallow(attacker) {
       function(attacker, defender) {
         return isNormal(attacker) && defender.flags.grappled == true && defender.flags.shrunk == true;
       }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.oral > 0; }
     ],
     priority: 2
   };
@@ -412,18 +418,16 @@ function pass(attacker) {
 
 function devourPlayer(attacker) {
   return {
-    name: "Devours YOU!",
-    desc: "You won't see this",
-    conditions: [
-      function(attacker, defender) { return defender.prefs.prey; }
-    ],
     requirements: [
       function(attacker, defender) { return attacker.leering == true; }
     ],
     attackPlayer: function(defender) {
       changeMode("eaten");
       return ["The voracious " + attacker.description() + " pins you down, his slimy maw spreading wide and engulfing your upper body with ease. He swallows and shoves you deeper, cramming your succulent frame into churning, crushing depths in seconds. A lazy, drawn-out <i>belch</i> escapes his gullet, his hunger briefly sated...and your existence now in inescapable peril."];
-    },
+    }, conditions: [
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.oral > 0; }
+    ],
     priority: 1,
   };
 }

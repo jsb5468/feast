@@ -28,7 +28,7 @@ function Geta() {
   this.struggles.push(new rub(this));
 
   this.prefs.scat = false;
-  this.prefs.analVore = false;
+  this.prefs.vore.anal = 0;
 }
 
 function getaShrink(attacker) {
@@ -227,6 +227,8 @@ function Trance() {
   this.attacks.push(new grappleSubdue(this));
   this.attacks.push(new tranceGrappleMaul(this));
   this.attacks.push(new tranceGrappleThroat(this));
+  this.attacks.push(new tranceGrappleConsume(this));
+  this.attacks.push(new tranceGrappleKill(this));
 
   this.attacks.push(new grappledReverse(this));
   this.attacks.push(new grappledDevour(this));
@@ -329,10 +331,11 @@ function tranceGrappleDevour(attacker) {
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.prey; }
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.oral > 0; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 3 - 2 * defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return (defender.prefs.vore.oral) * (3 - 2 * defender.health / defender.maxHealth); }
   };
 }
 
@@ -356,6 +359,56 @@ function tranceGrappleMaul(attacker) {
     priority: 1,
     weight: function(attacker, defender) { return defender.health / defender.maxHealth; },
     gameover: function() { return "Mauled by Trance"; }
+  };
+}
+
+function tranceGrappleConsume(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      defender.health = -100;
+      return ["The sergal sets about consuming your broken body, ripping you apart like deli meat as he sates his hunger. You are dead. Dead, dead, dead."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && isGrappled(defender);
+      },
+      function(attacker, defender) {
+        return defender.stamina <= 0 && defender.health <= 0;
+      }
+    ],
+    conditions: [
+      function(attacker, defender) {
+        return defender.prefs.vore.hard > 0;
+      }
+    ],
+    priority: 3,
+    weight: function(attacker, defender) { return defender.prefs.vore.hard; },
+    gameover: function() { return "Ripped apart and devoured by Trance"; }
+  };
+}
+
+function tranceGrappleKill(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      defender.health = -100;
+      return ["You're too tired to fight back as Trance's powerful hands grip your head, wrenching it to the side and snapping your neck like a twig - moments before his crushing jaws clamp down around your skull and crush it, killing you instantly."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return isNormal(attacker) && isGrappled(defender);
+      },
+      function(attacker, defender) {
+        return defender.stamina <= 0;
+      }
+    ],
+    conditions: [
+      function(attacker, defender) {
+        return defender.prefs.vore.hard > 0;
+      }
+    ],
+    priority: 2,
+    weight: function(attacker, defender) { return defender.prefs.vore.hard; },
+    gameover: function() { return "Ripped apart and devoured by Trance"; }
   };
 }
 
@@ -540,10 +593,11 @@ function taluthusGrabDevour(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; },
       function(attacker, defender) { return attacker.flags.grappleType == "hands"; }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.prey; }
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.oral > 0; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return defender.prefs.vore.oral; }
   };
 }
 
@@ -569,10 +623,10 @@ function taluthusGrabCockVore(attacker) {
       function(attacker, defender) { return attacker.flags.grappleType == "hands"; }
     ], conditions: [
       function(attacker, defender) { return defender.prefs.prey; },
-      function(attacker, defender) { return defender.prefs.vore.cock; }
+      function(attacker, defender) { return defender.prefs.vore.cock > 0; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return defender.prefs.vore.cock; }
   };
 }
 
@@ -598,7 +652,7 @@ function taluthusTailDevour(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 7 - 6 * defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return (7 - 6 * defender.health / defender.maxHealth) * defender.prefs.vore.tail; }
   };
 }
 
@@ -897,8 +951,8 @@ function Selicia() {
   this.defeated = function() { player.cash += 500; changeMode("explore"); moveToByName("Nature Trail"); update(["The dragoness yelps as you land your last blow, turning tail and darting away into the forest. You duck into her cave, finding a whole <i>pile</i> of wallets. Score!"]); };
 
   this.prefs.scat = false;
-  this.prefs.analVore = false;
   this.prefs.prey = false;
+
   this.attacks = [];
 
   this.attacks.push(seliciaBite(this));
@@ -1016,7 +1070,7 @@ function seliciaTailUnbirth(attacker) {
     },
     conditions: [
       function(attacker, defender) { return defender.prefs.prey; },
-      function(attacker, defender) { return defender.prefs.vore.cock; }
+      function(attacker, defender) { return defender.prefs.vore.unbirth > 0; }
     ],
     requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
@@ -1070,10 +1124,11 @@ function seliciaGrabSwallow(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
       function(attacker, defender) { return attacker.flags.voreType == "stomach"; }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.prey; }
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.oral > 0; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return defender.prefs.vore.oral; }
   };
 }
 
@@ -1090,10 +1145,10 @@ function seliciaGrabUnbirth(attacker) {
       function(attacker, defender) { return attacker.flags.voreType == "stomach"; }
     ], conditions: [
       function(attacker, defender) { return defender.prefs.prey; },
-      function(attacker, defender) { return defender.prefs.vore.cock; }
+      function(attacker, defender) { return defender.prefs.vore.unbirth > 0; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 2; }
+    weight: function(attacker, defender) { return defender.prefs.vore.unbirth; }
   };
 }
 
@@ -1141,10 +1196,10 @@ function seliciaPinUnbirth(attacker) {
       function(attacker, defender) { return attacker.flags.voreType == "unbirth"; }
     ], conditions: [
       function(attacker, defender) { return defender.prefs.prey; },
-      function(attacker, defender) { return defender.prefs.vore.cock; }
+      function(attacker, defender) { return defender.prefs.vore.unbirth > 0; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return defender.prefs.vore.unbirth; }
   };
 }
 

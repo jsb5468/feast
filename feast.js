@@ -304,6 +304,7 @@ window.addEventListener('load', function(event) {
 
 function start() {
   applySettings(generateSettings());
+  transformVorePrefs(player.prefs);
   document.getElementById("create").style.display = "none";
   document.getElementById("game").style.display = "block";
   document.getElementById("stat-button-status").addEventListener("click", status, false);
@@ -363,6 +364,21 @@ function applySettings(settings) {
       }
     }
   }
+}
+
+// turn things like "1" into a number
+function transformVorePrefs(prefs) {
+  for (let key in prefs.vore) {
+    if (prefs.vore.hasOwnProperty(key)) {
+      switch(prefs.vore[key]) {
+        case "0": prefs.vore[key] = 0; break;
+        case "1": prefs.vore[key] = 0.5; break;
+        case "2": prefs.vore[key] = 1; break;
+        case "3": prefs.vore[key] = 2; break;
+      }
+    }
+  }
+  return prefs;
 }
 
 function saveSettings() {

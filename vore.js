@@ -41,9 +41,14 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
   this.prefs = {
     prey: true,
     scat: true,
-    analVore: true,
-    gore: true,
-    grapple: true
+    grapple: true,
+    vore: {
+      oral: 1,
+      anal: 1,
+      cock: 1,
+      unbirth: 1,
+      hard: 1
+    }
   };
 
   this.cash = Math.floor(Math.random() * 10 + 5);

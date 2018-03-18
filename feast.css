@@ -163,9 +163,40 @@ button {
 }
 
 #character-form-list {
+  margin: auto;
   list-style-type: none;
 }
 
 #character-form {
   font-size: 20pt;
+}
+
+.pref-radio {
+  display: none;
+}
+
+.pref-radio + label {
+  color: #666;
+  width: 150px;
+}
+
+.pref-radio:checked + label {
+  background: #333;
+  color: #eee;
+}
+
+.pref-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pref-list {
+  text-align: center;
+  margin: auto;
+  user-select: none;
+}
+
+.pref-type {
+  width: 150px;
 }
