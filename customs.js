@@ -1335,6 +1335,10 @@ function Lalim() {
 
   this.attacks.push(lalimSwallow(this));
 
+  this.attacks.push(lalimFeed(this));
+  this.attacks.push(lalimFeedPull(this));
+  this.attacks.push(lalimFeedDigest(this));
+
   this.backupAttack = new pass(this);
 
   this.digests = [];
@@ -1361,6 +1365,53 @@ function lalimContort(attacker) {
     ],
     priority: 1,
     weight: function(attacker, defender) { return defender.stamina / defender.maxStamina; }
+  };
+}
+
+function lalimFeed(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.feeding = true;
+      return ["Lalim darts back, abruptly ripping open a tear in his shadowy realm - jaws lunging in and snapping up some unseen victim, yanking them from the world of light into his gullet. His noisy swallows and gulps mix with muffled whimpers and cries as he gulps them down."];
+    }, requirements: [
+    function(attacker, defender) { return isNormal(attacker) && isNormal(defender); },
+    function(attacker, defender) { return !attacker.flags.feeding && !attacker.flags.fed }
+  ],
+  priority: 1,
+  weight: function(attacker, defender) { return 0.5; }
+  };
+}
+
+function lalimFeedPull(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.fed = true;
+      attacker.flags.feeding = false;
+      return ["Lalim's prey sinks down his gullet, bulging out from his flexible stomach and swiftly plunging into his tail. Throbbing red light envelops the writhing meal, shrink-wrapped in Lalim's stretchy skin."];
+    }, requirements: [
+    function(attacker, defender) { return isNormal(attacker) && isNormal(defender); },
+    function(attacker, defender) { return attacker.flags.feeding; }
+  ],
+  priority: 2,
+  weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function lalimFeedDigest(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.fed = false;
+      attacker.str += 10;
+      attacker.dex += 10;
+      attacker.con += 10;
+      attacker.changeStamina(1000);
+      return ["You watch in horror as that writhing bulge falls limp, loses substance...and digests completely. The monster seems invigorated by its meal..."];
+    }, requirements: [
+    function(attacker, defender) { return isNormal(attacker) && isNormal(defender); },
+    function(attacker, defender) { return attacker.flags.fed; }
+  ],
+  priority: 2,
+  weight: function(attacker, defender) { return 1; }
   };
 }
 
@@ -1479,7 +1530,7 @@ function lalimStruggle(predator) {
 
       switch(predator.flags.stage) {
         case 1:
-          escape = Math.random() < 0.1;
+          escape = Math.random() < 0.1 * (1 + player.stamina / player.maxStamina);
           if (escape) {
             player.clear();
             predator.clear();
@@ -1492,28 +1543,28 @@ function lalimStruggle(predator) {
           }
           break;
         case 2:
-          escape = Math.random() < 0.5;
+          escape = Math.random() < 0.35 * (1 + player.stamina / player.maxStamina);
           if (escape)
             line = "You push against slick flesh, forcing yourself back into Lalim's neck. You can see the portal to your dimly-lit bedroom again...and those kneading, squeezing paws.";
           else
             line = "You try to claw your way back up to the beast's throat...but a lazy ripple of stomach-muscle throws you back down, thumping you against the hard, shadowy ground under the beast's distended belly.";
           break;
         case 3:
-          escape = Math.random() < 0.5;
+          escape = Math.random() < 0.35 * (1 + player.stamina / player.maxStamina);
           if (escape)
             line = "It's hard to tell just how deep you are...but you're back in the comforting green glow, far from that dreadful tail.";
           else
             line = "The tail won't let you go - you squirm and writhe, to no avail.";
           break;
         case 4:
-          escape = Math.random() < 0.33;
+          escape = Math.random() < 0.2 * (1 + player.stamina / player.maxStamina);
           if (escape)
             line = "The tingling lessens as you force yourself into the base of Lalim's tail.";
           else
             line = "Your heart pounds as your struggles take you <i>nowhere</i>. Your body slowly digests in the ever-tightening tail.";
           break;
         case 5:
-          escape = Math.random() < 0.2;
+          escape = Math.random() < 0.1 * (1 + player.stamina / player.maxStamina);
           if (escape)
             line = "You drag yourself from certain doom, clawing your way out of the crushing, deadly tail-tip.";
           else
