@@ -27,8 +27,8 @@ function statCheck(attacker, defender, stat) {
 }
 
 function statHealthCheck(attacker, defender, stat) {
-  let attackerPercent = attacker.health / attacker.maxHealth;
-  let defenderPercent = defender.health / defender.maxHealth;
+  let attackerPercent = 0.5 + 0.5 * attacker.health / attacker.maxHealth;
+  let defenderPercent = 0.5 + 0.5 * defender.health / defender.maxHealth;
 
   if (attacker.stamina <= 0)
     attackerPercent /= 2;

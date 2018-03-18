@@ -1360,7 +1360,7 @@ function lalimFeed(attacker) {
       return ["Lalim darts back, abruptly ripping open a tear in his shadowy realm - jaws lunging in and snapping up some unseen victim, yanking them from the world of light into his gullet. His noisy swallows and gulps mix with muffled whimpers and cries as he gulps them down."];
     }, requirements: [
     function(attacker, defender) { return isNormal(attacker) && isNormal(defender); },
-    function(attacker, defender) { return !attacker.flags.feeding && !attacker.flags.fed }
+    function(attacker, defender) { return !attacker.flags.feeding && !attacker.flags.fed; }
   ],
   priority: 1,
   weight: function(attacker, defender) { return 0.5 + (5 - 5 * attacker.stamina / attacker.maxStamina); }
@@ -1389,7 +1389,8 @@ function lalimFeedDigest(attacker) {
       attacker.str += 10;
       attacker.dex += 10;
       attacker.con += 10;
-      attacker.changeStamina(1000);
+      attacker.health += 100;
+      attacker.changeStamina(200);
       return ["You watch in horror as that writhing bulge falls limp, loses substance...and digests completely. The monster seems invigorated by its meal..."];
     }, requirements: [
     function(attacker, defender) { return isNormal(attacker) && isNormal(defender); },
