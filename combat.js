@@ -245,26 +245,26 @@ function grappledStruggle(attacker) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
-        attacker.changeStamina(-25);
-        defender.changeStamina(-25);
+        attacker.changeStamina(-5);
+        defender.changeStamina(-10);
         attacker.flags.grappled = false;
         return ["You struggle and shove " + defender.description("the") + " off of you."];
       } else {
-        attacker.changeStamina(-25);
-        defender.changeStamina(-10);
+        attacker.changeStamina(-10);
+        defender.changeStamina(-5);
         return ["You struggle, but to no avail."];
       }
     },
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
-        attacker.changeStamina(-25);
-        defender.changeStamina(-25);
+        attacker.changeStamina(-5);
+        defender.changeStamina(-10);
         attacker.flags.grappled = false;
         return ["Your prey shoves you back, breaking your grapple!"];
       } else {
-        attacker.changeStamina(-25);
-        defender.changeStamina(-10);
+        attacker.changeStamina(-10);
+        defender.changeStamina(-5);
         return ["Your prey squirms, but remains pinned."];
       }
     },
@@ -282,26 +282,26 @@ function grappledReverse(attacker) {
     attack: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
-        attacker.changeStamina(-25);
-        defender.changeStamina(-35);
+        attacker.changeStamina(-5);
+        defender.changeStamina(-15);
         attacker.flags.grappled = false;
         defender.flags.grappled = true;
         return ["You surprise " + defender.description("the") + " with a burst of strength, flipping them over and pinning them."];
       } else {
-        attacker.changeStamina(-35);
+        attacker.changeStamina(-15);
         return ["You try to throw your opponent off of you, but fail."];
       }
     },
     attackPlayer: function(defender) {
       let success = statHealthCheck(attacker, defender, "str");
       if (success) {
-        attacker.changeStamina(-25);
-        defender.changeStamina(-35);
+        attacker.changeStamina(-5);
+        defender.changeStamina(-15);
         attacker.flags.grappled = false;
         defender.flags.grappled = true;
         return ["Your prey suddenly grabs hold and flips you over, pinning you!"];
       } else {
-        attacker.changeStamina(-35);
+        attacker.changeStamina(-15);
         return ["Your prey tries to grab at you, but you keep them under  control."];
       }
     },

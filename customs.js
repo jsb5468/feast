@@ -1329,8 +1329,6 @@ function Lalim() {
 
   this.attacks = [];
 
-  this.attacks.push(lalimContort(this));
-
   this.attacks.push(lalimPin(this));
 
   this.attacks.push(lalimSwallow(this));
@@ -1355,19 +1353,6 @@ function Lalim() {
   this.prefs.prey = false;
 }
 
-function lalimContort(attacker) {
-  return {
-    attackPlayer: function(defender) {
-      defender.changeStamina(-30);
-      return ["Lalim leaps over your head, then contorts and lunges at you from behind. You leap out of the way, covering your face as he leaps past again. The effort exhausts you.."];
-    }, requirements: [
-      function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
-    ],
-    priority: 1,
-    weight: function(attacker, defender) { return defender.stamina / defender.maxStamina; }
-  };
-}
-
 function lalimFeed(attacker) {
   return {
     attackPlayer: function(defender) {
@@ -1378,7 +1363,7 @@ function lalimFeed(attacker) {
     function(attacker, defender) { return !attacker.flags.feeding && !attacker.flags.fed }
   ],
   priority: 1,
-  weight: function(attacker, defender) { return 0.5; }
+  weight: function(attacker, defender) { return 0.5 + (5 - 5 * attacker.stamina / attacker.maxStamina); }
   };
 }
 
@@ -1421,13 +1406,13 @@ function lalimPin(attacker) {
       let success = statHealthCheck(attacker, defender, "dex");
 
       if (success) {
-        attacker.changeStamina(-10);
-        defender.changeStamina(-25);
+        attacker.changeStamina(-5);
+        defender.changeStamina(-10);
         defender.flags.grappled = true;
         return ["Lalim lunges at you, knocking you to the floor. Before you can even land, his head and neck whip past; you land roughly on his translucent neck, swiftly finding yourself bound up by his slinky body."];
       } else {
-        attacker.changeStamina(-25);
-        defender.changeStamina(-15);
+        attacker.changeStamina(-15);
+        defender.changeStamina(-5);
         return ["The beast leaps at you; you barely manage to avoid his massive frame, tumbling and stumbling back to your feet as he hisses and snarls."];
       }
     },
@@ -1445,7 +1430,7 @@ function lalimSwallow(attacker) {
       let success = statHealthCheck(attacker, defender, "dex");
       if(success) {
         attacker.changeStamina(-5);
-        defender.changeStamina(-15);
+        defender.changeStamina(-5);
         defender.flags.grappled = false;
         attacker.flags.stage = 1;
         changeMode("eaten");
@@ -1470,7 +1455,7 @@ function lalimPull(predator) {
     digest: function(player) {
       let success = statHealthCheck(predator, player, "dex");
       if (success) {
-        player.changeStamina(-10);
+        player.changeStamina(-5);
         predator.flags.stage += 1;
 
         if (predator.flags.stage == 2) {
