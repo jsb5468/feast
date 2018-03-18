@@ -78,8 +78,17 @@ function Bed() {
   this.actions.push({
     "name": "Sleep",
     "action": function() {
+      if (player.health >= player.maxHealth) {
+        if (Math.random() < 0.25) {
+          update(["You crawl into bed and fall asleep...",newline]);
+          advanceTime(86400 - time);
+          startCombat(new Lalim());
+          return;
+        }
+      }
+
       update(["You take a nap."]);
-      advanceTime(2700);
+      advanceTime(3600*2);
       updateDisplay();
     }
   });
