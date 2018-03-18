@@ -126,7 +126,11 @@ function updateEaten() {
     list.removeChild(list.firstChild);
   }
 
-  struggles = filterValid(currentFoe.struggles, currentFoe, player);
+  if (player.health > 0)
+    struggles = filterValid(currentFoe.struggles, currentFoe, player);
+  else
+    struggles = [submit(currentFoe)];
+    
   for (let i = 0; i < struggles.length; i++) {
     let li = document.createElement("li");
     let button = document.createElement("button");
@@ -147,7 +151,10 @@ function updateCombat() {
     list.removeChild(list.firstChild);
   }
 
-  playerAttacks = filterValid(player.attacks, player, currentFoe);
+  if (player.health > 0)
+    playerAttacks = filterValid(player.attacks, player, currentFoe);
+  else
+    playerAttacks = [pass(player)];
 
   if (playerAttacks.length == 0)
     playerAttacks = [player.backupAttack];
@@ -343,7 +350,11 @@ function applySettings(settings) {
       if (key.match(/prefs/)) {
         let tokens = key.split("-");
         let pref = player.prefs;
-        pref = tokens.slice(1,-1).reduce((pref, key) => pref[key], pref);
+        pref = tokens.slice(1,-1).reduce(function(pref, key) {
+          if (pref[key] == undefined)
+            pref[key] = {};
+          return pref[key];
+        }, pref);
         pref[tokens.slice(-1)[0]] = settings[key];
       }
     }
@@ -452,9 +463,9 @@ function attackClicked(index) {
       update(["You die..."]);
       respawn(respawnRoom);
     } else if (player.health <= 0) {
-      update(["You fall to the ground..."]);
+      update(["You're too weak to do anything..."]);
       if (player.prefs.prey) {
-        changeMode("eaten");
+        // nada
       } else {
         killingBlow = attack;
         update(["You die..."]);

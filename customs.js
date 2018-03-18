@@ -568,7 +568,8 @@ function taluthusGrabCockVore(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true; },
       function(attacker, defender) { return attacker.flags.grappleType == "hands"; }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.prey; }
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.cock; }
     ],
     priority: 1,
     weight: function(attacker, defender) { return 1; }
@@ -1013,6 +1014,10 @@ function seliciaTailUnbirth(attacker) {
         return ["Selicia grinds your face against her slit, but you stay free of her greedy confines."];
       }
     },
+    conditions: [
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.cock; }
+    ],
     requirements: [
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
       function(attacker, defender) { return attacker.flags.voreType == "tail"; }
@@ -1084,7 +1089,8 @@ function seliciaGrabUnbirth(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
       function(attacker, defender) { return attacker.flags.voreType == "stomach"; }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.prey; }
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.cock; }
     ],
     priority: 1,
     weight: function(attacker, defender) { return 2; }
@@ -1134,7 +1140,8 @@ function seliciaPinUnbirth(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
       function(attacker, defender) { return attacker.flags.voreType == "unbirth"; }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.prey; }
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.cock; }
     ],
     priority: 1,
     weight: function(attacker, defender) { return 1; }
