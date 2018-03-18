@@ -168,4 +168,20 @@ function WildernessExplore(natureTrail) {
     }
   });
 
+  this.actions.push({
+    "name": "Look for trouble",
+    "action": function() {
+      let outcome = Math.random();
+      advanceTime(60*15);
+
+      if (outcome < 0.33) {
+        startCombat(new Trance());
+      } else if (outcome < 0.66) {
+        startCombat(new Taluthus());
+      } else {
+        startCombat(new Selicia());
+      }
+    }
+  });
+
 }
