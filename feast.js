@@ -130,7 +130,7 @@ function updateEaten() {
     struggles = filterValid(currentFoe.struggles, currentFoe, player);
   else
     struggles = [submit(currentFoe)];
-    
+
   for (let i = 0; i < struggles.length; i++) {
     let li = document.createElement("li");
     let button = document.createElement("button");
@@ -174,6 +174,9 @@ function updateCombat() {
   document.getElementById("stat-foe-name").innerHTML = "Name: " + currentFoe.name;
   document.getElementById("stat-foe-health").innerHTML = "Health: " + currentFoe.health + "/" + currentFoe.maxHealth;
   document.getElementById("stat-foe-stamina").innerHTML = "Stamina: " + currentFoe.stamina + "/" + currentFoe.maxStamina;
+  document.getElementById("stat-foe-str").innerHTML = "Str: " + currentFoe.str;
+  document.getElementById("stat-foe-dex").innerHTML = "Dex: " + currentFoe.dex;
+  document.getElementById("stat-foe-con").innerHTML = "Con: " + currentFoe.con;
 }
 
 function updateDialog() {

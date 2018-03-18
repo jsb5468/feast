@@ -467,7 +467,7 @@ function digestPlayerStomach(predator,damage=20) {
   };
 }
 
-function instakillPlayerStomach(pedator) {
+function instakillPlayerStomach(predator) {
   return {
     digest: function(player) {
       player.health = -100;
