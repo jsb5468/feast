@@ -422,6 +422,7 @@ function devourPlayer(attacker) {
       function(attacker, defender) { return attacker.leering == true; }
     ],
     attackPlayer: function(defender) {
+      attacker.flags.voreType = "oral";
       changeMode("eaten");
       return ["The voracious " + attacker.description() + " pins you down, his slimy maw spreading wide and engulfing your upper body with ease. He swallows and shoves you deeper, cramming your succulent frame into churning, crushing depths in seconds. A lazy, drawn-out <i>belch</i> escapes his gullet, his hunger briefly sated...and your existence now in inescapable peril."];
     }, conditions: [
@@ -429,6 +430,25 @@ function devourPlayer(attacker) {
       function(attacker, defender) { return defender.prefs.vore.oral > 0; }
     ],
     priority: 1,
+    weight: function(attacker, defender) { return defender.prefs.vore.oral; }
+  };
+}
+
+function devourPlayerAnal(attacker) {
+  return {
+    requirements: [
+      function(attacker, defender) { return attacker.leering == true; }
+    ],
+    attackPlayer: function(defender) {
+      attacker.flags.voreType = "anal";
+      changeMode("eaten");
+      return ["Fen grabs you and shoves you against the wall, turning around and slamming his ass against your face. Your entire head slips into his bowels with a wet <i>shlllrp</i>; there he holds you for a long minute, clenching and squeezing on his latest toy.",newline,"After what seems an eternity, his depths begin to pull...and within seconds, you're gone, dragged up his ass and imprisoned in his intestines. He moans softly, panting and curling his toes in delight."];
+    }, conditions: [
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.anal > 0; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.prefs.vore.anal;}
   };
 }
 
@@ -475,10 +495,32 @@ function instakillPlayerStomach(predator) {
   return {
     digest: function(player) {
       player.health = -100;
-      return ["The stomach walls churn, clench, and swiftly crush you into nothingnes."];
+      return ["The stomach walls churn, clench, and swiftly crush you into nothingness."];
     },
     priority: 1,
-    weight: function(attacker, defender) { return 1/3; },
-    gameover: function() { return "Digested by " + predator.description("a"); }
+    weight: function(attacker, defender) { return 1; },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.voreType == "oral";
+      }
+    ],
+    gameover: function() { return "Crushed by Fen's stomach"; }
+  };
+}
+
+function instakillPlayerBowels(predator) {
+  return {
+    digest: function(player) {
+      player.health = -100;
+      return ["Fen's intestines clench, and clench and <i>clench</i> - and in seconds, you're gone, just another victim of the beast's ravenous body."];
+    },
+    priority: 1,
+    weight: function(attacker, defender) { return 1; },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.voreType == "anal";
+      }
+    ],
+    gameover: function() { return "Absorbed into Fen's bowels"; }
   };
 }

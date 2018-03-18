@@ -179,6 +179,7 @@ function Fen() {
   this.attacks = [];
 
   this.attacks.push(new devourPlayer(this));
+  this.attacks.push(new devourPlayerAnal(this));
   this.attacks.push(new leer(this));
   this.backupAttack = new poke(this);
 
@@ -188,8 +189,8 @@ function Fen() {
 
   this.digests = [];
 
-  this.digests.push(new digestPlayerStomach(this,50));
   this.digests.push(new instakillPlayerStomach(this));
+  this.digests.push(new instakillPlayerBowels(this));
 
   this.backupDigest = new digestPlayerStomach(this,50);
 }
@@ -465,7 +466,7 @@ function rub(predator) {
     struggle: function(player) {
       return {
         "escape": "stuck",
-        "lines": ["You rub the walls of your predator's belly. At least " + predator.description("the") + " is getting something out of this."]
+        "lines": ["You rub the crushing walls. At least " + predator.description("the") + " is getting something out of this."]
       };
     }
   };
