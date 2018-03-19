@@ -79,10 +79,10 @@ function Bed() {
     "name": "Sleep",
     "action": function() {
       if (player.health >= player.maxHealth) {
-        if (Math.random() < 0.25) {
+        if (Math.random() < 0.33 && (time > EVENING)) {
           update(["You crawl into bed and fall asleep...",newline]);
-          advanceTime(86400 - time);
-          startCombat(new Lalim());
+          advanceTimeTo(MIDNIGHT);
+          startDialog(new LalimEncounter());
           return;
         }
       }

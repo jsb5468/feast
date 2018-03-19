@@ -24,6 +24,11 @@ let killingBlow = null;
 let deaths = [];
 let respawnRoom;
 
+let MIDNIGHT = 0;
+let MORNING = 21600;
+let NOON = 43200;
+let EVENING = 64800;
+
 function join(things) {
   if (things.length == 1) {
     return things[0].description("a");
@@ -238,6 +243,10 @@ function updateDisplay() {
   } else {
     document.getElementById("stat-bowels").innerHTML = "";
   }
+}
+
+function advanceTimeTo(newTime) {
+  advanceTime((86400 + newTime - time) % 86400);
 }
 
 function advanceTime(amount) {
@@ -534,14 +543,14 @@ function struggleHovered(index) {
 function startDialog(dialog) {
   currentDialog = dialog;
   changeMode("dialog");
-  update(currentDialog.text);
+  update(currentDialog.text.concat([newline]));
   currentDialog.visit();
   updateDisplay();
 }
 
 function dialogClicked(index) {
   currentDialog = currentDialog.choices[index].node;
-  update(currentDialog.text);
+  update(currentDialog.text.concat([newline]));
   currentDialog.visit();
   if (currentDialog.choices.length == 0 && mode == "dialog") {
     changeMode("explore");

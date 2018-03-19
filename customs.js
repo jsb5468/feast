@@ -1391,6 +1391,35 @@ function seliciaUnbirthStruggle(predator) {
 
 /* LALIM */
 
+function LalimEncounter() {
+  DialogNode.call(this);
+
+  this.text = ["You stir from your slumber, groggy eyes blinking as your dimly-lit room comes into focus. Something feels wrong. You sit upright, freezing at a most peculiar sight - a twinkling, glittering star, hovering by your far wall. It's so pretty..."];
+
+  let approach = new DialogNode();
+  this.addChoice("Get closer to the light.", approach);
+  approach.hooks.push(function() {
+    startCombat(new Lalim());
+  });
+
+  {
+    let light = new DialogNode();
+    this.addChoice("Turn on the lights", light);
+    light.text = ["You reach over to your nightstand, fumbling around for the switch to your lamp. You pause as your fingers grasp at the knob - that light is <i>so pretty</i>."];
+
+    light.addChoice("Get closer to the light.", approach);
+
+    {
+      let lightReally = new DialogNode();
+      light.addChoice("No, really, turn on the lights", lightReally);
+      lightReally.text = ["You switch on the lamp. Light floods the room, revealing something most surreal. A jagged, shadowy rift has been torn in your far wall. Beyond is a vast void, speckled with stars and lit by a dim, all-pervading glow. And then, of course, there's the monster - a massive, furry beast with a maw full of fangs and a long, ornately-detailed body covered in jagged spirals of gold.",newline,"It hisses as the light floods its eyes, scuttling back and letting the portal snap shut.",newline,"So much for a restful night's sleep..."];
+      lightReally.hooks.push(function() {
+        advanceTimeTo(MORNING);
+      });
+    }
+  }
+}
+
 function Lalim() {
   Creature.call(this, "Lalim", 25, 35, 25);
 
@@ -1398,7 +1427,7 @@ function Lalim() {
 
   this.description = function() { return "Lalim"; };
 
-  this.startCombat = function() { return ["You awaken with a start, face to face with a grinning maw full of teeth. A massive beast - half-emerged from a swirling portal of darkness - grips you in its forepaws and pulls you from your bed, dragging you into a plane of darkness!",newline,"You groan and struggle to stand up, lungs heaving and heart hammering. Alas, this is no dream - you're faced with a waking nightmare."]; };
+  this.startCombat = function() { return ["You crawl from your bed, slowly walking over to that pretty, glittery star. It's so shiny...so pefect...and framed by fangs?",newline,"You awaken from your trance with a start, face to face with a grinning maw full of teeth. A massive beast - half-emerged from a swirling portal of darkness - grips you in its forepaws and drags you into a plane of darkness!",newline,"You groan and struggle to stand up, lungs heaving and heart hammering. Alas, this is no dream - you're faced with a waking nightmare."]; };
   this.finishDigest = function() { return ["The slinky beast digests you..."];
   };
 
@@ -1537,7 +1566,7 @@ function lalimPull(predator) {
         predator.flags.stage += 1;
 
         if (predator.flags.stage == 2) {
-          return ["The rippling walls convulse, sucking you deeper into Lalim's depths. The soothing blue glow of his clear throat-pouch is replaced with a dull green haze; the walls squeeze and churn, stronger than before...but still safe, for now."];
+          return ["The rippling walls convulse, sucking you deeper into Lalim's starry depths. The soothing squeezes of his clear throat-pouch turns to ha eavier pressure; the walls squeeze and churn, stronger than before...but still safe, for now."];
         } else if (predator.flags.stage == 3) {
           return ["A crushing wave of peristalsis yanks you from the dragon's belly, pulling you into the base of his tail. What was once surprisingly safe is now...unsettling. The slick walls grind and squeeze, and you could swear your skin is <i>tingling</i>"];
         } else if (predator.flags.stage == 4) {
@@ -1566,15 +1595,15 @@ function lalimDigest(predator) {
       if (predator.flags.stage == 1) {
         return ["Lalim's forepaws knead over your imprisoned body, squishing you about in a tube of soft flesh."];
       } else if (predator.flags.stage == 2) {
-        return ["The dull green glow matches what you feel - very little. The beast's stomach walls undulate, quivering as he sprawls over your bed."];
+        return ["The beast's starry stomach walls undulate, quivering as he sprawls out to savor his meal."];
       } else if (predator.flags.stage == 3) {
-        return ["You're feeling a little nervous - dull red fills your eyes, and you're struggling to press back on that rippling muscle that imprisons you."];
+        return ["You're feeling a little nervous. You struggle to press back on that rippling muscle that imprisons you."];
       } else if (predator.flags.stage == 4) {
         attack(predator, player, 15);
         return ["You feel yourself slowly melting - slowly fading away into the dragon's depths."];
       } else if (predator.flags.stage == 5) {
         attack(predator, player, 75);
-        return ["Throbbing red light fills your eyes as Lalim's tail crushes you."];
+        return ["Throbbing pain overwhelms your body as Lalim's tail crushes you."];
       }
 
     },
