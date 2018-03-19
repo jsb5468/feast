@@ -180,8 +180,23 @@ button {
   width: 150px;
 }
 
-.pref-radio:checked + label {
-  background: #333;
+.pref-radio:checked + label.pref-disable {
+  background: #933;
+  color: #eee;
+}
+
+.pref-radio:checked + label.pref-avoid {
+  background: #973;
+  color: #eee;
+}
+
+.pref-radio:checked + label.pref-enable {
+  background: #393;
+  color: #eee;
+}
+
+.pref-radio:checked + label.pref-prefer {
+  background: #191;
   color: #eee;
 }
 
