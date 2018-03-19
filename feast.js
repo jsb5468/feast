@@ -666,7 +666,7 @@ function status() {
   update(lines);
 }
 
-let toSave = ["str","dex","con","name","species"];
+let toSave = ["str","dex","con","name","species","health","stamina"];
 
 function saveGame() {
   let save = {};

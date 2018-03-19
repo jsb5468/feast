@@ -966,8 +966,11 @@ function Selicia() {
   this.attacks.push(seliciaGrabSwallow(this));
   this.attacks.push(seliciaGrabUnbirth(this));
 
+  this.attacks.push(grappledReverse(this));
+
   this.attacks.push(seliciaPin(this));
   this.attacks.push(seliciaPinUnbirth(this));
+  this.attacks.push(seliciaPinGrind(this));
 
   this.digests = [];
 
@@ -1047,7 +1050,8 @@ function seliciaTailCrush(attacker) {
       function(attacker, defender) { return attacker.flags.voreType == "tail"; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return 1; },
+    gameover: function() { return "Constricted by Selicia's tail"; }
   };
 }
 
@@ -1202,6 +1206,24 @@ function seliciaPinUnbirth(attacker) {
     weight: function(attacker, defender) { return defender.prefs.vore.unbirth; }
   };
 }
+
+function seliciaPinGrind(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attack(attacker, defender, attacker.str*2);
+      attacker.changeStamina(-10);
+      defender.changeStamina(-25);
+      return ["Selicia grinds over your pinned body, smearing you in her scent and wearing you out and dealing " + attack(attacker, defender, attacker.str*2) + "damage."];
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender); },
+      function(attacker, defender) { return attacker.flags.voreType == "unbirth"; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; },
+    gameover: function() { return "Snuffed out by Selicia's lust"; }
+  };
+}
+
 
 function seliciaUnbirthPull(predator) {
   return {

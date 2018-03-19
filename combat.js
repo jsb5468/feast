@@ -308,6 +308,9 @@ function grappledReverse(attacker) {
         return ["Your prey tries to grab at you, but you keep them under  control."];
       }
     },
+    conditions: [
+      function(attacker, defender) { return defender.flags.grapple; }
+    ],
     requirements: [
       function(attacker, defender) { return isGrappled(attacker) && isNormalSize(attacker) && isNormal(defender); },
       function(attacker, defender) { return attacker.flags.grappled; }
