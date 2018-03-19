@@ -181,22 +181,22 @@ button {
 }
 
 .pref-radio:checked + label.pref-disable {
-  background: #933;
+  background: #931;
   color: #eee;
 }
 
 .pref-radio:checked + label.pref-avoid {
-  background: #973;
+  background: #a41;
   color: #eee;
 }
 
 .pref-radio:checked + label.pref-enable {
-  background: #393;
+  background: #373;
   color: #eee;
 }
 
 .pref-radio:checked + label.pref-prefer {
-  background: #191;
+  background: #44a2c7;
   color: #eee;
 }
 
