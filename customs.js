@@ -170,7 +170,7 @@ function getaStompFinish(attacker) {
     ],
     conditions: [
       function(attacker, defender) {
-        return defender.prefs.gore;
+        return defender.prefs.vore.hard > 0;
       }
     ],
     priority: 3,
@@ -261,10 +261,10 @@ function tranceKick(attacker) {
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.gore; }
+      function(attacker, defender) { return defender.prefs.vore.hard > 0; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 0.5 * defender.health / defender.maxHealth; }
+    weight: function(attacker, defender) { return 0.5 * defender.prefs.vore.hard * defender.health / defender.maxHealth; }
   };
 }
 
@@ -305,10 +305,10 @@ function tranceStomp(attacker) {
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ], conditions: [
-      function(attacker, defender) { return defender.prefs.gore; }
+      function(attacker, defender) { return defender.prefs.vore.hard > 0; }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return attacker.health / attacker.maxHealth > 0.5 ? 0 : 3; },
+    weight: function(attacker, defender) { return attacker.health * defender.prefs.vore.hard / attacker.maxHealth > 0.5 ? 0 : 3; },
     gameover: function() { return "Crushed under Trance's paw"; }
   };
 }
@@ -353,11 +353,11 @@ function tranceGrappleMaul(attacker) {
     ],
     conditions: [
       function(attacker, defender) {
-        return defender.prefs.gore;
+        return defender.prefs.vore.hard > 0;
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.health / defender.maxHealth; },
+    weight: function(attacker, defender) { return defender.prefs.vore.hard * defender.health / defender.maxHealth; },
     gameover: function() { return "Mauled by Trance"; }
   };
 }
@@ -427,7 +427,7 @@ function tranceGrappleThroat(attacker) {
     },
     conditions: [
       function(attacker, defender) {
-        return defender.prefs.gore;
+        return defender.prefs.vore.hard > 0;
       }
     ],
     requirements: [
@@ -436,7 +436,7 @@ function tranceGrappleThroat(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.health / defender.maxHealth > attacker.health / attacker.maxHealth ? 2 : 0; },
+    weight: function(attacker, defender) { return defender.health / defender.maxHealth > attacker.health / attacker.maxHealth ? 2 * defender.prefs.vore.hard : 0; },
     gameover: function() { return "Throat ripped out by Trance"; }
   };
 }
@@ -465,11 +465,11 @@ function tranceDigestCrush(predator, damage=75) {
     },
     conditions: [
       function(attacker, defender) {
-        return defender.prefs.gore;
+        return defender.prefs.vore.hard > 0;
       }
     ],
     priority: 1,
-    weight: function() { return 0.5; }
+    weight: function() { return defender.prefs.vore.hard / 0.5; }
   };
 }
 
@@ -481,11 +481,11 @@ function tranceDigestInstakill(predator) {
     },
     conditions: [
       function(attacker, defender) {
-        return defender.prefs.gore;
+        return defender.prefs.vore.hard > 0;
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.stamina <= 0 ? 5 : 0.1; }
+    weight: function(attacker, defender) { return defender.stamina <= 0 ? 5 : 0.1 * defender.prefs.vore.hard; }
   };
 }
 
