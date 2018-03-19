@@ -181,7 +181,7 @@ button {
 }
 
 .pref-radio:checked + label.pref-disable {
-  background: #931;
+  background: #711;
   color: #eee;
 }
 
@@ -191,7 +191,7 @@ button {
 }
 
 .pref-radio:checked + label.pref-enable {
-  background: #373;
+  background: #3a3;
   color: #eee;
 }
 
