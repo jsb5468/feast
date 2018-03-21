@@ -212,20 +212,20 @@ function Micro() {
 
 // vore stuff here
 
-class Container {
-  constructor(owner) {
-    this.owner = owner;
-    this.contents = [];
-    // health/sec
-    this.damageRate = 15*100/86400;
-    // health percent/sec
-    this.damageRatePercent = 1/86400;
+function Container(owner) {
+  this.owner = owner;
+  this.contents = [];
+  // health/sec
+  this.damageRate = 15*100/86400;
+  // health percent/sec
+  this.damageRatePercent = 1/86400;
 
-    // kg/sec
-    this.digestRate = 80/8640;
-  }
+  // kg/sec
+  this.digestRate = 80/8640;
+}
 
-  digest(time) {
+Container.prototype = {
+  digest: function(time) {
     let lines = [];
     this.contents.forEach(function(prey) {
       if (prey.health > 0) {
@@ -257,64 +257,64 @@ class Container {
         this.finish(prey);
       }
 
+      this.contents = this.contents.filter(function(prey) {
+        return prey.mass > 0;
+      });
+
     }, this);
 
-    this.contents = this.contents.filter(function(prey) {
-      return prey.mass > 0;
-    });
-
     return lines;
-  }
+  },
 
-  feed(prey) {
+  feed: function(prey) {
     this.contents.push(prey);
-  }
+  },
 
-  fullness() {
+  fullness: function() {
     return this.contents.reduce((total, prey) => total + prey.mass, 0);
   }
-}
+};
 
-class Stomach extends Container {
-  constructor(owner,bowels) {
-    super(owner);
-    this.bowels = bowels;
-  }
+function Stomach(owner,bowels) {
+  Container.call(this,owner);
 
-  describeDamage(prey) {
+  this.bowels = bowels;
+
+  this.describeDamage = function(prey) {
     return "Your guts gurgle and churn, slowly wearing down " + prey.description("the") + " trapped within.";
-  }
+  };
 
-  describeKill(prey) {
+  this.describeKill = function(prey) {
     return prey.description("The") + "'s struggles wane as your stomach overpowers them.";
-  }
+  };
 
-  describeFinish(prey) {
+  this.describeFinish = function(prey) {
     return "Your churning guts have reduced " + prey.description("a") + " to meaty chyme.";
-  }
+  };
 
-  fill(amount) {
+  this.fill = function(amount) {
     this.bowels.add(amount);
-  }
+  };
 
-  finish(prey) {
+  this.finish = function(prey) {
     this.bowels.finish(prey);
-  }
+  };
 }
 
-class Butt extends Container {
-  constructor(owner, bowels, stomach) {
-    super(owner);
-    this.bowels = bowels;
-    this.stomach = stomach;
-  }
+Stomach.prototype = Object.create(Container.prototype);
 
-  digest(time) {
+function Butt(owner,bowels,stomach) {
+  Container.call(this,owner);
+
+  this.bowels = bowels;
+  this.stomach = stomach;
+
+  this.digest = function(time) {
     this.contents.forEach(function (x) {
       x.timeInButt += time;
     });
 
-    let lines = super.digest(time);
+    let lines = Container.prototype.digest.call(this,time);
 
     let pushed = this.contents.filter(prey => prey.timeInButt >= 60 * 30);
 
@@ -326,33 +326,35 @@ class Butt extends Container {
     this.contents = this.contents.filter(prey => prey.timeInButt < 60 * 30);
 
     return lines;
-  }
+  };
 
-  describeDamage(prey) {
+  this.describeDamage = function(prey) {
     return "Your bowels gurgle and squeeze, working to wear down " + prey.description("the") + " trapped in those musky confines.";
-  }
+  };
 
-  describeKill(prey) {
+  this.describeKill = function(prey) {
     return prey.description("The") + " abruptly stops struggling, overpowered by your winding intestines.";
-  }
+  };
 
-  describeFinish(prey) {
+  this.describeFinish = function(prey) {
     return "That delicious " + prey.description() + " didn't even make it to your stomach...now they're gone.";
-  }
+  };
 
-  feed(prey) {
+  this.feed = function(prey) {
     prey.timeInButt = 0;
-    super.feed(prey);
-  }
+    Container.prototype.feed(prey);
+  };
 
-  fill(amount) {
+  this.fill = function(amount) {
     this.bowels.add(amount);
-  }
+  };
 
-  finish(prey) {
+  this.finish = function(prey) {
     this.bowels.finish(prey);
-  }
+  };
 }
+
+Butt.prototype = Object.create(Container.prototype);
 
 function WasteContainer(name) {
   this.name = name;
