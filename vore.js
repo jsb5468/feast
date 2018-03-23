@@ -1,23 +1,64 @@
 "use strict";
 
-function Creature(name = "Creature", str=10, dex=10, con=10) {
+function Creature(name = "Creature", str = 10, dex = 10, con = 10) {
   this.name = name;
 
   this.mass = 80;
   this.bowels = new Bowels();
-  this.stomach = new Stomach(this,this.bowels);
-  this.butt = new Butt(this,this.bowels,this.stomach);
+  this.stomach = new Stomach(this, this.bowels);
+  this.butt = new Butt(this, this.bowels, this.stomach);
   this.attacks = [];
 
-  this.str = str;
-  this.dex = dex;
-  this.con = con;
+  this.baseStr = str;
+  this.baseDex = dex;
+  this.baseCon = con;
+
+  this.statBuffs = [];
+
+  this.statMultiplier = function(stat) {
+    let multiplier = 1;
+
+    return this.statBuffs.reduce((multiplier, effect) => (effect.stat == stat) ? multiplier * effect.amount : multiplier, multiplier);
+  };
+
+  Object.defineProperty(this, "str", {
+    get: function() {
+      return this.baseStr * this.statMultiplier("str");
+    },
+    set: function(val) {
+      this.baseStr = val;
+    }
+  });
+  Object.defineProperty(this, "dex", {
+    get: function() {
+      return this.baseDex * this.statMultiplier("dex");
+    },
+    set: function(val) {
+      this.baseDex = val;
+    }
+  });
+  Object.defineProperty(this, "con", {
+    get: function() {
+      return this.baseCon * this.statMultiplier("con");
+    },
+    set: function(val) {
+      this.baseCon = val;
+    }
+  });
 
   this.hasName = false;
 
-  Object.defineProperty(this, "maxHealth", {get: function() { return this.str * 5 + this.con * 10 }});
+  Object.defineProperty(this, "maxHealth", {
+    get: function() {
+      return this.str * 5 + this.con * 10;
+    }
+  });
   this.health = this.maxHealth;
-  Object.defineProperty(this, "maxStamina", {get: function() { return this.dex * 5 + this.con * 10 }});
+  Object.defineProperty(this, "maxStamina", {
+    get: function() {
+      return this.dex * 5 + this.con * 10;
+    }
+  });
   this.stamina = this.maxStamina;
 
   // fraction of max health per second
@@ -55,18 +96,36 @@ function Creature(name = "Creature", str=10, dex=10, con=10) {
 
   this.text = {};
 
-  this.startCombat = function() { return [this.description("A") + " appears. It's a fight!"]; };
+  this.startCombat = function() {
+    return [this.description("A") + " appears. It's a fight!"];
+  };
 
-  this.finishCombat = function() { return [this.description("The") + " scoops up your limp body and gulps you down."]; };
+  this.finishCombat = function() {
+    return [this.description("The") + " scoops up your limp body and gulps you down."];
+  };
 
-  this.finishDigest = function() { return [this.description("The") + " digests you..."]; };
+  this.finishDigest = function() {
+    return [this.description("The") + " digests you..."];
+  };
 
-  this.defeated = function() { startDialog(new FallenFoe(this)); };
+  this.defeated = function() {
+    startDialog(new FallenFoe(this));
+  };
 
   this.changeStamina = function(amount) {
     this.stamina += amount;
     this.stamina = Math.min(this.maxStamina, this.stamina);
     this.stamina = Math.max(0, this.stamina);
+  };
+
+  this.tickEffects = function() {
+    this.statBuffs.forEach(function(x) {
+      x.tick();
+    });
+
+    this.statBuffs.filter(function(x) {
+      return x.alive;
+    });
   };
 }
 
@@ -101,25 +160,25 @@ function Player(name = "Player") {
   this.cash = 100;
 }
 
-function Anthro(name="Anthro") {
+function Anthro(name = "Anthro") {
   this.build = pickRandom(["skinny", "fat", "muscular", "sickly", "ordinary"]);
 
-  switch(this.build) {
+  switch (this.build) {
     case "skinny":
       Creature.call(this, name, 8, 12, 8);
-      this.mass *= ( Math.random() * 0.2 + 0.7 );
+      this.mass *= (Math.random() * 0.2 + 0.7);
       break;
     case "fat":
       Creature.call(this, name, 10, 7, 15);
-      this.mass *= ( Math.random() * 0.4 + 1.1);
+      this.mass *= (Math.random() * 0.4 + 1.1);
       break;
     case "muscular":
       Creature.call(this, name, 13, 11, 13);
-      this.mass *= ( Math.random() * 0.1 + 1.1);
+      this.mass *= (Math.random() * 0.1 + 1.1);
       break;
     case "sickly":
       Creature.call(this, name, 6, 8, 6);
-      this.mass *= ( Math.random() * 0.2 + 0.6 );
+      this.mass *= (Math.random() * 0.2 + 0.6);
       break;
     case "ordinary":
       Creature.call(this, name, 10, 10, 10);
@@ -127,21 +186,21 @@ function Anthro(name="Anthro") {
 
   }
 
-  this.species = pickRandom(["dog","cat","lizard","deer","wolf","fox"]);
+  this.species = pickRandom(["dog", "cat", "lizard", "deer", "wolf", "fox"]);
 
   // todo better lol
 
-  this.description = function(prefix="") {
+  this.description = function(prefix = "") {
     if (this.build == "")
       if (prefix == "")
         return this.species;
       else
         return prefix + " " + this.species;
     else
-      if (prefix == "")
-        return this.build + " " + this.species;
-      else
-        return prefix + " " + this.build + " " + this.species;
+    if (prefix == "")
+      return this.build + " " + this.species;
+    else
+      return prefix + " " + this.build + " " + this.species;
   };
 
   this.attacks.push(new punchAttack(this));
@@ -163,9 +222,9 @@ function Anthro(name="Anthro") {
 
   this.digests = [];
 
-  this.digests.push(new digestPlayerStomach(this,20));
+  this.digests.push(new digestPlayerStomach(this, 20));
 
-  this.backupDigest = new digestPlayerStomach(this,20);
+  this.backupDigest = new digestPlayerStomach(this, 20);
 }
 
 function Fen() {
@@ -174,7 +233,9 @@ function Fen() {
   this.build = "loomy";
   this.species = "crux";
 
-  this.description = function(prefix) { return "Fen"; };
+  this.description = function(prefix) {
+    return "Fen";
+  };
 
   this.attacks = [];
 
@@ -192,16 +253,16 @@ function Fen() {
   this.digests.push(new instakillPlayerStomach(this));
   this.digests.push(new instakillPlayerBowels(this));
 
-  this.backupDigest = new digestPlayerStomach(this,50);
+  this.backupDigest = new digestPlayerStomach(this, 50);
 }
 
 function Micro() {
   Creature.call(this, name);
 
   this.health = 5;
-  this.mass = 0.1 * (Math.random()/2 - 0.25 + 1);
+  this.mass = 0.1 * (Math.random() / 2 - 0.25 + 1);
 
-  this.species = pick(["dog","cat","lizard","deer","wolf","fox"]);
+  this.species = pick(["dog", "cat", "lizard", "deer", "wolf", "fox"]);
   this.description = function(prefix = "") {
     if (prefix == "")
       return "micro " + this.species;
@@ -216,12 +277,12 @@ function Container(owner) {
   this.owner = owner;
   this.contents = [];
   // health/sec
-  this.damageRate = 15*100/86400;
+  this.damageRate = 15 * 100 / 86400;
   // health percent/sec
-  this.damageRatePercent = 1/86400;
+  this.damageRatePercent = 1 / 86400;
 
   // kg/sec
-  this.digestRate = 80/8640;
+  this.digestRate = 80 / 8640;
 }
 
 Container.prototype = {
@@ -247,7 +308,7 @@ Container.prototype = {
 
         prey.mass -= digested;
 
-        this.owner.changeStamina(digested*10);
+        this.owner.changeStamina(digested * 10);
 
         this.fill(digested);
       }
@@ -275,8 +336,8 @@ Container.prototype = {
   }
 };
 
-function Stomach(owner,bowels) {
-  Container.call(this,owner);
+function Stomach(owner, bowels) {
+  Container.call(this, owner);
 
   this.bowels = bowels;
 
@@ -303,25 +364,25 @@ function Stomach(owner,bowels) {
 
 Stomach.prototype = Object.create(Container.prototype);
 
-function Butt(owner,bowels,stomach) {
-  Container.call(this,owner);
+function Butt(owner, bowels, stomach) {
+  Container.call(this, owner);
 
   this.bowels = bowels;
   this.stomach = stomach;
 
   this.digest = function(time) {
-    this.contents.forEach(function (x) {
+    this.contents.forEach(function(x) {
       x.timeInButt += time;
     });
 
-    let lines = Container.prototype.digest.call(this,time);
+    let lines = Container.prototype.digest.call(this, time);
 
     let pushed = this.contents.filter(prey => prey.timeInButt >= 60 * 30);
 
     pushed.forEach(function(x) {
       this.stomach.feed(x);
       lines.push("Your winding guts squeeze " + x.description("the") + " into your stomach.");
-    },this);
+    }, this);
 
     this.contents = this.contents.filter(prey => prey.timeInButt < 60 * 30);
 
