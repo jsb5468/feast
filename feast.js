@@ -157,7 +157,10 @@ function updateCombat() {
   }
 
   if (player.health > 0)
-    playerAttacks = filterValid(player.attacks, player, currentFoe);
+    if (currentFoe.playerAttacks == undefined)
+      playerAttacks = filterValid(player.attacks, player, currentFoe);
+    else
+      playerAttacks = filterValid(currentFoe.playerAttacks.map(attack => attack(player)), player, currentFoe);
   else
     playerAttacks = [pass(player)];
 
@@ -473,7 +476,7 @@ function respawn(respawnRoom) {
 function startCombat(opponent) {
   currentFoe = opponent;
   changeMode("combat");
-  update(opponent.startCombat());
+  update(opponent.startCombat(player));
 }
 
 function attackClicked(index) {

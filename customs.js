@@ -1678,3 +1678,218 @@ function lalimStruggle(predator) {
     ]
   };
 }
+
+/* POOJAWA */
+
+function Poojawa() {
+  Creature.call(this, "Poojawa", 20, 40, 30);
+
+  this.hasName = true;
+
+  this.description = function() { return "Poojawa"; };
+
+  this.attacks = [];
+
+  this.attacks.push(poojawaBeckonWait(this));
+  this.attacks.push(poojawaBeckonTease(this));
+  this.attacks.push(poojawaBeckonStep(this));
+  this.attacks.push(poojawaBeckonSaunter(this));
+
+  this.attacks.push(poojawaBeckonCatch(this));
+  this.attacks.push(poojawaBeckonCaught(this));
+
+  this.backupAttack = new pass(this);
+
+  this.playerAttacks = [];
+
+  this.playerAttacks.push(poojawaPlayerForward);
+  this.playerAttacks.push(poojawaPlayerStay);
+  this.playerAttacks.push(poojawaPlayerBackward);
+  /*this.playerAttacks.push(poojawaPlayerFlee);
+
+  this.playerAttacks.push(poojawaPlayerPinnedSubmit);
+  this.playerAttacks.push(poojawaPlayerPinnedStruggle);
+
+  this.playerAttacks.push(poojawaPlayerUnbirthSubmit);
+  this.playerAttacks.push(poojawaPlayerUnbirthStruggle);*/
+
+  this.digests = [];
+
+  this.digests.push(new digestPlayerStomach(this,50));
+
+  this.struggles = [];
+
+  this.struggles.push(new rub(this));
+
+  this.prefs.prey = false;
+
+  this.consts = {};
+
+  this.consts.caughtDist = 0;
+  this.consts.startDist = 3;
+  this.consts.escapeDist = 10;
+
+  this.flags.distance = this.consts.startDist;
+
+  this.flags.state = "beckon";
+
+  this.startCombat = function(player) {
+    player.flags.teases = 0;
+    return ["You gasp softly as a purple hand grips your shoulder - turning and stumbling back a few paces to see that sultry sabersune watching you with devious eyes. She's up to no good..."];
+  };
+}
+
+/* PLAYER MOVES */
+
+function poojawaPlayerForward(player) {
+  return {
+    name: "Step forward",
+    desc: "Get a little closer...",
+    attack: function(poojawa) {
+      poojawa.flags.distance -= 1;
+      return ["You swallow nervously, stepping closer to the sultry sabersune."];
+    },
+    requirements: [
+      function(player, poojawa) {
+        return poojawa.flags.state == "beckon";
+      }
+    ]
+  };
+}
+
+function poojawaPlayerStay(player) {
+  return {
+    name: "Stand still",
+    desc: "Just wait...",
+    attack: function(poojawa) {
+      return ["Your knees quiver as a blush washes over your face - and you stand still."];
+    },
+    requirements: [
+      function(player, poojawa) {
+        return poojawa.flags.state == "beckon";
+      }
+    ]
+  };
+}
+
+function poojawaPlayerBackward(player) {
+  return {
+    name: "Step backward",
+    desc: "Get a little further...",
+    attack: function(poojawa) {
+      poojawa.flags.distance += 1;
+      return ["Wary for any surprises from the sabersune, you take a nervous step back."];
+    },
+    requirements: [
+      function(player, poojawa) {
+        return poojawa.flags.state == "beckon";
+      }
+    ]
+  };
+}
+
+/* POOJAWA MOVES */
+
+function poojawaBeckonWait(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      return ["The sune does nothing - she just watches and waits, those pretty pink eyes locked with yours..."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "beckon";
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaBeckonTease(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      player.flags.teases += 1;
+      return ["Poojawa's jaws open part-way, flashing her slick fangs as she lets her tongue roll over her fingers ever-so-smoothly. \"Sweetie,\" she coos, \"you <i>know</i> you want this~\""];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "beckon";
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaBeckonStep(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.distance -= 1;
+      return ["Poojawa takes a step toward you, tails swaying behind her."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "beckon";
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaBeckonSaunter(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.distance -= 3;
+      return ["The sabersune takes a few lazy steps toward you, each one eroding several of your own anxious footsteps..."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "beckon";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.distance > 5;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return poojawa.flags.distance / 6; }
+  };
+}
+
+function poojawaBeckonCatch(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.state = "caught";
+      return ["One last step, and the sabersune is on top of you. She grips you with both hands, pulling you in close and stuffing your muzzle into her faintly-scented bosom. You squirm and struggle, but can do little as she pulls you away from the noisy bar and into a secluded alcove. \"Shhh, darling,\" she murmurs, clicking her tongue at your muffled protests."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "beckon";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.distance == 1;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaBeckonCaught(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.state = "caught";
+      return ["You stumbled forwards and into Poojawa's grasp. She grips you with both hands, pulling you in close and stuffing your muzzle into her faintly-scented bosom. You squirm and struggle, but can do little as she pulls you away from the noisy bar and into a secluded alcove. \"Shhh, darling,\" she murmurs, clicking her tongue at your muffled protests."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "beckon";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.distance <= 0;
+      }
+    ],
+    priority: 2,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
