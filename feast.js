@@ -240,9 +240,9 @@ function updateDisplay() {
   document.getElementById("stat-health").innerHTML = "Health: " + round(player.health,0) + "/" + round(player.maxHealth,0);
   document.getElementById("stat-cash").innerHTML = "Cash: $" + round(player.cash,0);
   document.getElementById("stat-stamina").innerHTML = "Stamina: " + round(player.stamina,0) + "/" + round(player.maxStamina,0);
-  document.getElementById("stat-foe-str").innerHTML = "Str: " + player.str;
-  document.getElementById("stat-foe-dex").innerHTML = "Dex: " + player.dex;
-  document.getElementById("stat-foe-con").innerHTML = "Con: " + player.con;
+  document.getElementById("stat-str").innerHTML = "Str: " + player.str;
+  document.getElementById("stat-dex").innerHTML = "Dex: " + player.dex;
+  document.getElementById("stat-con").innerHTML = "Con: " + player.con;
   document.getElementById("stat-fullness").innerHTML = "Fullness: " + round(player.fullness(),0);
   if (player.prefs.scat) {
     document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness,0);

@@ -1722,6 +1722,13 @@ function Poojawa() {
 
   this.attacks.push(poojawaUnbirthedDigest(this));
 
+  this.attacks.push(poojawaCaughtOral(this));
+
+  this.attacks.push(poojawaOralPull(this));
+  this.attacks.push(poojawaOralLastPull(this));
+
+  this.attacks.push(poojawaStomachDigest(this));
+
   this.backupAttack = new pass(this);
 
   this.playerAttacks = [];
@@ -1794,6 +1801,17 @@ function Poojawa() {
         }
         break;
       case "unbirthed":
+        return [];
+      case "oral":
+        if (this.flags.progress == 1) {
+          return ["Poojawa's devious eyes are locked with yours...and your legs are vanishing down her gullet. She's <i>hungry.</i>"];
+        } else if (this.flags.progress == 2 ) {
+          return ["Ravenous hunger has taken all but your head - teasing licks working over your face as your body is gripped by the predator's tight body."];
+        } else {
+          return ["Everything is tight, hot, overwhelming. She has you - head in her throat, legs already in her gut. Not much left to do but...give in."];
+        }
+        break;
+      case "stomach":
         return [];
     }
   };
@@ -2105,6 +2123,81 @@ function poojawaUnbirthedDigest(poojawa) {
     requirements: [
       function(poojawa, player) {
         return poojawa.flags.state == "unbirthed";
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaCaughtOral(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      changeBackground("eaten");
+      poojawa.flags.progress = 1;
+      poojawa.flags.state = "oral";
+      return ["Poojawa's teasing licks and sultry breaths stop - a heartbeat before you feel your ankles slipping past her thick saber-fangs. A light gulp and a lazy <i>swallow</i> precede a disorienting slide as she drags you in front of her, her throat bulging with your thrashing lower legs!"];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "caught";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.oral > 3;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return player.prefs.vore.oral * (0.5 + poojawa.flags.oral / 6); }
+  };
+}
+
+function poojawaOralPull(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.progress += 1;
+      return ["A powerful ripple of muscle drags you down the sabersune's throat."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "oral";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.progress < 3;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaOralLastPull(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.state = "stomach";
+      return ["A final swallow stuffs you into Poojawa's gurgling guts. Rippling muscle grips at your slimy body."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "oral";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.progress >= 3;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaStomachDigest(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      player.health -= 50;
+      return ["Poojawa rubs her gut as you squirm within. You're already turning soft..."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "stomach";
       }
     ],
     priority: 1,
