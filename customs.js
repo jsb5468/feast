@@ -1687,7 +1687,15 @@ function PoojawaEncounter() {
     name: "Poojawa",
     action: function() {
       startCombat(new Poojawa());
-    }
+    },
+    conditions: [
+      function(prefs) {
+        return prefs.prey;
+      },
+      function(prefs) {
+        return prefs.vore.oral > 0 || prefs.vore.tail > 0 || prefs.vore.unbirth > 0;
+      }
+    ]
   });
 }
 
@@ -1712,9 +1720,8 @@ function Poojawa() {
   this.attacks.push(poojawaCaughtLick(this));
   this.attacks.push(poojawaCaughtTailLick(this));
   this.attacks.push(poojawaCaughtGrind(this));
+  this.attacks.push(poojawaCaughtGrind(this));
 
-  //this.attacks.push(poojawaCaughtOral(this));
-  //this.attacks.push(poojawaCaughtTail(this));
   this.attacks.push(poojawaCaughtUnbirth(this));
 
   this.attacks.push(poojawaUnbirthPull(this));
@@ -1747,10 +1754,10 @@ function Poojawa() {
   this.playerAttacks.push(poojawaPlayerBeckonBackward);
   this.playerAttacks.push(poojawaPlayerBeckonFlee);
 
-  /*this.playerAttacks.push(poojawaPlayerCaughtOral);
+  this.playerAttacks.push(poojawaPlayerCaughtOral);
   this.playerAttacks.push(poojawaPlayerCaughtTail);
   this.playerAttacks.push(poojawaPlayerCaughtUnbirth);
-  this.playerAttacks.push(poojawaPlayerCaughtStruggle);*/
+  this.playerAttacks.push(poojawaPlayerCaughtStruggle);
 
   //this.playerAttacks.push(poojawaPlayerUnbirthSubmit);
   //this.playerAttacks.push(poojawaPlayerUnbirthStruggle);
@@ -1926,6 +1933,8 @@ function poojawaPlayerBeckonFlee(player) {
           moveToByName("Alley","");
           return ["You turn tail and run, throwing open the door and barely escaping from the sabersune's clutches. She could easily chase you down, but she just leans outside, heavy tails propping the door open - and gives you a wink."];
         } else {
+          poojawa.flags.state = "caught";
+          poojawa.flags.distance = 0;
           return ["You turn and flee. It's a valiant effort - you manage to grab the door handle - but not enough. Poojawa grips you from behind and drags you away, whispering a <i>tsk-tsk</i> of disapproval into your ear as you're pulled out of sight."];
         }
       }
@@ -1933,6 +1942,84 @@ function poojawaPlayerBeckonFlee(player) {
     requirements: [
       function(player, poojawa) {
         return poojawa.flags.state == "beckon";
+      }
+    ]
+  };
+}
+
+function poojawaPlayerCaughtOral(player) {
+  return {
+    name: "Push at her mouth",
+    desc: "Imagine those soft, velvety depths clenching and caressing you...why not just give her a taste?",
+    attack: function(poojawa) {
+      poojawa.flags.oral += 1;
+      return ["You moan as the sabresune backs up and sluuuurps along your hips and belly. Judging by the sounds she's making, she's enjoying it too..."];
+    },
+    conditions: [
+      function(player, poojawa) {
+        return player.prefs.vore.oral > 0;
+      }
+    ],
+    requirements: [
+      function(player, poojawa) {
+        return poojawa.flags.state == "caught";
+      }
+    ]
+  };
+}
+
+function poojawaPlayerCaughtTail(player) {
+  return {
+    name: "Rub her tails",
+    desc: "Why not just give them a fewpets?",
+    attack: function(poojawa) {
+      poojawa.flags.tail += 1;
+      return ["You reach out at one of Poojawa's swaying tails, stroking along soft fur and sneaking your hand into the slackeend maw. So soft..."];
+    },
+    conditions: [
+      function(player, poojawa) {
+        return player.prefs.vore.tail > 0;
+      }
+    ],
+    requirements: [
+      function(player, poojawa) {
+        return poojawa.flags.state == "caught";
+      }
+    ]
+  };
+}
+
+function poojawaPlayerCaughtUnbirth(player) {
+  return {
+    name: "Lick her sex",
+    desc: "Surely it's safe...",
+    attack: function(poojawa) {
+      poojawa.flags.unbirth += 1;
+      return ["Blushing hotly, you sit upright - as much as she'll allow - and press your snout to the sabersune's dripping snatch. She churrrrls softly as your tongue laps at sweet, musky nectar, flexing her toes and grinding back on you a little."];
+    },
+    conditions: [
+      function(player, poojawa) {
+        return player.prefs.vore.unbirth > 0;
+      }
+    ],
+    requirements: [
+      function(player, poojawa) {
+        return poojawa.flags.state == "caught";
+      }
+    ]
+  };
+}
+
+function poojawaPlayerCaughtStruggle(player) {
+  return {
+    name: "Struggle",
+    desc: "Try to escape!",
+    attack: function(poojawa) {
+      return ["You wriggle beneath the sultry 'sune...to no avail. She giggles and continues to tease."];
+    },
+    requirements: [
+      function(player, poojawa) {
+        return poojawa.flags.state == "caught";
       }
     ]
   };
