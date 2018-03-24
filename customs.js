@@ -1724,6 +1724,7 @@ function Poojawa() {
   this.attacks.push(poojawaUnbirthLastPull(this));
 
   this.attacks.push(poojawaUnbirthedDigest(this));
+  this.attacks.push(poojawaUnbirthedRoll(this));
 
   this.attacks.push(poojawaCaughtOral(this));
 
@@ -2075,6 +2076,11 @@ function poojawaCaughtLick(poojawa) {
       poojawa.flags.oral += 1;
       return ["The sabersune's velvety tongue drags along your thigh, her dripping slit held firmly in your face as she tastes you over."];
     },
+    conditions: [
+      function(poojawa, player) {
+        return player.prefs.vore.oral > 0;
+      }
+    ],
     requirements: [
       function(poojawa, player) {
         return poojawa.flags.state == "caught";
@@ -2091,6 +2097,11 @@ function poojawaCaughtTailLick(poojawa) {
       poojawa.flags.tail += 1;
       return ["Slick flesh envelops your arms as two of the sabersune's tails get a little nibby."];
     },
+    conditions: [
+      function(poojawa, player) {
+        return player.prefs.vore.tail > 0;
+      }
+    ],
     requirements: [
       function(poojawa, player) {
         return poojawa.flags.state == "caught";
@@ -2107,6 +2118,11 @@ function poojawaCaughtGrind(poojawa) {
       poojawa.flags.unbirth += 1;
       return ["Poojawa's hips grind down over your face, smearing you in her musky scents and sending a shiver up her spine."];
     },
+    conditions: [
+      function(poojawa, player) {
+        return player.prefs.vore.unbirth > 0;
+      }
+    ],
     requirements: [
       function(poojawa, player) {
         return poojawa.flags.state == "caught";
@@ -2127,6 +2143,11 @@ function poojawaCaughtUnbirth(poojawa) {
       newline,
       "Your nostrils flood with her scent; you can see only dim, red depths."];
     },
+    conditions: [
+      function(poojawa, player) {
+        return player.prefs.vore.unbirth > 0;
+      }
+    ],
     requirements: [
       function(poojawa, player) {
         return poojawa.flags.state == "caught";
@@ -2203,7 +2224,7 @@ function poojawaUnbirthOrgasm(poojawa) {
   return {
     attackPlayer: function(player) {
       poojawa.flags.state = "unbirthed";
-      return ["Poojawa yowls in pleasure as she cums...and yanks you inside in a single, massive <i>glrpk</i> of unstoppable musckle. She flops onto her belly, panting and groaning as she rides down from that pleasurable high."];
+      return ["Poojawa yowls in pleasure as she cums...and yanks you inside with a single, massive <i>glrpk</i> of unstoppable muscle. She flops onto her belly, panting and groaning as she rides down from that pleasurable high."];
     },
     requirements: [
       function(poojawa, player) {
@@ -2222,7 +2243,7 @@ function poojawaUnbirthLastPull(poojawa) {
   return {
     attackPlayer: function(player) {
       poojawa.flags.state = "unbirthed";
-      return ["One last lustful squeeze, and your body slips into the sabersune's womb. She coos and sits up, slender fingers playing over her bulging lower belly as she toys with you..."];
+      return ["One last lustful squeeze, and your body slips into the sabersune's womb. She coos and sits up, slender fingers playing over her bulging lower belly as she begins to toy with you..."];
     },
     requirements: [
       function(poojawa, player) {
@@ -2263,6 +2284,28 @@ function poojawaUnbirthedDigest(poojawa) {
   };
 }
 
+function poojawaUnbirthedRoll(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      player.health -= 75;
+      return pickRandom([["Poojawa rolls over, hips thrusting at the hardwood floor and grinding you into her sensitive womb-walls."],
+      ["The sabersune shifts onto her side, then flumps onto her belly. The force balls you up even tighter..."],
+      ]);
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "unbirthed";
+      },
+      function(poojawa, player) {
+        return player.health > 0;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 0.33; },
+    gameover: function() { return "Melted into femcum in Poojawa's depths"; }
+  };
+}
+
 function poojawaCaughtOral(poojawa) {
   return {
     attackPlayer: function(player) {
@@ -2271,6 +2314,11 @@ function poojawaCaughtOral(poojawa) {
       poojawa.flags.state = "oral";
       return ["Poojawa's teasing licks and sultry breaths stop - a heartbeat before you feel your ankles slipping past her thick saber-fangs. A light gulp and a lazy <i>swallow</i> precede a disorienting slide as she drags you in front of her, her throat bulging with your thrashing lower legs!"];
     },
+    conditions: [
+      function(poojawa, player) {
+        return player.prefs.vore.oral > 0;
+      }
+    ],
     requirements: [
       function(poojawa, player) {
         return poojawa.flags.state == "caught";
@@ -2332,6 +2380,11 @@ function poojawaCaughtTail(poojawa) {
       newline,
       "A powerful gulp yanks you in deep, leaving your wriggling toes hanging from that heavy tail."];
     },
+    conditions: [
+      function(poojawa, player) {
+        return player.prefs.vore.tail > 0;
+      }
+    ],
     requirements: [
       function(poojawa, player) {
         return poojawa.flags.state == "caught";
