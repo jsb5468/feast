@@ -88,7 +88,8 @@ function Creature(name = "Creature", str = 10, dex = 10, con = 10) {
       anal: 1,
       cock: 1,
       unbirth: 1,
-      hard: 1
+      hard: 1,
+      soul: 1
     }
   };
 

@@ -1732,6 +1732,7 @@ function Poojawa() {
 
   this.attacks.push(poojawaUnbirthedDigest(this));
   this.attacks.push(poojawaUnbirthedRoll(this));
+  this.attacks.push(poojawaUnbirthedSoulRip(this));
 
   this.attacks.push(poojawaCaughtOral(this));
 
@@ -1744,6 +1745,7 @@ function Poojawa() {
   this.attacks.push(poojawaTailLastPull(this));
 
   this.attacks.push(poojawaStomachDigest(this));
+  this.attacks.push(poojawaStomachSoulRip(this));
 
   this.backupAttack = new pass(this);
 
@@ -2395,6 +2397,31 @@ function poojawaUnbirthedRoll(poojawa) {
   };
 }
 
+function poojawaUnbirthedSoulRip(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      player.health = -100;
+      return ["You feel a strange, ethereal presence...slowly realizing that your very soul is being pulled from your body. Womb-walls grip your spirit with the same practiced ease that they claimed your body with, molding and squeezing and grinding you down..."];
+    },
+    conditions: [
+      function(poojawa, player) {
+        return player.prefs.vore.soul > 0;
+      }
+    ],
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "unbirthed";
+      },
+      function(poojawa, player) {
+        return player.health / player.maxHealth < 0.2;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return player.prefs.vore.soul; },
+    gameover: function() { return "Body and soul melted down to femcum in Poojawa's depths"; }
+  };
+}
+
 function poojawaCaughtOral(poojawa) {
   return {
     attackPlayer: function(player) {
@@ -2538,5 +2565,30 @@ function poojawaStomachDigest(poojawa) {
     ],
     priority: 1,
     weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaStomachSoulRip(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      player.health = -100;
+      return ["The churning guts of the sabersune are too much, and you fall limp...only to return to the world as your soul is dragged from your softening body. Crushing muscle grips your spirit, swiftly wearing you down...."];
+    },
+    conditions: [
+      function(poojawa, player) {
+        return player.prefs.vore.soul > 0;
+      }
+    ],
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "stomach";
+      },
+      function(poojawa, player) {
+        return player.health / player.maxHealth < 0.2;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return player.prefs.vore.soul; },
+    gameover: function() { return "Body and soul melted down and absorbed into Poojawa's belly"; }
   };
 }
