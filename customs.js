@@ -1744,7 +1744,7 @@ function Poojawa() {
   this.playerAttacks.push(poojawaPlayerBeckonForward);
   this.playerAttacks.push(poojawaPlayerBeckonStay);
   this.playerAttacks.push(poojawaPlayerBeckonBackward);
-  ///this.playerAttacks.push(poojawaPlayerFlee);
+  this.playerAttacks.push(poojawaPlayerBeckonFlee);
 
   /*this.playerAttacks.push(poojawaPlayerCaughtOral);
   this.playerAttacks.push(poojawaPlayerCaughtTail);
@@ -1893,6 +1893,39 @@ function poojawaPlayerBeckonBackward(player) {
       }
       poojawa.flags.distance += 1;
       return ["Wary for any surprises from the sabersune, you take a nervous step back."];
+    },
+    requirements: [
+      function(player, poojawa) {
+        return poojawa.flags.state == "beckon";
+      }
+    ]
+  };
+}
+
+function poojawaPlayerBeckonFlee(player) {
+  return {
+    name: "Run!",
+    desc: "Flee - if you've made enough distance, at least...",
+    attack: function(poojawa) {
+      if (poojawa.flags.distance <= 1) {
+        poojawa.flags.state = "caught";
+        poojawa.flags.distance = 0;
+        return ["In your panic, you turn to run. Poojawa clicks her tongue and grabs you by the arm, then pulls you in close..."];
+      } else if (poojawa.flags.distance <= 3) {
+        poojawa.flags.state = "caught";
+        poojawa.flags.distance = 0;
+        return ["You turn and run...and a few seconds later, the sabersune is on top of you, effortlessly tackling you and pinning you to the floor, then pulling you aside for some...<i>private time.</i>"];
+      } else if (poojawa.flags.distance <= 5) {
+        poojawa.flags.state = "caught";
+        poojawa.flags.distance = 0;
+        return ["You turn and flee. It's a valiant effort - you manage to grab the door handle - but not enough. Poojawa grips you from behind and drags you away, whispering a <i>tsk-tsk</i> of disapproval into your ear as you're pulled out of sight."];
+      } else {
+        if (Math.random() < 0.25 + (poojawa.flags.distance - 5) * 0.2) {
+          return ["You turn tail and run, throwing open the door and barely escaping from the sabersune's clutches. She could easily chase you down, but she just leans outside, heavy tails propping the door open - and gives you a wink."];
+        } else {
+          return ["You turn and flee. It's a valiant effort - you manage to grab the door handle - but not enough. Poojawa grips you from behind and drags you away, whispering a <i>tsk-tsk</i> of disapproval into your ear as you're pulled out of sight."];
+        }
+      }
     },
     requirements: [
       function(player, poojawa) {
