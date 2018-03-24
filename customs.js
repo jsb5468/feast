@@ -1922,6 +1922,8 @@ function poojawaPlayerBeckonFlee(player) {
         return ["You turn and flee. It's a valiant effort - you manage to grab the door handle - but not enough. Poojawa grips you from behind and drags you away, whispering a <i>tsk-tsk</i> of disapproval into your ear as you're pulled out of sight."];
       } else {
         if (Math.random() < 0.25 + (poojawa.flags.distance - 5) * 0.2) {
+          changeMode("explore");
+          moveToByName("Alley","");
           return ["You turn tail and run, throwing open the door and barely escaping from the sabersune's clutches. She could easily chase you down, but she just leans outside, heavy tails propping the door open - and gives you a wink."];
         } else {
           return ["You turn and flee. It's a valiant effort - you manage to grab the door handle - but not enough. Poojawa grips you from behind and drags you away, whispering a <i>tsk-tsk</i> of disapproval into your ear as you're pulled out of sight."];
