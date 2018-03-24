@@ -497,7 +497,7 @@ function respawn(respawnRoom) {
 function startCombat(opponent) {
   currentFoe = opponent;
   changeMode("combat");
-  update(opponent.startCombat(player));
+  update(opponent.startCombat(player).concat([newline]));
 }
 
 function attackClicked(index) {
@@ -529,8 +529,11 @@ function attackClicked(index) {
       }
     }
 
-    if (currentFoe.status != undefined)
-      update(currentFoe.status());
+    if (currentFoe.status != undefined) {
+      let status = currentFoe.status();
+      if (status.length > 0)
+        update(status.concat([newline]));
+    }
   }
 }
 

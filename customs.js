@@ -1681,6 +1681,16 @@ function lalimStruggle(predator) {
 
 /* POOJAWA */
 
+function PoojawaEncounter() {
+  GameObject.call(this, "Poojawa");
+  this.actions.push({
+    name: "Poojawa",
+    action: function() {
+      startCombat(new Poojawa());
+    }
+  });
+}
+
 function Poojawa() {
   Creature.call(this, "Poojawa", 20, 40, 30);
 

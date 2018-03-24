@@ -142,9 +142,9 @@ let locationsSrc = [
         "dir": SOUTH,
         "desc": "You step out of the bar"
       }
-    ],    
+    ],
     "objs": [
-
+      PoojawaEncounter
     ]
   },
   {
