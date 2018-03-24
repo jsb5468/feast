@@ -421,6 +421,7 @@ function update(lines=[]) {
     log.appendChild(div);
   }
 
+
   log.scrollTop = log.scrollHeight;
   updateDisplay();
 }
@@ -501,6 +502,7 @@ function startCombat(opponent) {
 }
 
 function attackClicked(index) {
+  clearScreen();
   update(playerAttacks[index].attack(currentFoe).concat([newline]));
 
   if (currentFoe.health <= 0) {

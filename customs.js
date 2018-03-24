@@ -1973,7 +1973,7 @@ function poojawaPlayerCaughtOral(player) {
 function poojawaPlayerCaughtTail(player) {
   return {
     name: "Rub her tails",
-    desc: "Why not just give them a fewpets?",
+    desc: "Why not just give them a few pets?",
     attack: function(poojawa) {
       poojawa.flags.tail += 1;
       return ["You reach out at one of Poojawa's swaying tails, stroking along soft fur and sneaking your hand into the slackeend maw. So soft..."];
