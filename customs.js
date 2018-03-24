@@ -1719,6 +1719,8 @@ function Poojawa() {
 
   this.attacks.push(poojawaUnbirthPull(this));
   this.attacks.push(poojawaUnbirthPush(this));
+  this.attacks.push(poojawaUnbirthClench(this));
+  this.attacks.push(poojawaUnbirthOrgasm(this));
   this.attacks.push(poojawaUnbirthLastPull(this));
 
   this.attacks.push(poojawaUnbirthedDigest(this));
@@ -1776,6 +1778,7 @@ function Poojawa() {
   this.flags.oral = 0;
   this.flags.unbirth = 1;
   this.flags.progress = 0;
+  this.flags.arousal = 0;
 
   this.startCombat = function(player) {
     player.flags.teases = 0;
@@ -2100,13 +2103,14 @@ function poojawaCaughtUnbirth(poojawa) {
       }
     ],
     priority: 1,
-    weight: function(poojawa, player) { return player.prefs.vore.unbirth * (0.5 + poojawa.flags.unbirth / 6); }
+    weight: function(poojawa, player) { return player.prefs.vore.unbirth * (0.5 + Math.pow(poojawa.flags.unbirth,2) / 6); }
   };
 }
 
 function poojawaUnbirthPull(poojawa) {
   return {
     attackPlayer: function(player) {
+      poojawa.flags.arousal += 1;
       poojawa.flags.progress += 1;
       return ["A powerful ripple of muscle drags you deeper."];
     },
@@ -2123,9 +2127,29 @@ function poojawaUnbirthPull(poojawa) {
   };
 }
 
+function poojawaUnbirthClench(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.arousal += 2;
+      return ["Muscular walls clench and crush in on you, grinding hard and eliciting a gasp from your captor."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "unbirth";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.progress > 1;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
 function poojawaUnbirthPush(poojawa) {
   return {
     attackPlayer: function(player) {
+      poojawa.flags.arousal += 4;
       poojawa.flags.progress -= 1;
       return ["Poojawa grips your ankles, yanking you part-way free and moaning in pleasure. You must feel so good..."];
     },
@@ -2139,6 +2163,25 @@ function poojawaUnbirthPush(poojawa) {
     ],
     priority: 1,
     weight: function(poojawa, player) { return 0.5; }
+  };
+}
+
+function poojawaUnbirthOrgasm(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.state = "unbirthed";
+      return ["Poojawa yowls in pleasure as she cums...and yanks you inside in a single, massive <i>glrpk</i> of unstoppable musckle. She flops onto her belly, panting and groaning as she rides down from that pleasurable high."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "unbirth";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.arousal >= 10;
+      }
+    ],
+    priority: 2,
+    weight: function(poojawa, player) { return 1; }
   };
 }
 
@@ -2204,7 +2247,7 @@ function poojawaCaughtOral(poojawa) {
       }
     ],
     priority: 1,
-    weight: function(poojawa, player) { return player.prefs.vore.oral * (0.5 + poojawa.flags.oral / 6); }
+    weight: function(poojawa, player) { return player.prefs.vore.oral * (0.5 +  Math.pow(poojawa.flags.oral,2) / 6); }
   };
 }
 
@@ -2265,7 +2308,7 @@ function poojawaCaughtTail(poojawa) {
       }
     ],
     priority: 1,
-    weight: function(poojawa, player) { return player.prefs.vore.tail * (0.5 + poojawa.flags.tail / 6); }
+    weight: function(poojawa, player) { return player.prefs.vore.tail * (0.5 +  Math.pow(poojawa.flags.tail,2) / 6); }
   };
 }
 
