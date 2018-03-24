@@ -516,6 +516,8 @@ function attackClicked(index) {
 
     if (player.health <= -100) {
       killingBlow = attack;
+      if (currentFoe.finishCombat != undefined)
+        update(currentFoe.finishCombat().concat([newline]));
       update(["You die..."]);
       respawn(respawnRoom);
     } else if (player.health <= 0) {

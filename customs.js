@@ -1718,6 +1718,7 @@ function Poojawa() {
   this.attacks.push(poojawaCaughtUnbirth(this));
 
   this.attacks.push(poojawaUnbirthPull(this));
+  this.attacks.push(poojawaUnbirthPush(this));
   this.attacks.push(poojawaUnbirthLastPull(this));
 
   this.attacks.push(poojawaUnbirthedDigest(this));
@@ -1779,6 +1780,19 @@ function Poojawa() {
   this.startCombat = function(player) {
     player.flags.teases = 0;
     return ["You gasp softly as a purple hand grips your shoulder - turning and stumbling back a few paces to see that sultry sabersune watching you with devious eyes. She's up to no good..."];
+  };
+
+  this.finishCombat = function() {
+    switch(this.flags.state) {
+      case "unbirthed":
+        return ["Poojawa moans and pants, both hands <i>squeeeezing</i> her swiftly flattening lower belly...and then she reaches orgasm. She yowls, hackles standing on end - dropping onto her knees and steadying her self with one hand as her other plunges into her gushing slit.",
+        newline,
+        "Your former body gushes out as a torrent of slick, musky femcum, every grind of fingers coaxing out a greater spurt than the last. As impressive as her display is, most of your remains never see the light of the day - absorbed into her womb, just another victim of her endless lust..."];
+      case "stomach":
+        return ["Poojawa coos and grinds on her gut with both hands. You're barely conscious, lost among her sultry depths...and as she rolls over, the pressure becomes too much to bear.",
+        newline,
+        "You collapse, melting away and swiftly becoming a part of the sabresune's body."];
+    }
   };
 
   this.status = function(player) {
@@ -2109,6 +2123,25 @@ function poojawaUnbirthPull(poojawa) {
   };
 }
 
+function poojawaUnbirthPush(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.progress -= 1;
+      return ["Poojawa grips your ankles, yanking you part-way free and moaning in pleasure. You must feel so good..."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "unbirth";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.progress > 1;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 0.5; }
+  };
+}
+
 function poojawaUnbirthLastPull(poojawa) {
   return {
     attackPlayer: function(player) {
@@ -2132,7 +2165,16 @@ function poojawaUnbirthedDigest(poojawa) {
   return {
     attackPlayer: function(player) {
       player.health -= 50;
-      return ["Poojawa murmurs with pleasure as she feels you squirm in her womb. Your body slowly softens as she takes you..."];
+      if (player.health > 0) {
+        return pickRandom([["Poojawa murmurs with pleasure as she feels you squirm in her womb. Your body slowly softens as she takes you..."],
+        ["Hot, slick flesh grinds over your body. Every clench elicits another coo of lust from your predator."],
+        ]);
+      }
+      else {
+        return pickRandom([["The heat is overwhelming - powerful lust making short work of your tender body as you start to melt into femcum."],
+        ["You can't find the energy to struggle as Poojawa grinds your softening bulge against a barstool...breaking you down at a frightening pace."]
+        ]);
+      }
     },
     requirements: [
       function(poojawa, player) {
@@ -2140,7 +2182,8 @@ function poojawaUnbirthedDigest(poojawa) {
       }
     ],
     priority: 1,
-    weight: function(poojawa, player) { return 1; }
+    weight: function(poojawa, player) { return 1; },
+    gameover: function() { return "Melted into femcum in Poojawa's depths"; }
   };
 }
 
