@@ -24,10 +24,22 @@ let killingBlow = null;
 let deaths = [];
 let respawnRoom;
 
+let noLog = false;
+
 let MIDNIGHT = 0;
 let MORNING = 21600;
 let NOON = 43200;
 let EVENING = 64800;
+
+function toggleLog() {
+  noLog = !noLog;
+
+  if (noLog) {
+    document.getElementById("log-button").innerHTML = "Log: Disabled";
+  } else {
+    document.getElementById("log-button").innerHTML = "Log: Enabled";
+  }
+}
 
 function join(things) {
   if (things.length == 1) {
@@ -281,6 +293,8 @@ function renderTime(time) {
 }
 
 function move(direction) {
+  if (noLog)
+    clearScreen();
   let target = currentRoom.exits[direction];
   if (target == null) {
     alert("Tried to move to an empty room!");
@@ -323,6 +337,7 @@ function start() {
   document.getElementById("create").style.display = "none";
   document.getElementById("game").style.display = "block";
   document.getElementById("stat-button-status").addEventListener("click", status, false);
+  document.getElementById("log-button").addEventListener("click", toggleLog, false);
   loadActions();
   loadCompass();
   loadDialog();
@@ -502,7 +517,8 @@ function startCombat(opponent) {
 }
 
 function attackClicked(index) {
-  clearScreen();
+  if (noLog)
+    clearScreen();
   update(playerAttacks[index].attack(currentFoe).concat([newline]));
 
   if (currentFoe.health <= 0) {
@@ -546,6 +562,8 @@ function attackHovered(index) {
 }
 
 function struggleClicked(index) {
+  if (noLog)
+    clearScreen();
   let struggle = struggles[index];
 
   let result = struggle.struggle(player);
@@ -578,6 +596,8 @@ function struggleHovered(index) {
 }
 
 function startDialog(dialog) {
+  if (noLog)
+    clearScreen();
   currentDialog = dialog;
   changeMode("dialog");
   update(currentDialog.text.concat([newline]));
