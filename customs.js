@@ -1697,21 +1697,37 @@ function Poojawa() {
 
   this.attacks.push(poojawaBeckonCatch(this));
   this.attacks.push(poojawaBeckonCaught(this));
+  this.attacks.push(poojawaBeckonTeased(this));
+
+  this.attacks.push(poojawaCaughtLick(this));
+  this.attacks.push(poojawaCaughtTailLick(this));
+  this.attacks.push(poojawaCaughtGrind(this));
+
+  //this.attacks.push(poojawaCaughtOral(this));
+  //this.attacks.push(poojawaCaughtTail(this));
+  this.attacks.push(poojawaCaughtUnbirth(this));
+
+  this.attacks.push(poojawaUnbirthPull(this));
+  this.attacks.push(poojawaUnbirthLastPull(this));
+
+  this.attacks.push(poojawaUnbirthedDigest(this));
 
   this.backupAttack = new pass(this);
 
   this.playerAttacks = [];
 
-  this.playerAttacks.push(poojawaPlayerForward);
-  this.playerAttacks.push(poojawaPlayerStay);
-  this.playerAttacks.push(poojawaPlayerBackward);
-  /*this.playerAttacks.push(poojawaPlayerFlee);
+  this.playerAttacks.push(poojawaPlayerBeckonForward);
+  this.playerAttacks.push(poojawaPlayerBeckonStay);
+  this.playerAttacks.push(poojawaPlayerBeckonBackward);
+  ///this.playerAttacks.push(poojawaPlayerFlee);
 
-  this.playerAttacks.push(poojawaPlayerPinnedSubmit);
-  this.playerAttacks.push(poojawaPlayerPinnedStruggle);
+  /*this.playerAttacks.push(poojawaPlayerCaughtOral);
+  this.playerAttacks.push(poojawaPlayerCaughtTail);
+  this.playerAttacks.push(poojawaPlayerCaughtUnbirth);
+  this.playerAttacks.push(poojawaPlayerCaughtStruggle);*/
 
-  this.playerAttacks.push(poojawaPlayerUnbirthSubmit);
-  this.playerAttacks.push(poojawaPlayerUnbirthStruggle);*/
+  //this.playerAttacks.push(poojawaPlayerUnbirthSubmit);
+  //this.playerAttacks.push(poojawaPlayerUnbirthStruggle);
 
   this.digests = [];
 
@@ -1727,21 +1743,55 @@ function Poojawa() {
 
   this.consts.caughtDist = 0;
   this.consts.startDist = 3;
-  this.consts.escapeDist = 10;
+  this.consts.escapeDist = 8;
+  this.consts.maxTease = 5;
 
   this.flags.distance = this.consts.startDist;
 
   this.flags.state = "beckon";
+  this.flags.tail = 0;
+  this.flags.oral = 0;
+  this.flags.unbirth = 1;
+  this.flags.progress = 0;
 
   this.startCombat = function(player) {
     player.flags.teases = 0;
     return ["You gasp softly as a purple hand grips your shoulder - turning and stumbling back a few paces to see that sultry sabersune watching you with devious eyes. She's up to no good..."];
   };
+
+  this.status = function(player) {
+    switch(this.flags.state) {
+      case "beckon":
+        if (this.flags.distance == 1) {
+          return ["The sabersune is one step away from taking you - alluring scents and sensual body so very close to yours..."];
+        } else if (this.flags.distance <= 3) {
+          return ["You're uncomfortably close to your predator."];
+        } else if (this.flags.distance <= 5) {
+          return ["There's a little room between you and Poojawa now...but not enough."];
+        } else {
+          return ["You're almost far enough to make a break for it. Surely she couldn't catch you now...right?"];
+        }
+        break;
+      case "caught":
+        return [];
+      case "unbirth":
+        if (this.flags.progress == 1) {
+          return ["Your head is stuffed into Poojawa's snatch. The velvety walls want the rest of you inside her...and they want you <i>now.</i>"];
+        } else if (this.flags.progress == 2 ) {
+          return ["She's claimed your upper body. Your head is grinding against the entrance to her hot, humid womb."];
+        } else {
+          return ["Only your shins and feet hang from the gorgeous predator's slit. Your head and chest are being gripped and squeezed by the sabersune's womb."];
+        }
+        break;
+      case "unbirthed":
+        return [];
+    }
+  };
 }
 
 /* PLAYER MOVES */
 
-function poojawaPlayerForward(player) {
+function poojawaPlayerBeckonForward(player) {
   return {
     name: "Step forward",
     desc: "Get a little closer...",
@@ -1757,7 +1807,7 @@ function poojawaPlayerForward(player) {
   };
 }
 
-function poojawaPlayerStay(player) {
+function poojawaPlayerBeckonStay(player) {
   return {
     name: "Stand still",
     desc: "Just wait...",
@@ -1772,11 +1822,16 @@ function poojawaPlayerStay(player) {
   };
 }
 
-function poojawaPlayerBackward(player) {
+function poojawaPlayerBeckonBackward(player) {
   return {
     name: "Step backward",
     desc: "Get a little further...",
     attack: function(poojawa) {
+      if (player.flags.teases > 0) {
+        if (Math.random() * poojawa.consts.maxTease < player.flags.teases) {
+          return ["A lump forms in your throat - you're helpless, transfixed by the predatory sabersune's teases and threats."];
+        }
+      }
       poojawa.flags.distance += 1;
       return ["Wary for any surprises from the sabersune, you take a nervous step back."];
     },
@@ -1817,7 +1872,7 @@ function poojawaBeckonTease(poojawa) {
       }
     ],
     priority: 1,
-    weight: function(poojawa, player) { return 1; }
+    weight: function(poojawa, player) { return player.flags.teases >= poojawa.consts.maxTease ? 0 : 1 - player.flags.teases / 10; }
   };
 }
 
@@ -1860,7 +1915,9 @@ function poojawaBeckonCatch(poojawa) {
   return {
     attackPlayer: function(player) {
       poojawa.flags.state = "caught";
-      return ["One last step, and the sabersune is on top of you. She grips you with both hands, pulling you in close and stuffing your muzzle into her faintly-scented bosom. You squirm and struggle, but can do little as she pulls you away from the noisy bar and into a secluded alcove. \"Shhh, darling,\" she murmurs, clicking her tongue at your muffled protests."];
+      return ["One last step, and the sabersune is on top of you. She grips you with both hands, pulling you in close and stuffing your muzzle into her faintly-scented bosom. You squirm and struggle, but can do little as she pulls you away from the noisy bar and into a secluded alcove.",
+      newline,
+      "\"Shhh, darling,\" she murmurs, clicking her tongue at your muffled protests. \"Be good.\""];
     },
     requirements: [
       function(poojawa, player) {
@@ -1879,7 +1936,9 @@ function poojawaBeckonCaught(poojawa) {
   return {
     attackPlayer: function(player) {
       poojawa.flags.state = "caught";
-      return ["You stumbled forwards and into Poojawa's grasp. She grips you with both hands, pulling you in close and stuffing your muzzle into her faintly-scented bosom. You squirm and struggle, but can do little as she pulls you away from the noisy bar and into a secluded alcove. \"Shhh, darling,\" she murmurs, clicking her tongue at your muffled protests."];
+      return ["You stumble forwards and into Poojawa's grasp. She grips you with both hands, pulling you in close and stuffing your muzzle into her faintly-scented bosom. You squirm and struggle, but can do little as she pulls you away from the noisy bar and into a secluded alcove.",
+      newline,
+      "\"Shhh, darling,\" she murmurs, clicking her tongue at your muffled protests. \"Be good.\""];
     },
     requirements: [
       function(poojawa, player) {
@@ -1890,6 +1949,155 @@ function poojawaBeckonCaught(poojawa) {
       }
     ],
     priority: 2,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaBeckonTeased(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.state = "caught";
+      return ["You freeze up, completely transfixed by the beautiful sabersune. Her approach is slow, agonizing even - and there's nothing you can do about it. She grips you with both hands, pulling you in close and stuffing your muzzle into her faintly-scented bosom. You squirm and struggle, but can do little as she pulls you away from the noisy bar and into a secluded alcove.",
+      newline,
+      "\"Shhh, darling,\" she murmurs, clicking her tongue at your muffled protests. \"Be good.\""];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "beckon";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.distance > 0;
+      },
+      function(poojawa, player) {
+        return player.flags.teases >= poojawa.consts.maxTease;
+      }
+    ],
+    priority: 2,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaCaughtLick(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.oral += 1;
+      return ["The sabersune's velvety tongue drags along your thigh, her dripping slit held firmly in your face as she tastes you over."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "caught";
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return player.prefs.vore.oral * (1 + poojawa.flags.oral / 3); }
+  };
+}
+
+function poojawaCaughtTailLick(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.tail += 1;
+      return ["Slick flesh envelops your arms as two of the sabersune's tails get a little nibby."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "caught";
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return player.prefs.vore.tail * (1 + poojawa.flags.tail / 3); }
+  };
+}
+
+function poojawaCaughtGrind(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.unbirth += 1;
+      return ["Poojawa's hips grind down over your face, smearing you in her musky scents and sending a shiver up her spine."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "caught";
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return player.prefs.vore.unbirth * (1 + poojawa.flags.unbirth / 3); }
+  };
+}
+
+function poojawaCaughtUnbirth(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      changeBackground("eaten");
+      poojawa.flags.progress = 1;
+      poojawa.flags.state = "unbirth";
+      return ["The sune giggles, then slams her hips down over your head. A loud, wet <i>shllllck</i> fills your ears as you're stuffed into Poojawa's nethers, a spurt of nectar splattering over the wall from the sheer <i>strength</i> of that thrust.",
+      newline,
+      "Your nostrils flood with her scent; you can see only dim, red depths."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "caught";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.unbirth > 3;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return player.prefs.vore.unbirth * (0.5 + poojawa.flags.unbirth / 6); }
+  };
+}
+
+function poojawaUnbirthPull(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.progress += 1;
+      return ["A powerful ripple of muscle drags you deeper."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "unbirth";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.progress < 3;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaUnbirthLastPull(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.state = "unbirthed";
+      return ["One last lustful squeeze, and your body slips into the sabersune's womb. She coos and sits up, slender fingers playing over her bulging lower belly as she toys with you..."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "unbirth";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.progress >= 3;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaUnbirthedDigest(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      player.health -= 50;
+      return ["Poojawa murmurs with pleasure as she feels you squirm in her womb. Your body slowly softens as she takes you..."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "unbirthed";
+      }
+    ],
+    priority: 1,
     weight: function(poojawa, player) { return 1; }
   };
 }

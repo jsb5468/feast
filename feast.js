@@ -448,6 +448,27 @@ function changeMode(newMode) {
   updateDisplay();
 }
 
+// make it look like eaten mode, even when in combat
+function changeBackground(newMode) {
+  let body = document.querySelector("body");
+  document.getElementById("foe-stats").style.display = "none";
+  body.className = "";
+  switch(newMode) {
+    case "explore":
+    case "dialog":
+      body.classList.add("explore");
+      break;
+    case "combat":
+      body.classList.add("combat");
+      document.getElementById("foe-stats").style.display = "block";
+      break;
+    case "eaten":
+      body.classList.add("eaten");
+      document.getElementById("foe-stats").style.display = "block";
+      break;
+  }
+}
+
 function respawn(respawnRoom) {
 
   if (killingBlow.gameover == undefined) {
@@ -507,6 +528,9 @@ function attackClicked(index) {
         respawn(respawnRoom);
       }
     }
+
+    if (currentFoe.status != undefined)
+      update(currentFoe.status());
   }
 }
 
