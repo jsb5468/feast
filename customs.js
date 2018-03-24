@@ -1727,6 +1727,11 @@ function Poojawa() {
   this.attacks.push(poojawaOralPull(this));
   this.attacks.push(poojawaOralLastPull(this));
 
+  this.attacks.push(poojawaCaughtTail(this));
+
+  this.attacks.push(poojawaTailPull(this));
+  this.attacks.push(poojawaTailLastPull(this));
+
   this.attacks.push(poojawaStomachDigest(this));
 
   this.backupAttack = new pass(this);
@@ -1809,6 +1814,15 @@ function Poojawa() {
           return ["Ravenous hunger has taken all but your head - teasing licks working over your face as your body is gripped by the predator's tight body."];
         } else {
           return ["Everything is tight, hot, overwhelming. She has you - head in her throat, legs already in her gut. Not much left to do but...give in."];
+        }
+        break;
+      case "tail":
+        if (this.flags.progress == 1) {
+          return ["Your limbs and face are clearly visible in the sabersune's bulging tail."];
+        } else if (this.flags.progress == 2 ) {
+          return ["You're deeper now...deeper in that hot, tight tail. Muscles squeeze and squelch over your delicious body."];
+        } else {
+          return ["You're just a bulge now, hanging low in a greedy tail and about to plunge into Poojawa's belly."];
         }
         break;
       case "stomach":
@@ -2179,6 +2193,67 @@ function poojawaOralLastPull(poojawa) {
     requirements: [
       function(poojawa, player) {
         return poojawa.flags.state == "oral";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.progress >= 3;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaCaughtTail(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      changeBackground("eaten");
+      poojawa.flags.progress = 1;
+      poojawa.flags.state = "tail";
+      return ["Your vision goes dark, upper body smothered in flesh as one of Poojawa's ravenous tails takes you in. Your squirms do little; you are food.",
+      newline,
+      "A powerful gulp yanks you in deep, leaving your wriggling toes hanging from that heavy tail."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "caught";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.tail > 3;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return player.prefs.vore.tail * (0.5 + poojawa.flags.tail / 6); }
+  };
+}
+
+function poojawaTailPull(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.progress += 1;
+      return ["A powerful ripple of muscle drags you deeper into the sabersune's tail."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "tail";
+      },
+      function(poojawa, player) {
+        return poojawa.flags.progress < 3;
+      }
+    ],
+    priority: 1,
+    weight: function(poojawa, player) { return 1; }
+  };
+}
+
+function poojawaTailLastPull(poojawa) {
+  return {
+    attackPlayer: function(player) {
+      poojawa.flags.state = "stomach";
+      return ["A final swallow pulls you past the sabersune's hips and into her powerful stomach...stuffing you into a tight embrace of slick, slimy muscle."];
+    },
+    requirements: [
+      function(poojawa, player) {
+        return poojawa.flags.state == "tail";
       },
       function(poojawa, player) {
         return poojawa.flags.progress >= 3;
