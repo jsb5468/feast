@@ -278,6 +278,7 @@ function advanceTime(amount) {
   player.restoreStamina(amount);
   update(player.stomach.digest(amount));
   update(player.butt.digest(amount));
+  update(player.balls.digest(amount));
 }
 
 function renderTime(time) {

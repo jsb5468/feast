@@ -7,6 +7,7 @@ function Creature(name = "Creature", str = 10, dex = 10, con = 10) {
   this.bowels = new Bowels();
   this.stomach = new Stomach(this, this.bowels);
   this.butt = new Butt(this, this.bowels, this.stomach);
+  this.balls = new Balls(this);
   this.attacks = [];
 
   this.baseStr = str;
@@ -425,6 +426,32 @@ function WasteContainer(name) {
 
   this.add = function(amount) {
     this.fullness += amount;
+  };
+
+  this.finish = function(prey) {
+    if (prey.prefs.scat)
+      this.contents.push(prey);
+  };
+}
+
+function Balls(owner) {
+  Container.call(this, owner);
+  WasteContainer.call(this, "Balls");
+
+  this.describeDamage = function(prey) {
+    return "Your balls slosh as they wear down the " + prey.description("the") + " trapped within.";
+  };
+
+  this.describeKill = function(prey) {
+    return prey.description("The") + "'s struggles cease, overpowered by your cum-filled balls.";
+  };
+
+  this.describeFinish = function(prey) {
+    return "Your churning balls have melted " + prey.description("a") + " down to musky cum.";
+  };
+
+  this.fill = function(amount) {
+    this.add(amount);
   };
 
   this.finish = function(prey) {
