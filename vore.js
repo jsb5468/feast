@@ -284,10 +284,8 @@ function Container(owner) {
 
   // kg/sec
   this.digestRate = 80 / 8640;
-}
 
-Container.prototype = {
-  digest: function(time) {
+  this.digest = function(time) {
     let lines = [];
     this.contents.forEach(function(prey) {
       if (prey.health > 0) {
@@ -326,16 +324,16 @@ Container.prototype = {
     }, this);
 
     return lines;
-  },
+  };
 
-  feed: function(prey) {
+  this.feed = function(prey) {
     this.contents.push(prey);
-  },
+  };
 
-  fullness: function() {
+  this.fullness = function() {
     return this.contents.reduce((total, prey) => total + prey.mass, 0);
-  }
-};
+  };
+}
 
 function Stomach(owner, bowels) {
   Container.call(this, owner);
@@ -363,20 +361,20 @@ function Stomach(owner, bowels) {
   };
 }
 
-Stomach.prototype = Object.create(Container.prototype);
-
 function Butt(owner, bowels, stomach) {
   Container.call(this, owner);
 
   this.bowels = bowels;
   this.stomach = stomach;
 
+  this.parentDigest = this.digest;
+
   this.digest = function(time) {
     this.contents.forEach(function(x) {
       x.timeInButt += time;
     });
 
-    let lines = Container.prototype.digest.call(this, time);
+    let lines = this.parentDigest(time);
 
     let pushed = this.contents.filter(prey => prey.timeInButt >= 60 * 30);
 
@@ -402,9 +400,11 @@ function Butt(owner, bowels, stomach) {
     return "That delicious " + prey.description() + " didn't even make it to your stomach...now they're gone.";
   };
 
+  this.parentFeed = this.feed;
+
   this.feed = function(prey) {
     prey.timeInButt = 0;
-    Container.prototype.feed(prey);
+    this.parentFeed(prey);
   };
 
   this.fill = function(amount) {
@@ -415,8 +415,6 @@ function Butt(owner, bowels, stomach) {
     this.bowels.finish(prey);
   };
 }
-
-Butt.prototype = Object.create(Container.prototype);
 
 function WasteContainer(name) {
   this.name = name;
