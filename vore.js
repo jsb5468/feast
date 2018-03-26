@@ -4,10 +4,6 @@ function Creature(name = "Creature", str = 10, dex = 10, con = 10) {
   this.name = name;
 
   this.mass = 80;
-  this.bowels = new Bowels();
-  this.stomach = new Stomach(this, this.bowels);
-  this.butt = new Butt(this, this.bowels, this.stomach);
-  this.balls = new Balls(this);
   this.attacks = [];
 
   this.baseStr = str;
@@ -89,6 +85,7 @@ function Creature(name = "Creature", str = 10, dex = 10, con = 10) {
       anal: 1,
       cock: 1,
       unbirth: 1,
+      breast: 1,
       hard: 1,
       soul: 1
     }
@@ -138,28 +135,40 @@ function Player(name = "Player") {
     return this.stomach.fullness() + this.butt.fullness();
   };
 
-  this.attacks.push(new punchAttack(this));
-  this.attacks.push(new flankAttack(this));
+  this.attacks.push(punchAttack(this));
+  this.attacks.push(flankAttack(this));
 
-  this.attacks.push(new grapple(this));
-  this.attacks.push(new grappleSubdue(this));
-  this.attacks.push(new grappleDevour(this));
-  this.attacks.push(new grappleAnalVore(this));
-  this.attacks.push(new grappleRelease(this));
+  this.attacks.push(grapple(this));
+  this.attacks.push(grappleSubdue(this));
+  this.attacks.push(grappleDevour(this));
+  this.attacks.push(grappleAnalVore(this));
+  this.attacks.push(grappleCockVore(this));
+  this.attacks.push(grappleUnbirth(this));
+  this.attacks.push(grappleBreastVore(this));
+  this.attacks.push(grappleRelease(this));
 
-  this.attacks.push(new grappledStruggle(this));
-  this.attacks.push(new grappledReverse(this));
+  this.attacks.push(grappledStruggle(this));
+  this.attacks.push(grappledReverse(this));
 
-  this.attacks.push(new shrunkGrapple(this));
-  this.attacks.push(new shrunkSwallow(this));
-  this.attacks.push(new shrunkStomp(this));
+  this.attacks.push(shrunkGrapple(this));
+  this.attacks.push(shrunkSwallow(this));
+  this.attacks.push(shrunkStomp(this));
 
-  this.attacks.push(new pass(this));
-  this.attacks.push(new flee(this));
+  this.attacks.push(pass(this));
+  this.attacks.push(flee(this));
 
-  this.backupAttack = new pass(this);
+  this.backupAttack = pass(this);
 
   this.cash = 100;
+
+  this.bowels = new Bowels();
+  this.stomach = new Stomach(this, this.bowels);
+  this.butt = new Butt(this, this.bowels, this.stomach);
+  this.balls = new Balls(this);
+  this.womb = new Womb(this);
+  this.breasts = new Breasts(this);
+
+  this.parts = {};
 }
 
 function Anthro(name = "Anthro") {
@@ -422,7 +431,7 @@ function WasteContainer(name) {
 
   this.fullness = 0;
 
-  this.contents = [];
+  this.digested = [];
 
   this.add = function(amount) {
     this.fullness += amount;
@@ -430,7 +439,7 @@ function WasteContainer(name) {
 
   this.finish = function(prey) {
     if (prey.prefs.scat)
-      this.contents.push(prey);
+      this.digested.push(prey);
   };
 }
 
@@ -456,7 +465,59 @@ function Balls(owner) {
 
   this.finish = function(prey) {
     if (prey.prefs.scat)
-      this.contents.push(prey);
+      this.digested.push(prey);
+  };
+}
+
+function Womb(owner) {
+  Container.call(this, owner);
+  WasteContainer.call(this, "Womb");
+
+  this.describeDamage = function(prey) {
+    return "You shiver as " + prey.description("the") + " squrims within your womb.";
+  };
+
+  this.describeKill = function(prey) {
+    return "Your womb clenches and squeezes, overwhelming " + prey.description("the") + " trapped within.";
+  };
+
+  this.describeFinish = function(prey) {
+    return "Your womb dissolves " + prey.description("a") + " into femcum.";
+  };
+
+  this.fill = function(amount) {
+    this.add(amount);
+  };
+
+  this.finish = function(prey) {
+    if (prey.prefs.scat)
+      this.digested.push(prey);
+  };
+}
+
+function Breasts(owner) {
+  Container.call(this, owner);
+  WasteContainer.call(this, "Breasts");
+
+  this.describeDamage = function(prey) {
+    return "Your breasts slosh from side to side, steadily softening " + prey.description("the") + " trapped within.";
+  };
+
+  this.describeKill = function(prey) {
+    return prey.description("The") + " gives one last mighty shove...and then slumps back in your breasts.";
+  };
+
+  this.describeFinish = function(prey) {
+    return "Your breasts have broken " + prey.description("a") + " down to creamy milk.";
+  };
+
+  this.fill = function(amount) {
+    this.add(amount);
+  };
+
+  this.finish = function(prey) {
+    if (prey.prefs.scat)
+      this.digested.push(prey);
   };
 }
 

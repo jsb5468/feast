@@ -279,6 +279,8 @@ function advanceTime(amount) {
   update(player.stomach.digest(amount));
   update(player.butt.digest(amount));
   update(player.balls.digest(amount));
+  update(player.womb.digest(amount));
+  update(player.breasts.digest(amount));
 }
 
 function renderTime(time) {
@@ -386,12 +388,23 @@ function applySettings(settings) {
       if (key.match(/prefs/)) {
         let tokens = key.split("-");
         let pref = player.prefs;
+
+        // construct missing child dictionaries if needed :)
+
         pref = tokens.slice(1,-1).reduce(function(pref, key) {
           if (pref[key] == undefined)
             pref[key] = {};
           return pref[key];
         }, pref);
         pref[tokens.slice(-1)[0]] = settings[key];
+      } else if(key.match(/parts/)) {
+        let tokens = key.split("-");
+        player.parts[tokens[1]] = settings[key] >= 1;
+
+        if (player.prefs.pred == undefined)
+          player.prefs.pred = {};
+
+        player.prefs.pred[tokens[1]] = settings[key] >= 2;
       }
     }
   }
@@ -503,7 +516,7 @@ function respawn(respawnRoom) {
   player.clear();
   player.stomach.contents = [];
   player.butt.contents = [];
-  player.bowels.contents = [];
+  player.bowels.digested = [];
   player.bowels.fullness = 0;
   advanceTime(Math.floor(86400 / 2 * (Math.random() * 0.5 - 0.25 + 1)));
   changeMode("explore");
@@ -729,6 +742,99 @@ function status() {
     });
     lines.push(newline);
   }
+
+  if (player.parts.cock) {
+    if (player.balls.contents.length > 0) {
+      lines.push("Your balls are bulging with prey.");
+      player.balls.contents.map(function(prey) {
+        let state = "";
+        let healthRatio = prey.health / prey.maxHealth;
+
+        if (healthRatio > 0.75) {
+          state = "is writhing in your sac";
+        } else if (healthRatio > 0.5) {
+          state = "is struggling in a pool of cum";
+        } else if (healthRatio > 0.25) {
+          state = "is starting to turn soft";
+        } else if (healthRatio > 0) {
+          state = "is barely visible anymore";
+        } else {
+          state = "has succumbed to your balls";
+        }
+
+        lines.push(prey.description("A") + " " + state);
+      });
+      lines.push(newline);
+    } else {
+      if (player.balls.fullness > 0) {
+        lines.push("Your balls are heavy with cum.");
+        lines.push(newline);
+      }
+    }
+  }
+
+  if (player.parts.unbirth) {
+    if (player.womb.contents.length > 0) {
+      lines.push("Your slit drips, hinting at prey trapped within.");
+      player.womb.contents.map(function(prey) {
+        let state = "";
+        let healthRatio = prey.health / prey.maxHealth;
+
+        if (healthRatio > 0.75) {
+          state = "is thrashing in your womb";
+        } else if (healthRatio > 0.5) {
+          state = "is pressing out inside your lower belly";
+        } else if (healthRatio > 0.25) {
+          state = "is still trying to escape";
+        } else if (healthRatio > 0) {
+          state = "is barely moving";
+        } else {
+          state = "is dissolving into femcum";
+        }
+
+        lines.push(prey.description("A") + " " + state);
+      });
+      lines.push(newline);
+    } else {
+      if (player.womb.fullness > 0) {
+        lines.push("Your slit drips, holding back a tide of femcum.");
+        lines.push(newline);
+      }
+    }
+  }
+
+  if (player.parts.breast) {
+    if (player.breasts.contents.length > 0) {
+      lines.push("Your breasts are bulging with prey.");
+      player.breasts.contents.map(function(prey) {
+        let state = "";
+        let healthRatio = prey.health / prey.maxHealth;
+
+        if (healthRatio > 0.75) {
+          state = "is struggling to escape";
+        } else if (healthRatio > 0.5) {
+          state = "is putting up a fight";
+        } else if (healthRatio > 0.25) {
+          state = "is starting to weaken";
+        } else if (healthRatio > 0) {
+          state = "is struggling to keep their head free of your milk";
+        } else {
+          state = "has succumbed, swiftly melting into milk";
+        }
+
+        lines.push(prey.description("A") + " " + state);
+      });
+      lines.push(newline);
+    } else {
+      if (player.breasts.fullness > 0) {
+        lines.push("Your breasts slosh with milk.");
+        lines.push(newline);
+      }
+    }
+  }
+
+
+
 
   update(lines);
 }

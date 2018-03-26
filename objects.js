@@ -37,11 +37,11 @@ function Toilet() {
         player.bowels.fullness = 0;
       }
 
-      if (player.bowels.contents.length > 0) {
-        lines.push("The remains of " + join(player.bowels.contents) + " empty into the sewers as you flush them away.");
+      if (player.bowels.digested.length > 0) {
+        lines.push("The remains of " + join(player.bowels.digested) + " empty into the sewers as you flush them away.");
       }
 
-      player.bowels.contents = [];
+      player.bowels.digested = [];
 
       update(lines);
     },

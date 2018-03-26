@@ -226,6 +226,96 @@ function grappleAnalVore(attacker) {
   };
 }
 
+function grappleCockVore(attacker) {
+  return {
+    name: "Cock Vore",
+    desc: "Try to shove your opponent down your shaft.",
+    attack: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-25);
+        attacker.balls.feed(defender);
+        defender.flags.grappled = false;
+        attacker.cash += defender.cash;
+        changeMode("explore");
+        return ["You gasp with pleasure as you shove " + defender.description("the") + "'s head into your throbbing shaft, quickly pulling them down into your churning balls.", newline, "You notice their wallet with $" + defender.cash + " lying on the ground. Score!"];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-10);
+        return ["Your grasp and shove " + defender.description("the") + ", but they manage to avoid becoming " + attacker.species + " chow."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true ; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.cock > 0; },
+      function(attacker, defender) { return attacker.prefs.pred.cock; }
+    ],
+    priority: 1,
+  };
+}
+
+function grappleUnbirth(attacker) {
+  return {
+    name: "Unbirth",
+    desc: "Try to shove your opponent into your snatch.",
+    attack: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-25);
+        attacker.womb.feed(defender);
+        defender.flags.grappled = false;
+        attacker.cash += defender.cash;
+        changeMode("explore");
+        return [defender.description("The") + " is powerless to resist as you stuff them head-first into your dripping sex. Ripples of pleasure roll up your spine as rhythmic clenches pull them deeper and deeper, eventually imprisoning your prey into your hot, tight womb.", newline, "You notice their wallet with $" + defender.cash + " lying on the ground. Score!"];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-10);
+        return ["Your grasp and shove " + defender.description("the") + ", but they manage to avoid becoming a " + attacker.species + " toy."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true ; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.unbirth > 0; },
+      function(attacker, defender) { return attacker.prefs.pred.unbirth; }
+    ],
+    priority: 1,
+  };
+}
+
+function grappleBreastVore(attacker) {
+  return {
+    name: "Breast Vore",
+    desc: "Try to shove your opponent into your breasts.",
+    attack: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        attacker.changeStamina(-10);
+        defender.changeStamina(-25);
+        attacker.breasts.feed(defender);
+        defender.flags.grappled = false;
+        attacker.cash += defender.cash;
+        changeMode("explore");
+        return ["You grin and ram " + defender.description("the") + " against your bare chest, enveloping their head in your greedy breast! Before they can recover from the surprise, you swiftly stuff the rest of their squirming body inside.", newline, "You notice their wallet with $" + defender.cash + " lying on the ground. Score!"];
+      } else {
+        attacker.changeStamina(-25);
+        defender.changeStamina(-10);
+        return ["Your grasp and shove " + defender.description("the") + ", but they manage to avoid becoming " + attacker.species + " chow."];
+      }
+    }, requirements: [
+      function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true ; }
+    ], conditions: [
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.breast > 0; },
+      function(attacker, defender) { return attacker.prefs.pred.breast; }
+    ],
+    priority: 1,
+  };
+}
+
 function grappleRelease(attacker) {
   return {
     name: "Release",
