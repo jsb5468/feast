@@ -82,7 +82,7 @@ function Bed() {
         if (Math.random() < 0.33 && (time > EVENING)) {
           update(["You crawl into bed and fall asleep...",newline]);
           advanceTimeTo(MIDNIGHT);
-          startDialog(new LalimEncounter());
+          startDialog(new LoganPaulEncounter());
           return;
         }
       }
@@ -154,8 +154,8 @@ function VendingMachine() {
   });
 }
 
-function WildernessExplore(natureTrail) {
-  GameObject.call(this, "Explore the Wilderness");
+function SwampExplore(natureTrail) {
+  GameObject.call(this, "Explore the Swamp");
 
   this.actions.push({
     "name": "Explore",
@@ -163,16 +163,10 @@ function WildernessExplore(natureTrail) {
       let outcome = Math.random();
       advanceTime(60*15);
 
-      if (outcome < 0.25) {
+      if (outcome < 0.5) {
         moveToByName("Nature Trail", "You find your way back");
-      } else if (outcome < 0.35) {
-        startCombat(new Trance());
-      } else if (outcome < 0.45) {
-        startCombat(new Taluthus());
-      } else if (outcome < 0.55) {
-        startCombat(new Selicia());
       } else {
-        update(["You wander around for a bit, but haven't found your way out yet."]);
+        startCombat(new Shrek());
       }
     }
   });
@@ -180,17 +174,20 @@ function WildernessExplore(natureTrail) {
   this.actions.push({
     "name": "Look for trouble",
     "action": function() {
-      let outcome = Math.random();
       advanceTime(60*15);
-
-      if (outcome < 0.33) {
-        startCombat(new Trance());
-      } else if (outcome < 0.66) {
-        startCombat(new Taluthus());
-      } else {
-        startCombat(new Selicia());
-      }
+      startCombat(new Shrek());
     }
   });
 
+}
+
+function LoganPaulObj() {
+  GameObject.call(this, "Is that LOGAN PAUL?");
+
+  this.actions.push({
+    "name": "Is that LOGAN PAUL?!",
+    "action": function() {
+      starTcombat(new LoganPaul());
+    }
+  })
 }

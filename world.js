@@ -194,24 +194,24 @@ let locationsSrc = [
         "desc": "You return to town."
       },
       {
-        "name": "Wilderness",
+        "name": "Swamp",
         "dir": SOUTH,
-        "desc": "You wander into the wilderness...and immediately get lost."
+        "desc": "You wander into the swamp...and immediately get lost."
       }
     ],
     "objs": [
       NatureTrailExercise,
-      GetaObj
+      LoganPaulObj
     ]
   },
   {
-    "name": "Wilderness",
+    "name": "Swamp",
     "desc": "Pretty spooky",
     "conn": [
 
     ],
     "objs": [
-      WildernessExplore
+      SwampExplore
     ]
   },
   {
@@ -247,7 +247,7 @@ let locationsSrc = [
     ],
     "hooks": [
       function() {
-        startCombat(new Fen());
+        startCombat(new Fam());
       }
     ]
   },
