@@ -201,7 +201,7 @@ let locationsSrc = [
     ],
     "objs": [
       NatureTrailExercise,
-      LoganPaulObj
+      JakePaulObj
     ]
   },
   {

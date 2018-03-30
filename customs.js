@@ -1,11 +1,11 @@
 /* AEZNON GETA COMMISSION */
 
-function LoganPaul() {
-  Creature.call(this, "Logan Paul", 5, 15, 10);
+function JakePaul() {
+  Creature.call(this, "Jake Paul", 5, 15, 10);
 
   this.hasName = true;
 
-  this.description = function() { return "Logan Paul"; };
+  this.description = function() { return "Jake Paul"; };
 
   this.attacks.push(new dab(this));
   this.attacks.push(new recklessDab(this));
@@ -16,7 +16,7 @@ function LoganPaul() {
   this.prefs.grapple = false;
   this.prefs.prey = false;
 
-  this.defeated = function() { changeMode("explore"); update(["Logan Paul dissipates into a cloud of Youtube comments. A troubling thought crosses your mind: <i>are you the hater?</i>"]); };
+  this.defeated = function() { changeMode("explore"); update(["Jake Paul dissipates into a cloud of Youtube comments. A troubling thought crosses your mind: <i>are you the hater?</i>"]); };
 
 }
 
@@ -50,7 +50,7 @@ function recklessDab(attacker) {
 function extremeDab(attacker) {
   return {
     attackPlayer: function(defender) {
-      return ["Desperate for more subs, Logan Paul performs an ultimate dab on you for " + attack(attacker, defender, attacker.str*3) + " damage", "But he takes " + attack(attacker, attacker, attacker.str) + " damage from the sheer insanity of that big dab!"];
+      return ["Desperate for more subs, Jake Paul performs an ultimate dab on you for " + attack(attacker, defender, attacker.str*3) + " damage", "But he takes " + attack(attacker, attacker, attacker.str) + " damage from the sheer insanity of that big dab!"];
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); },
         function(attacker, defender) {
@@ -65,7 +65,7 @@ function extremeDab(attacker) {
 function apologyVideo(attacker) {
   return {
     attackPlayer: function(defender) {
-      return ["Logan Paul films an apology video to apologize for dabbing too much. He heals " + attack(attacker, attacker, -20) + " health."];
+      return ["Jake Paul films an apology video to apologize for dabbing too much. He heals " + attack(attacker, attacker, -20) + " health."];
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); },
       function(attacker, defender) { return attacker.health/attacker.maxHealth < 0.6; }
@@ -79,7 +79,7 @@ function merch(attacker) {
   return {
     attackPlayer: function(defender) {
       defender.stamina -= 25;
-      return ["Logan Paul throws merch at you. It's exhausting."];
+      return ["Jake Paul throws merch at you. It's exhausting."];
     }, requirements: [
       function(attacker, defender) { return isNormal(attacker) && isNormal(defender); }
     ],

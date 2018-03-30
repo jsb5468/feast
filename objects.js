@@ -181,13 +181,13 @@ function SwampExplore(natureTrail) {
 
 }
 
-function LoganPaulObj() {
-  GameObject.call(this, "Is that LOGAN PAUL?");
+function JakePaulObj() {
+  GameObject.call(this, "Is that JAKE PAUL?");
 
   this.actions.push({
-    "name": "Is that LOGAN PAUL?!",
+    "name": "Is that JAKE PAUL?!",
     "action": function() {
-      startCombat(new LoganPaul());
+      startCombat(new JakePaul());
     }
   });
 }
