@@ -187,7 +187,7 @@ function LoganPaulObj() {
   this.actions.push({
     "name": "Is that LOGAN PAUL?!",
     "action": function() {
-      starTcombat(new LoganPaul());
+      startCombat(new LoganPaul());
     }
-  })
+  });
 }
