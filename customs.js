@@ -1,7 +1,7 @@
-/* AEZNON GETA COMMISSION */
+/* HATERS??? */
 
 function JakePaul() {
-  Creature.call(this, "Jake Paul", 5, 15, 10);
+  Creature.call(this, "Jake Paul", 15, 25, 15);
 
   this.hasName = true;
 
@@ -1566,7 +1566,7 @@ function PoojawaEncounter() {
   this.actions.push({
     name: "Poojawa",
     action: function() {
-      startCombat(new Poojawa());
+      update(["Oops! This encounter is morally alarming! Please find something more wholesome."]);
     },
     conditions: [
       function(prefs) {

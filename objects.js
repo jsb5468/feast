@@ -73,6 +73,16 @@ function Phone() {
   });
 }
 
+function Stairs() {
+  GameObject.call(this, "Stairs");
+  this.actions.push({
+    "name": "Use the stairs",
+    "action": function() {
+      update(["FUCK"]);
+      document.querySelector("body").classList.add("stairs");
+    }
+  });
+}
 function Bed() {
   GameObject.call(this, "Bed");
   this.actions.push({
@@ -82,7 +92,7 @@ function Bed() {
         if (Math.random() < 0.33 && (time > EVENING)) {
           update(["You crawl into bed and fall asleep...",newline]);
           advanceTimeTo(MIDNIGHT);
-          startDialog(new LoganPaulEncounter());
+          startCombat(new JakePaul());
           return;
         }
       }

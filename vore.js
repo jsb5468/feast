@@ -172,32 +172,32 @@ function Player(name = "Player") {
 }
 
 function Anthro(name = "Anthro") {
-  this.build = pickRandom(["skinny", "fat", "muscular", "sickly", "ordinary"]);
+  this.build = pickRandom(["🥗", "🍔", "💪", "🤢", "😐"]);
 
   switch (this.build) {
-    case "skinny":
+    case "🥗":
       Creature.call(this, name, 8, 12, 8);
       this.mass *= (Math.random() * 0.2 + 0.7);
       break;
-    case "fat":
+    case "🍔":
       Creature.call(this, name, 10, 7, 15);
       this.mass *= (Math.random() * 0.4 + 1.1);
       break;
-    case "muscular":
+    case "💪":
       Creature.call(this, name, 13, 11, 13);
       this.mass *= (Math.random() * 0.1 + 1.1);
       break;
-    case "sickly":
+    case "🤢":
       Creature.call(this, name, 6, 8, 6);
       this.mass *= (Math.random() * 0.2 + 0.6);
       break;
-    case "ordinary":
+    case "😐":
       Creature.call(this, name, 10, 10, 10);
       break;
 
   }
 
-  this.species = pickRandom(["dog", "cat", "lizard", "deer", "wolf", "fox"]);
+  this.species = pickRandom(["emoji"]);
 
   // todo better lol
 

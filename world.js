@@ -66,7 +66,8 @@ let locationsSrc = [
     ],
     "objs": [
       TV,
-      Phone
+      Phone,
+      Stairs
     ]
   },
   {

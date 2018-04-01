@@ -1,9 +1,13 @@
 body {
-  background: #111;
+  background-color: #f0f;
   color: #eee;
   height: 100%;
   width: 100%;
   font-family: Arial;
+}
+
+.stairs {
+  background-image: url("stairs.png") !important;
 }
 
 hr {
@@ -16,20 +20,20 @@ hr {
 }
 
 a {
-  color: #7777FF;
+  color: #0f0;
   text-decoration: none;
 }
 
 body.combat {
-  background: #311;
+  background: #f0d;
 }
 
 body.explore {
-  background: #111;
+  background: #f0f;
 }
 
 body.eaten {
-  background: #500;
+  background: #f0c;
 }
 
 button {
@@ -166,7 +170,7 @@ button {
 }
 
 #create {
-  color: #eee;
+  color: #0f0;
   padding: 25px;
   text-align: center;
 }
@@ -185,28 +189,32 @@ button {
 }
 
 .pref-radio + label {
-  color: #666;
+  color: #000;
   width: 150px;
 }
 
 .pref-radio:checked + label.pref-disable {
   background: #711;
   color: #eee;
+  animation: shit 2s infinite;
 }
 
 .pref-radio:checked + label.pref-avoid {
   background: #a41;
   color: #eee;
+  animation: shit 2s infinite;
 }
 
 .pref-radio:checked + label.pref-enable {
   background: #3a3;
   color: #eee;
+  animation: shit 2s infinite;
 }
 
 .pref-radio:checked + label.pref-prefer {
   background: #44a2c7;
   color: #eee;
+  animation: shit 2s infinite;
 }
 
 .pref-select {
@@ -223,4 +231,10 @@ button {
 
 .pref-type {
   width: 150px;
+}
+
+@keyframes shit {
+  0% { font-size: 24px; }
+  50% { font-size: 48px; }
+  100% {font-size: 24px; }
 }

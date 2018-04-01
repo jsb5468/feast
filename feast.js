@@ -312,6 +312,13 @@ function moveToByName(roomName, desc="You go places lol", loading=false) {
 }
 
 function moveTo(room,desc="You go places lol", loading=false) {
+
+  if (Math.random() < 0.01) {
+    update(["You trip on a rock and die😂😂😂😂😂😂😂😂😂😂😂😂😂😂😂😂"]);
+    killingBlow = {};
+    killingBlow.gameover = function() { return "Tripped and died"; };
+    respawn(respawnRoom);
+  }
   actions = [];
   currentRoom = room;
 

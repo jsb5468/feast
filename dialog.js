@@ -44,23 +44,29 @@ function PhoneCall() {
 
   {
     let nodeFen = new DialogNode();
-    this.addChoice("Fen",nodeFen);
-    nodeFen.text = ["You dial Fen's number. Milliseconds later, he kicks open your front door and dabs on you, then runs away."];
+    this.addChoice("Pizza time",nodeFen);
+    nodeFen.text = ["Pizza time"];
   }
 
-  {
-    let nodeNerd = new DialogNode();
-    this.addChoice("Some nerd",nodeNerd);
-    nodeNerd.text = ["You dial some nerd. He shows up at your front door."];
-    nodeNerd.hooks.push(function() { startDialog(new EatDude()); });
-  }
-
-  {
-    let nodeCrash = new DialogNode();
-    this.addChoice("Crash the game",nodeCrash);
-    nodeCrash.text = ["Oh no oops"];
-    nodeCrash.hooks.push(function() { potato() });
-  }
+    {
+      let nodeFen = new DialogNode();
+      this.addChoice("Pizza time",nodeFen);
+      nodeFen.text = ["Pizza time"];
+      nodeFen.hooks.push(function() {
+        update(["You die instantly",newline,"Pizza time :("]);
+        respawn(respawnRoom);
+      });
+    }
+      {
+        let nodeFen = new DialogNode();
+        this.addChoice("Pizza time",nodeFen);
+        nodeFen.text = ["Pizza time"];
+      }
+        {
+          let nodeFen = new DialogNode();
+          this.addChoice("Pizza time",nodeFen);
+          nodeFen.text = ["Pizza time"];
+        }
 }
 
 function FallenFoe(foe) {
