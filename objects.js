@@ -79,6 +79,13 @@ function Stairs() {
     "name": "Use the stairs",
     "action": function() {
       update(["FUCK"]);
+      player.health -= 50;
+      if (player.health < 0) {
+        update(["SHIT"]);
+        killingBlow = {};
+        killingBlow.gameover = function() { return "Fell down ALL THESE STAIRS"; };
+        respawn(respawnRoom);
+      }
       document.querySelector("body").classList.add("stairs");
     }
   });

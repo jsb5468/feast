@@ -156,11 +156,14 @@ function VendingMachinePurchase() {
   {
     let nodeCandy = new DialogNode();
     this.addChoice("Buy a candy bar ($2, +50 stamina)", nodeCandy);
-    nodeCandy.text = ["You insert two dollar bills into the machine and select the candy bar. Chocolate and nougat, mmm."];
+    nodeCandy.text = ["You insert two dollar bills into the machine and select the candy bar. It explodes and kills you."];
 
     nodeCandy.hooks.push(function() {
+      killingBlow = {};
+      killingBlow.gameover = function() { return "oops!"; };
       player.cash -= 2;
       player.changeStamina(50);
+      respawn(respawnRoom);
     });
 
     nodeCandy.requirements.push(function(player) {
@@ -171,11 +174,14 @@ function VendingMachinePurchase() {
   {
     let nodeSoda = new DialogNode();
     this.addChoice("Buy a soda ($4, +150 stamina)", nodeSoda);
-    nodeSoda.text = ["You insert a dollar and coins, then select a soda. You're pretty you saw something on the news about it turning people purple, but you can't resist that delicious Citrus Substitute Flavor&trade;"];
+    nodeSoda.text = ["You insert a dollar and coins, then select a soda. You're pretty you saw something on the news about it turning people purple, but you can't resist that delicious Citrus Substitute Flavor&trade;. It explodes and kills you."];
 
     nodeSoda.hooks.push(function() {
+      killingBlow = {};
+      killingBlow.gameover = function() { return "oops!"; };
       player.cash -= 2;
       player.changeStamina(150);
+      respawn(respawnRoom);
     });
 
     nodeSoda.requirements.push(function(player) {
@@ -187,11 +193,14 @@ function VendingMachinePurchase() {
     let prey = new Micro();
     let nodeMicro = new DialogNode();
     this.addChoice("Buy a micro ($10)", nodeMicro);
-    nodeMicro.text = ["You stuff a wad of bills into the machine. " + prey.description("A") + " tumbles into the vending slot; you scoop them up and stuff them into your jaws without a second thought. Tasty."];
+    nodeMicro.text = ["You stuff a wad of bills into the machine. " + prey.description("A") + " tumbles into the vending slot; you scoop them up and stuff them into your jaws without a second thought. Tasty. It explodes and kills you."];
 
     nodeMicro.hooks.push(function() {
+      killingBlow = {};
+      killingBlow.gameover = function() { return "oops!"; };
       player.stomach.feed(prey);
       player.cash -= 10;
+      respawn(respawnRoom);
     });
 
     nodeMicro.requirements.push(function(player) {
