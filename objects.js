@@ -166,7 +166,13 @@ function SwampExplore(natureTrail) {
       if (outcome < 0.5) {
         moveToByName("Nature Trail", "You find your way back");
       } else {
-        startCombat(new Shrek());
+        update(["I was going to have a Shrek fight, but even for this gigantic shitpost, writing about a goddamn ogre shoving you up his ass would be too much for me.",
+      newline,
+      "also you died 😂"]);
+        player.health = -100;
+        killingBlow = {};
+        killingBlow.gameover = function() { return "shreked"; };
+        respawn(respawnRoom);
       }
     }
   });
@@ -175,7 +181,13 @@ function SwampExplore(natureTrail) {
     "name": "Look for trouble",
     "action": function() {
       advanceTime(60*15);
-      startCombat(new Shrek());
+        update(["I was going to have a Shrek fight, but even for this gigantic shitpost, writing about a goddamn ogre shoving you up his ass would be too much for me.",
+      newline,
+      "also you died 😂"]);
+        player.health = -100;
+        killingBlow = {};
+        killingBlow.gameover = function() { return "shreked"; };
+        respawn(respawnRoom);
     }
   });
 
