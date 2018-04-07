@@ -136,10 +136,6 @@ function Creature(name = "Creature", str = 10, dex = 10, con = 10) {
 function Player(name = "Player") {
   Creature.call(this, name, 15, 15, 15);
 
-  this.fullness = function() {
-    return this.stomach.fullness() + this.butt.fullness();
-  };
-
   this.attacks.push(punchAttack(this));
   this.attacks.push(flankAttack(this));
 
@@ -166,9 +162,9 @@ function Player(name = "Player") {
 
   this.cash = 100;
 
-  this.bowels = new Bowels();
-  this.stomach = new Stomach(this, this.bowels);
-  this.butt = new Butt(this, this.bowels, this.stomach);
+  this.stomach = new Stomach(this);
+  this.bowels = new Bowels(this, this.stomach);
+  this.stomach.bowels = this.bowels;
   this.balls = new Balls(this);
   this.womb = new Womb(this);
   this.breasts = new Breasts(this);
@@ -292,10 +288,16 @@ function Micro() {
 function Container(owner) {
   this.owner = owner;
   this.contents = [];
+
+  this.waste = 0;
+  this.digested = [];
+
   // health/sec
   this.damageRate = 15 * 100 / 86400;
   // health percent/sec
   this.damageRatePercent = 1 / 86400;
+
+  this.capacity  = 100;
 
   // kg/sec
   this.digestRate = 80 / 8640;
@@ -346,14 +348,21 @@ function Container(owner) {
   };
 
   this.fullness = function() {
-    return this.contents.reduce((total, prey) => total + prey.mass, 0);
+    return this.contents.reduce((total, prey) => total + prey.mass, 0) + this.waste;
+  };
+
+  this.add = function(amount) {
+    this.waste += amount;
+  };
+
+  this.finish = function(prey) {
+    if (prey.prefs.scat)
+      this.digested.push(prey);
   };
 }
 
-function Stomach(owner, bowels) {
+function Stomach(owner) {
   Container.call(this, owner);
-
-  this.bowels = bowels;
 
   this.describeDamage = function(prey) {
     return "Your guts gurgle and churn, slowly wearing down " + prey.description("the") + " trapped within.";
@@ -376,29 +385,28 @@ function Stomach(owner, bowels) {
   };
 }
 
-function Butt(owner, bowels, stomach) {
+function Bowels(owner, stomach) {
   Container.call(this, owner);
 
-  this.bowels = bowels;
   this.stomach = stomach;
 
   this.parentDigest = this.digest;
 
   this.digest = function(time) {
     this.contents.forEach(function(x) {
-      x.timeInButt += time;
+      x.timeInBowels += time;
     });
 
     let lines = this.parentDigest(time);
 
-    let pushed = this.contents.filter(prey => prey.timeInButt >= 60 * 30);
+    let pushed = this.contents.filter(prey => prey.timeInBowels >= 60 * 30);
 
     pushed.forEach(function(x) {
       this.stomach.feed(x);
       lines.push("Your winding guts squeeze " + x.description("the") + " into your stomach.");
     }, this);
 
-    this.contents = this.contents.filter(prey => prey.timeInButt < 60 * 30);
+    this.contents = this.contents.filter(prey => prey.timeInBowels < 60 * 30);
 
     return lines;
   };
@@ -418,39 +426,21 @@ function Butt(owner, bowels, stomach) {
   this.parentFeed = this.feed;
 
   this.feed = function(prey) {
-    prey.timeInButt = 0;
+    prey.timeInBowels = 0;
     this.parentFeed(prey);
   };
 
   this.fill = function(amount) {
-    this.bowels.add(amount);
+    this.add(amount);
   };
 
   this.finish = function(prey) {
-    this.bowels.finish(prey);
-  };
-}
-
-function WasteContainer(name) {
-  this.name = name;
-
-  this.fullness = 0;
-
-  this.digested = [];
-
-  this.add = function(amount) {
-    this.fullness += amount;
-  };
-
-  this.finish = function(prey) {
-    if (prey.prefs.scat)
-      this.digested.push(prey);
+    this.digested.push(prey);
   };
 }
 
 function Balls(owner) {
   Container.call(this, owner);
-  WasteContainer.call(this, "Balls");
 
   this.describeDamage = function(prey) {
     return "Your balls slosh as they wear down the " + prey.description("the") + " trapped within.";
@@ -469,14 +459,12 @@ function Balls(owner) {
   };
 
   this.finish = function(prey) {
-    if (prey.prefs.scat)
-      this.digested.push(prey);
+    this.digested.push(prey);
   };
 }
 
 function Womb(owner) {
   Container.call(this, owner);
-  WasteContainer.call(this, "Womb");
 
   this.describeDamage = function(prey) {
     return "You shiver as " + prey.description("the") + " squrims within your womb.";
@@ -495,14 +483,12 @@ function Womb(owner) {
   };
 
   this.finish = function(prey) {
-    if (prey.prefs.scat)
-      this.digested.push(prey);
+    this.digested.push(prey);
   };
 }
 
 function Breasts(owner) {
   Container.call(this, owner);
-  WasteContainer.call(this, "Breasts");
 
   this.describeDamage = function(prey) {
     return "Your breasts slosh from side to side, steadily softening " + prey.description("the") + " trapped within.";
@@ -521,13 +507,8 @@ function Breasts(owner) {
   };
 
   this.finish = function(prey) {
-    if (prey.prefs.scat)
-      this.digested.push(prey);
+    this.digested.push(prey);
   };
-}
-
-function Bowels() {
-  WasteContainer.call(this, "Bowels");
 }
 
 // PLAYER PREY

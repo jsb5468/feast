@@ -30,11 +30,11 @@ function Toilet() {
 
       lines.push("You sit down on the toilet.");
 
-      if (player.bowels.fullness == 0) {
+      if (player.bowels.waste == 0) {
         lines.push("But nothing happens.");
       } else {
         lines.push("You grunt and clench, squeezing out the remains of your former prey.");
-        player.bowels.fullness = 0;
+        player.bowels.waste = 0;
       }
 
       if (player.bowels.digested.length > 0) {

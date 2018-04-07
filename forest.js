@@ -7,7 +7,7 @@ function ForestExplore() {
       let outcome = Math.random();
       advanceTime(60*30 * (Math.random() * 0.2 + 0.9));
 
-      if (outcome < 0.25) {
+      if (outcome < 0.35) {
         currentRoom.flags.exit = true;
         update(["You find a way back!"]);
       } else if (outcome < 0.5) {
@@ -59,6 +59,7 @@ function Wolf() {
   this.digests = [];
 
   this.digests.push(wolfDigest(this));
+  this.digests.push(wolfBelch(this));
 
   this.flags.stage = "combat";
 
@@ -106,6 +107,7 @@ function AlphaWolf() {
   this.digests = [];
 
   this.digests.push(wolfDigest(this));
+  this.digests.push(wolfBelch(this));
 
   this.flags.stage = "combat";
 
@@ -270,5 +272,23 @@ function wolfDigest(attacker) {
     priority: 1,
     weight: function(attacker, defender) { return 1; },
     gameover: function() { return "Digested by " + attacker.description("a"); }
+  };
+}
+
+function wolfBelch(attacker) {
+  return {
+    digest: function(defender){
+      defender.stamina -= 50;
+      let damage = attack(attacker, defender, attacker.str * 2);
+      return [attacker.description("The") + " lets out a crass <i>BELCH</i>, draining air from its snarling gut and squeezing you even tighter than before."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.stage == "oral";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; },
+    gameover: function() { return "Reduced to a belch by " + attacker.description("a"); }
   };
 }

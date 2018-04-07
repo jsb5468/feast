@@ -206,7 +206,7 @@ function grappleAnalVore(attacker) {
       if (success) {
         attacker.changeStamina(-10);
         defender.changeStamina(-25);
-        attacker.butt.feed(defender);
+        attacker.bowels.feed(defender);
         defender.flags.grappled = false;
         attacker.cash += defender.cash;
         changeMode("explore");

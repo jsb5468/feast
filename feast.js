@@ -257,9 +257,9 @@ function updateDisplay() {
   document.getElementById("stat-str").innerHTML = "Str: " + player.str;
   document.getElementById("stat-dex").innerHTML = "Dex: " + player.dex;
   document.getElementById("stat-con").innerHTML = "Con: " + player.con;
-  document.getElementById("stat-fullness").innerHTML = "Fullness: " + round(player.fullness(),0);
+  document.getElementById("stat-fullness").innerHTML = "Stomach: " + round(player.stomach.fullness(),0) + "/" + player.stomach.capacity;
   if (player.prefs.scat) {
-    document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness,0);
+    document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness(),0) + "/" + player.bowels.capacity;
   } else {
     document.getElementById("stat-bowels").innerHTML = "";
   }
@@ -279,7 +279,7 @@ function advanceTime(amount) {
   player.restoreHealth(amount);
   player.restoreStamina(amount);
   update(player.stomach.digest(amount));
-  update(player.butt.digest(amount));
+  update(player.bowels.digest(amount));
   update(player.balls.digest(amount));
   update(player.womb.digest(amount));
   update(player.breasts.digest(amount));
@@ -522,7 +522,7 @@ function respawn(respawnRoom) {
   moveTo(respawnRoom,"You drift through space and time...");
   player.clear();
   player.stomach.contents = [];
-  player.butt.contents = [];
+  player.bowels.contents = [];
   player.bowels.digested = [];
   player.bowels.fullness = 0;
   advanceTime(Math.floor(86400 / 2 * (Math.random() * 0.5 - 0.25 + 1)));
@@ -726,10 +726,10 @@ function status() {
     lines.push(newline);
   }
 
-  if (player.butt.contents.length > 0) {
+  if (player.bowels.contents.length > 0) {
     lines.push("Your bowels churn with prey.");
 
-    player.butt.contents.map(function(prey) {
+    player.bowels.contents.map(function(prey) {
       let state = "";
       let healthRatio = prey.health / prey.maxHealth;
 
@@ -773,7 +773,7 @@ function status() {
       });
       lines.push(newline);
     } else {
-      if (player.balls.fullness > 0) {
+      if (player.balls.waste > 0) {
         lines.push("Your balls are heavy with cum.");
         lines.push(newline);
       }
@@ -803,7 +803,7 @@ function status() {
       });
       lines.push(newline);
     } else {
-      if (player.womb.fullness > 0) {
+      if (player.womb.waste > 0) {
         lines.push("Your slit drips, holding back a tide of femcum.");
         lines.push(newline);
       }
@@ -833,7 +833,7 @@ function status() {
       });
       lines.push(newline);
     } else {
-      if (player.breasts.fullness > 0) {
+      if (player.breasts.waste > 0) {
         lines.push("Your breasts slosh with milk.");
         lines.push(newline);
       }
