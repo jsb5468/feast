@@ -1,5 +1,10 @@
 "use strict";
 
+function StatBuff(type, amount) {
+  this.stat = type;
+  this.amount = amount;
+}
+
 function Creature(name = "Creature", str = 10, dex = 10, con = 10) {
   this.name = name;
 

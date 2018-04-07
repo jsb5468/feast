@@ -313,7 +313,7 @@ function updateActions() {
   actions = [];
   currentRoom.objects.forEach(function (object) {
     object.actions.forEach(function (action) {
-      if (action.conditions == undefined || action.conditions.reduce((result, cond) => result && cond(player.prefs), true))
+      if (action.conditions == undefined || action.conditions.reduce((result, cond) => result && cond(player), true))
         actions.push(action);
     });
   });
