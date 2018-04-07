@@ -257,12 +257,12 @@ function updateDisplay() {
   document.getElementById("stat-str").innerHTML = "Str: " + player.str;
   document.getElementById("stat-dex").innerHTML = "Dex: " + player.dex;
   document.getElementById("stat-con").innerHTML = "Con: " + player.con;
-  document.getElementById("stat-fullness").innerHTML = "Stomach: " + round(player.stomach.fullness(),0) + "/" + player.stomach.capacity;
-  if (player.prefs.scat) {
-    document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness(),0) + "/" + player.bowels.capacity;
-  } else {
-    document.getElementById("stat-bowels").innerHTML = "";
-  }
+  document.getElementById("stat-stomach").innerHTML = "Stomach: " + round(player.stomach.fullness(),0) + "/" + player.stomach.capacity
+  document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness(),0) + "/" + player.bowels.capacity;
+  document.getElementById("stat-balls").innerHTML = "Balls: " + round(player.balls.fullness(),0) + "/" + player.balls.capacity;
+  document.getElementById("stat-womb").innerHTML = "Womb: " + round(player.womb.fullness(),0) + "/" + player.womb.capacity;
+  document.getElementById("stat-breasts").innerHTML = "Breasts: " + round(player.breasts.fullness(),0) + "/" + player.breasts.capacity;
+
 }
 
 function advanceTimeTo(newTime) {
