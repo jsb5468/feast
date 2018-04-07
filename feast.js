@@ -115,6 +115,8 @@ function updateExploreCompass() {
   }
 }
 function updateExploreActions() {
+  updateActions();
+
   for (let i = 0; i < actionButtons.length; i++) {
     if (i < actions.length) {
       actionButtons[i].disabled = false;
@@ -307,17 +309,8 @@ function move(direction) {
   moveTo(target,currentRoom.exitDescs[direction]);
 }
 
-function moveToByName(roomName, desc="You go places lol", loading=false) {
-  moveTo(world[roomName], desc, loading);
-}
-
-function moveTo(room,desc="You go places lol", loading=false) {
+function updateActions() {
   actions = [];
-  currentRoom = room;
-
-  if (!loading)
-    advanceTime(30);
-
   currentRoom.objects.forEach(function (object) {
     object.actions.forEach(function (action) {
       if (action.conditions == undefined || action.conditions.reduce((result, cond) => result && cond(player.prefs), true))
@@ -325,9 +318,23 @@ function moveTo(room,desc="You go places lol", loading=false) {
     });
   });
 
+}
+
+function moveToByName(roomName, desc="You go places lol", loading=false) {
+  moveTo(world[roomName], desc, loading);
+}
+
+function moveTo(room,desc="You go places lol", loading=false) {
+  currentRoom = room;
+
+  if (!loading)
+    advanceTime(30);
+
   update([desc,newline]);
 
   currentRoom.visit();
+
+  updateDisplay();
 }
 
 window.addEventListener('load', function(event) {

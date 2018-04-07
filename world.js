@@ -157,6 +157,11 @@ let locationsSrc = [
         "desc": "You walk north"
       },
       {
+        "name": "East Street",
+        "dir": EAST,
+        "desc": "You walk east"
+      },
+      {
         "name": "South Street",
         "dir": SOUTH,
         "desc": "You walk south"
@@ -165,6 +170,58 @@ let locationsSrc = [
         "name": "Corner Mart",
         "dir": SOUTH_EAST,
         "desc": "You walk into the convenience store"
+      }
+    ]
+  },
+  {
+    "name": "East Street",
+    "desc": "This street is in the east",
+    "conn": [
+      {
+        "name": "Crossroads",
+        "dir": WEST,
+        "desc": "You walk to the crossroads"
+      },
+      {
+        "name": "East Trail",
+        "dir": EAST,
+        "desc": "You head out on the road."
+      }
+    ]
+  },
+  {
+    "name": "East Trail",
+    "desc": "A trail from your hometown to lands beyond",
+    "conn": [
+      {
+        "name": "East Street",
+        "dir": WEST,
+        "desc": "You walk back into town"
+      },
+      {
+        "name": "Woods",
+        "dir": NORTH,
+        "desc": "You wander into the woods."
+      },
+      {
+        "name": "Woods",
+        "dir": SOUTH,
+        "desc": "You wander into the woods."
+      },
+    ]
+  },
+  {
+    "name": "Woods",
+    "desc": "A thick forest. It's easy to get lost here, but it's not too dangerous, at least.",
+    "conn": [
+
+    ],
+    "objs": [
+      ForestExplore,
+    ],
+    "hooks": [
+      function() {
+        currentRoom.flags.exit = false;
       }
     ]
   },
@@ -272,6 +329,7 @@ function Location(name="Nowhere",desc="Nada") {
   this.objects = [];
   this.hooks = [];
   this.conditions = [];
+  this.flags = [];
 
   this.visit = function() {
     this.hooks.forEach(function (x) {

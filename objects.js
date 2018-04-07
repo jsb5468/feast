@@ -46,8 +46,8 @@ function Toilet() {
       update(lines);
     },
     "conditions": [
-      function(prefs) {
-        return prefs.scat == true;
+      function(player) {
+        return player.prefs.scat == true;
       }
     ]
   });
