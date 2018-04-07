@@ -49,9 +49,16 @@ function Wolf() {
   this.attacks.push(wolfTackleBite(this));
   this.attacks.push(wolfTackleSwallow(this));
 
-  this.attacks.push(wolfDigest(this));
-
   this.backupAttack = pass(this);
+
+  this.struggles = [];
+
+  this.struggles.push(new struggle(this));
+  this.struggles.push(new submit(this));
+
+  this.digests = [];
+
+  this.digests.push(wolfDigest(this));
 
   this.flags.stage = "combat";
 
@@ -60,7 +67,57 @@ function Wolf() {
   };
 
   this.finishCombat = function() {
-    return ["The wolf knocks you to the ground. You bash your head on a rock and black out."];
+    if (this.flags.stage == "combat")
+      return [this.description("The") + " knocks you to the ground. You bash your head on a rock and black out."];
+    else if (this.flags.stage == "oral")
+      return ["You fall limp in " + this.description("the") + "'s roiling guts, melting away to feed the mangy predator for a good, long time..."];
+  };
+
+  this.status = function(player) {
+    return [];
+  };
+}
+
+function AlphaWolf() {
+  Creature.call(this, "Alpha Wolf", 20, 20, 20);
+
+  this.hasName = false;
+
+  this.description = function(prefix) { return prefix + " alpha wolf"; };
+
+  this.attacks = [];
+
+  this.attacks.push(wolfBite(this));
+  this.attacks.push(wolfHowl(this));
+
+  this.attacks.push(wolfTackle(this));
+  this.attacks.push(wolfTackleBite(this));
+  this.attacks.push(wolfTackleSwallow(this));
+
+  this.attacks.push(wolfSwallow(this));
+
+  this.backupAttack = pass(this);
+
+  this.struggles = [];
+
+  this.struggles.push(new struggle(this));
+  this.struggles.push(new submit(this));
+
+  this.digests = [];
+
+  this.digests.push(wolfDigest(this));
+
+  this.flags.stage = "combat";
+
+  this.startCombat = function(player) {
+    return ["A low growl sends a chill up your spine. You turn around slowly, coming face-to-face with a massive, snarling wolf. Nearly six feet tall at the shoulder, the beast is eyeing you up as a snack."];
+  };
+
+  this.finishCombat = function() {
+    if (this.flags.stage == "combat")
+      return [this.description("The") + " knocks you to the ground. You bash your head on a rock and black out."];
+    else if (this.flags.stage == "oral")
+      return ["You fall limp in " + this.description("the") + "'s roiling guts, melting away to feed the mangy predator for a good, long time..."];
   };
 
   this.status = function(player) {
@@ -72,7 +129,7 @@ function wolfBite(attacker) {
   return {
     attackPlayer: function(defender){
       let damage = attack(attacker, defender, attacker.str);
-      return ["The wolf jumps at you, biting for " + damage + " damage"];
+      return [attacker.description("The") + " jumps at you, biting for " + damage + " damage"];
     },
     requirements: [
       function(attacker, defender) {
@@ -91,7 +148,7 @@ function wolfHowl(attacker) {
   return {
     attackPlayer: function(defender){
       attacker.statBuffs.push(new StatBuff("str", 1.25));
-      return ["The wolf backs up and lets out a long, wailing howl.",newline,"It seems emboldened."];
+      return [attacker.description("The") + " backs up and lets out a long, wailing howl.",newline,"It seems emboldened."];
     },
     requirements: [
       function(attacker, defender) {
@@ -111,7 +168,7 @@ function wolfTackle(attacker) {
   return {
     attackPlayer: function(defender){
       defender.flags.grappled = true;
-      return ["The wolf leaps on top of you, pinning you to the ground!"];
+      return [attacker.description("The") + " leaps on top of you, pinning you to the ground!"];
     },
     requirements: [
       function(attacker, defender) {
@@ -131,9 +188,9 @@ function wolfTackleBite(attacker) {
     attackPlayer: function(defender){
       let damage = attack(attacker, defender, attacker.str * 1.5);
       return pickRandom([
-        ["Pain shoots through your arm as the wolf bites it for " + damage + " damage!"],
-        ["You struggle against the wolf as it bites your shoulder for " + damage + " damage."],
-        ["The wolf's claws dig into your legs for " + damage + " damage."]
+        ["Pain shoots through your arm as " + attacker.description("the") + " bites it for " + damage + " damage!"],
+        ["You struggle against " + attacker.description("the") + " as it bites your shoulder for " + damage + " damage."],
+        [attacker.description("The") + "'s claws dig into your legs for " + damage + " damage."]
       ]);
     },
     requirements: [
@@ -153,7 +210,8 @@ function wolfTackleSwallow(attacker) {
   return {
     attackPlayer: function(defender){
       attacker.flags.stage = "oral";
-      return ["You struggle against the wolf, but it's not enough - its greedy jaws envelop your head, then your shoulders. The hungry beast swallows you down in seconds, cramming you into its hot, slimy stomach."];
+      changeMode("eaten");
+      return ["You struggle against " + attacker.description("the") + ", but it's not enough - its greedy jaws envelop your head, then your shoulders. The hungry beast swallows you down in seconds, cramming you into its hot, slimy stomach."];
     },
     conditions: [
       function(attacker, defender) {
@@ -173,11 +231,36 @@ function wolfTackleSwallow(attacker) {
   };
 }
 
-function wolfDigest(attacker) {
+function wolfSwallow(attacker) {
   return {
     attackPlayer: function(defender){
-      let damage = attack(attacker, defender, 25);
-      return ["The wolf's churning guts wear you down."];
+      attacker.flags.stage = "oral";
+      changeMode("eaten");
+      return [attacker.description("The") + " charges, closing the gap in the blink of an eye and jamming your upper body into its massive, drool-slathered maw. <i>Glrp, glllpkh, gulp</i> - and you're in its throat, thrashing and struggling as you plunge into the greedy beast's sloppy stomach."];
+    },
+    conditions: [
+      function(attacker, defender) {
+        return defender.prefs.prey && defender.prefs.vore.oral > 0;
+      }
+    ],
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.stage == "combat";
+      },
+      function(attacker, defender) {
+        return !attacker.flags.grappled && !defender.flags.grappled;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function wolfDigest(attacker) {
+  return {
+    digest: function(defender){
+      let damage = attack(attacker, defender, attacker.str * 3);
+      return [attacker.description("The") + "'s churning guts wear you down."];
     },
     requirements: [
       function(attacker, defender) {
@@ -185,6 +268,7 @@ function wolfDigest(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return 1; },
+    gameover: function() { return "Digested by " + attacker.description("a"); }
   };
 }
