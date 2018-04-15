@@ -469,7 +469,7 @@ function tranceDigestCrush(predator, damage=75) {
       }
     ],
     priority: 1,
-    weight: function() { return defender.prefs.vore.hard / 0.5; }
+    weight: function(attacker, defender) { return defender.prefs.vore.hard / 0.5; }
   };
 }
 
@@ -1689,11 +1689,11 @@ function PoojawaEncounter() {
       startCombat(new Poojawa());
     },
     conditions: [
-      function(prefs) {
-        return prefs.prey;
+      function(player) {
+        return player.prefs.prey;
       },
-      function(prefs) {
-        return prefs.vore.oral > 0 || prefs.vore.tail > 0 || prefs.vore.unbirth > 0;
+      function(player) {
+        return player.prefs.vore.oral > 0 || player.prefs.vore.tail > 0 || player.prefs.vore.unbirth > 0;
       }
     ]
   });

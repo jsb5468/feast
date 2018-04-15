@@ -523,8 +523,18 @@ function respawn(respawnRoom) {
   player.clear();
   player.stomach.contents = [];
   player.bowels.contents = [];
+  player.bowels.waste = 0;
   player.bowels.digested = [];
-  player.bowels.fullness = 0;
+  player.womb.contents = [];
+  player.womb.waste = 0;
+  player.womb.digested = [];
+  player.balls.contents = [];
+  player.balls.waste = 0;
+  player.balls.digested = [];
+  player.breasts.contents = [];
+  player.breasts.waste = 0;
+  player.breasts.digested = [];
+
   advanceTime(Math.floor(86400 / 2 * (Math.random() * 0.5 - 0.25 + 1)));
   changeMode("explore");
   player.health = 100;

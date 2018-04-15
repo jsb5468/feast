@@ -49,6 +49,8 @@ function Wolf() {
   this.attacks.push(wolfTackleBite(this));
   this.attacks.push(wolfTackleSwallow(this));
 
+  this.attacks.push(grappledStruggle(this));
+
   this.backupAttack = pass(this);
 
   this.struggles = [];
@@ -96,6 +98,9 @@ function AlphaWolf() {
   this.attacks.push(wolfTackleSwallow(this));
 
   this.attacks.push(wolfSwallow(this));
+
+  this.attacks.push(grappledStruggle(this));
+  this.attacks.push(grappledReverse(this));
 
   this.backupAttack = pass(this);
 
@@ -236,9 +241,14 @@ function wolfTackleSwallow(attacker) {
 function wolfSwallow(attacker) {
   return {
     attackPlayer: function(defender){
-      attacker.flags.stage = "oral";
-      changeMode("eaten");
-      return [attacker.description("The") + " charges, closing the gap in the blink of an eye and jamming your upper body into its massive, drool-slathered maw. <i>Glrp, glllpkh, gulp</i> - and you're in its throat, thrashing and struggling as you plunge into the greedy beast's sloppy stomach."];
+      let success = statCheck(attacker, defender, "dex") || defender.stamina == 0;
+      if (success) {
+        attacker.flags.stage = "oral";
+        changeMode("eaten");
+        return [attacker.description("The") + " charges, closing the gap in the blink of an eye and jamming your upper body into its massive, drool-slathered maw. <i>Glrp, glllpkh, gulp</i> - and you're in its throat, thrashing and struggling as you plunge into the greedy beast's sloppy stomach."];
+      } else {
+        return [attacker.description("The") + " lunges at you, racing up with jaws splayed wide open. You leap to the side, barely avoiding the greedy beast's maw as it barrels past, growling and snapping in frustration."];
+      }
     },
     conditions: [
       function(attacker, defender) {
