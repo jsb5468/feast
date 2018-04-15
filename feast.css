@@ -189,6 +189,11 @@ button {
   width: 150px;
 }
 
+.pref-gray {
+  background: #111 !important;
+  color: #333 !important;
+}
+
 .pref-radio:checked + label.pref-disable {
   background: #711;
   color: #eee;

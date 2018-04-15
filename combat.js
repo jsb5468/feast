@@ -220,7 +220,8 @@ function grappleAnalVore(attacker) {
       function(attacker, defender) { return isNormal(attacker) && isGrappled(defender) && defender.flags.shrunk != true ; }
     ], conditions: [
       function(attacker, defender) { return defender.prefs.prey; },
-      function(attacker, defender) { return defender.prefs.vore.anal > 0; }
+      function(attacker, defender) { return defender.prefs.vore.anal > 0; },
+      function(attacker, defender) { return attacker.prefs.pred.anal; }
     ],
     priority: 1,
   };
