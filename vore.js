@@ -186,7 +186,7 @@ function Player(name = "Player") {
     this.arousal += this.arousalRate * this.womb.fullnessPercent();
     this.arousal += this.arousalRate * this.breasts.fullnessPercent();
 
-    if (this.arousal > 100) {
+    if (this.arousal > this.arousalLimit()) {
       update(this.orgasm());
     }
   };
