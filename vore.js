@@ -170,6 +170,22 @@ function Player(name = "Player") {
   this.breasts = new Breasts(this);
 
   this.parts = {};
+
+  this.arousal = 0;
+  this.arousalRate = 100 / 86400 * 4;
+
+  this.arousalLimit = function() {
+    return 100 * Math.sqrt(this.con / 15);
+  };
+
+  this.buildArousal = function(time) {
+    this.arousal += this.arousalRate * time;
+
+    this.arousal += this.arousalRate * this.bowels.fullnessPercent();
+    this.arousal += this.arousalRate * this.balls.fullnessPercent();
+    this.arousal += this.arousalRate * this.womb.fullnessPercent();
+    this.arousal += this.arousalRate * this.breasts.fullnessPercent();
+  };
 }
 
 function Anthro(name = "Anthro") {
@@ -350,6 +366,10 @@ function Container(owner) {
   this.fullness = function() {
     return this.contents.reduce((total, prey) => total + prey.mass, 0) + this.waste;
   };
+
+  this.fullnessPercent = function() {
+    return this.fullness() / this.capacity;
+  }
 
   this.add = function(amount) {
     this.waste += amount;
