@@ -185,6 +185,34 @@ function Player(name = "Player") {
     this.arousal += this.arousalRate * this.balls.fullnessPercent();
     this.arousal += this.arousalRate * this.womb.fullnessPercent();
     this.arousal += this.arousalRate * this.breasts.fullnessPercent();
+
+    if (this.arousal > 100) {
+      update(this.orgasm());
+    }
+  };
+
+  this.orgasm = function() {
+    this.arousal = 0;
+
+    let result = [];
+
+    result.push("You're cumming!", newline);
+
+    if (this.balls.waste > 0) {
+      result.push(this.balls.describeOrgasm(), newline);
+    }
+    if (this.bowels.waste > 0) {
+      result.push(this.bowels.describeOrgasm(), newline);
+    }
+    if (this.womb.waste > 0) {
+      result.push(this.womb.describeOrgasm(), newline);
+    }
+    if (this.breasts.waste > 0) {
+      result.push(this.breasts.describeOrgasm(), newline);
+    }
+
+
+    return result;
   };
 }
 
@@ -369,7 +397,7 @@ function Container(owner) {
 
   this.fullnessPercent = function() {
     return this.fullness() / this.capacity;
-  }
+  };
 
   this.add = function(amount) {
     this.waste += amount;
@@ -397,7 +425,8 @@ function Stomach(owner) {
   };
 
   this.fill = function(amount) {
-    this.bowels.add(amount);
+    if (owner.prefs.scat)
+      this.bowels.add(amount);
   };
 
   this.finish = function(prey) {
@@ -443,6 +472,16 @@ function Bowels(owner, stomach) {
     return "That delicious " + prey.description() + " didn't even make it to your stomach...now they're gone.";
   };
 
+  this.describeOrgasm = function() {
+    let line = "Your knees buckle as your bowels clench and squeeze, forcing out a " + Math.round(this.waste) + "-pound heap of shit in several pleasurable - and forceful - heaves.";
+    if (this.digested.length > 0) {
+      line += " The bones of " + join(this.digested) + " are streaked throughout your waste.";
+      this.digested = [];
+    }
+    this.waste = 0;
+    return [line];
+  };
+
   this.parentFeed = this.feed;
 
   this.feed = function(prey) {
@@ -451,11 +490,13 @@ function Bowels(owner, stomach) {
   };
 
   this.fill = function(amount) {
-    this.add(amount);
+    if (owner.prefs.scat)
+      this.add(amount);
   };
 
   this.finish = function(prey) {
-    this.digested.push(prey);
+    if (prey.prefs.scat)
+      this.digested.push(prey);
   };
 }
 
@@ -472,6 +513,19 @@ function Balls(owner) {
 
   this.describeFinish = function(prey) {
     return "Your churning balls have melted " + prey.description("a") + " down to musky cum.";
+  };
+
+  this.describeOrgasm = function() {
+    let line = "You heavy balls empty themselves over a nearby wall, spraying it with " + Math.round(this.waste) + " pounds of thick cum.";
+
+    if (this.digested.length > 0) {
+      line += " All that seed used to be " + join(this.digested) + ".";
+      this.digested = [];
+    }
+
+    this.waste = 0;
+
+    return [line];
   };
 
   this.fill = function(amount) {
@@ -498,6 +552,19 @@ function Womb(owner) {
     return "Your womb dissolves " + prey.description("a") + " into femcum.";
   };
 
+  this.describeOrgasm = function() {
+    let line = "You moan and stumble, nethers exploding with ecstasy and gushing out " + Math.round(this.waste/2.2) + " liters of musky, slick femcum.";
+
+    if (this.digested.length > 0) {
+      line += " You pant, fingering yourself as the remains of " + join(this.digested) + " drip onto the floor.";
+      this.digested = [];
+    }
+
+    this.waste = 0;
+
+    return [line];
+  };
+
   this.fill = function(amount) {
     this.add(amount);
   };
@@ -520,6 +587,19 @@ function Breasts(owner) {
 
   this.describeFinish = function(prey) {
     return "Your breasts have broken " + prey.description("a") + " down to creamy milk.";
+  };
+
+  this.describeOrgasm = function() {
+    let line = "Thick, creamy milk leaks from your overfilled breasts. You grab and squeeze, milking out " + Math.round(this.waste/2.2) + " liters of the warm fluid.";
+
+    if (this.digested.length > 0) {
+      line += " All that milk used to be " + join(this.digested) + ".";
+      this.digested = [];
+    }
+
+    this.waste = 0;
+
+    return [line];
   };
 
   this.fill = function(amount) {
