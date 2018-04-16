@@ -172,7 +172,7 @@ function Player(name = "Player") {
   this.parts = {};
 
   this.arousal = 0;
-  this.arousalRate = 100 / 86400 * 4;
+  this.arousalRate = 100 / 86400 * 2;
 
   this.arousalLimit = function() {
     return 100 * Math.sqrt(this.con / 15);

@@ -108,6 +108,13 @@ function Bed() {
       updateDisplay();
     }
   });
+  this.actions.push({
+    "name": "Whack off",
+    "action": function() {
+      player.arousal = 100;
+      advanceTime(240);
+    }
+  });
 }
 
 function Journal() {
