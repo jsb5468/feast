@@ -26,12 +26,13 @@ function MountainWyrm() {
   this.attacks = [];
 
   this.flags.state = "combat";
+  this.flags.roars = 0;
 
   this.attacks.push(wyrmBite(this));
-  /*this.attacks.push(wyrmTail(this));
+  this.attacks.push(wyrmTail(this));
   this.attacks.push(wyrmRoar(this));
 
-  this.attacks.push(wyrmPounce(this));
+  /*this.attacks.push(wyrmPounce(this));
 
   this.attacks.push(wyrmGrind(this));
   this.attacks.push(wyrmCockVore(this));
@@ -48,9 +49,9 @@ function MountainWyrm() {
   };
 
   this.finishCombat = function() {
-    if (this.flags.stage == "combat")
+    if (this.flags.state == "combat")
       return [this.description("The") + " knocks you to the ground. You bash your head on a rock and black out."];
-    else if (this.flags.stage == "balls")
+    else if (this.flags.state == "balls")
       return ["You fall limp in " + this.description("the") + "'s balls."];
   };
 }
@@ -71,5 +72,48 @@ function wyrmBite(attacker) {
     ],
     priority: 1,
     weight: function(attacker, defender) { return 1 + defender.health/defender.maxHealth; }
+  };
+}
+
+function wyrmTail(attacker) {
+  return {
+    attackPlayer: function(defender){
+      let damage = attack(attacker, defender, attacker.dex);
+      return [attacker.description("The") + " lashes at you with his tail, dealing " + damage + " damage."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "combat";
+      },
+      function(attacker, defender) {
+        return !attacker.flags.grappled && !defender.flags.grappled;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1 + defender.health/defender.maxHealth; }
+  };
+}
+
+function wyrmRoar(attacker) {
+  return {
+    attackPlayer: function(defender){
+      attacker.flags.roars += 1;
+      attacker.statBuffs.push(new StatBuff("str", 1.25));
+      attacker.statBuffs.push(new StatBuff("con", 1.25));
+      return [attacker.description("The") + " lets out an earsplitting roar. It looks even angrier now."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "combat";
+      },
+      function(attacker, defender) {
+        return !attacker.flags.grappled && !defender.flags.grappled;
+      },
+      function(attacker, defender) {
+        return attacker.flags.roars < 2;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 0.25 + attacker.flags.roars / 2; }
   };
 }
