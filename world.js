@@ -204,6 +204,11 @@ let locationsSrc = [
         "desc": "You wander into the woods."
       },
       {
+        "name": "Mountains",
+        "dir": EAST,
+        "desc": "You head up into the mountains."
+      },
+      {
         "name": "Woods",
         "dir": SOUTH,
         "desc": "You wander into the woods."
@@ -317,6 +322,20 @@ let locationsSrc = [
         "dir": NORTH_WEST,
         "desc": "You leave the store."
       }
+    ]
+  },
+  {
+    "name": "Mountains",
+    "desc": "Steep, chilly slopes.",
+    "conn": [
+      {
+        "name": "East Trail",
+        "dir": WEST,
+        "desc": "You clamber down from the mountains."
+      }
+    ],
+    "objs": [
+      MountainExplore
     ]
   }
 ];
