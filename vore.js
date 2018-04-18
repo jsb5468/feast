@@ -67,6 +67,14 @@ function Creature(name = "Creature", str = 10, dex = 10, con = 10) {
   this.healthRate = 1 / 86400 * 4;
   this.staminaRate = 1 / 86400 * 6;
 
+  this.healthPercentage = function() {
+    return this.health / this.maxHealth;
+  };
+
+  this.staminaPercentage = function() {
+    return this.stamina / this.maxStamina;
+  };
+
   this.restoreHealth = function(time) {
     this.health = Math.min(this.maxHealth, this.health + this.maxHealth * time * this.healthRate);
   };
