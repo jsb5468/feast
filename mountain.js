@@ -37,10 +37,15 @@ function MountainWyrm() {
   this.attacks.push(wyrmPounce(this));
 
   this.attacks.push(wyrmGrind(this));
+  this.attacks.push(wyrmOralVore(this));
   this.attacks.push(wyrmCockVore(this));
 
+  this.attacks.push(wyrmOralSwallow(this));
+
+  this.attacks.push(wyrmStomachDigest(this));
+
   this.attacks.push(wyrmCockSwallow(this));
-  //this.attacks.push(wyrmCockCrush(this));
+  this.attacks.push(wyrmCockCrush(this));
 
   this.attacks.push(wyrmBallsDigest(this));
 
@@ -49,8 +54,10 @@ function MountainWyrm() {
   this.playerAttacks.push(punchAttack);
   this.playerAttacks.push(flankAttack);
 
-  this.playerAttacks.push(cockStruggle);
-  this.playerAttacks.push(ballStruggle);
+  this.playerAttacks.push(wyrmOralStruggle);
+  this.playerAttacks.push(wyrmStomachStruggle);
+  this.playerAttacks.push(wyrmCockStruggle);
+  this.playerAttacks.push(wyrmBallStruggle);
 
   this.playerAttacks.push(pass);
   this.playerAttacks.push(flee);
@@ -62,6 +69,10 @@ function MountainWyrm() {
   this.finishCombat = function() {
     if (this.flags.state == "combat")
       return [this.description("The") + " knocks you to the ground. You bash your head on a rock and black out."];
+    else if (this.flags.state == "cock")
+      return ["You expire in the dragon's shaft, crushed to death by the wyrm's lust."];
+    else if (this.flags.state == "stomach")
+      return ["You give one last heave...and digest."];
     else if (this.flags.state == "balls")
       return ["You fall limp in " + this.description("the") + "'s balls."];
   };
@@ -172,6 +183,58 @@ function wyrmGrind(attacker) {
   };
 }
 
+function wyrmOralVore(attacker) {
+  return {
+    attackPlayer: function(defender){
+      if (statHealthCheck(attacker, defender, "str")) {
+        attacker.flags.state = "oral";
+        attacker.flags.oralDepth = 1;
+        defender.changeStamina(-25);
+        return ["Gasping for breath, you can only watch as the wyrm's jaws splay wide - strands of drool lashing out like bolts of lightning - and force over your head."];
+      } else {
+        return ["The wyrm's jaws splay wide, lunging in and trying to wrap around your head, but you manage to punch the beast in the snout and force him to back off."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "grapple";
+      },
+      function(attacker, defender) {
+        return defender.prefs.vore.oral > 0;
+      },
+      function(attacker, defender) {
+        return defender.prefs.prey;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) {return (1 - 0.5 * defender.staminaPercentage()) * defender.prefs.vore.oral; }
+  };
+}
+
+function wyrmOralSwallow(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.oralDepth += 1;
+      if (attacker.flags.oralDepth == 4) {
+        attacker.flags.state = "stomach";
+        return ["The beast gulps one last time, pulling your whole body into his roiling guts."];
+      } else if (attacker.flags.oralDepth == 3) {
+        return ["Hot, slimy flesh smothers your legs as they're dragged down. Trapped and teased, smothered and squeezed - you're one swallow away from being sealed away for good."];
+      } else if (attacker.flags.oralDepth == 2) {
+        return ["A powerful swallow claims your belly and hips. Your head pops into the wyrm's burning-hot belly, shoved into the slimy, fleshy prison with ease."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "oral";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+
 function wyrmCockVore(attacker) {
   return {
     attackPlayer: function(defender){
@@ -196,7 +259,7 @@ function wyrmCockVore(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) {return 2 - defender.staminaPercentage(); }
+    weight: function(attacker, defender) { return (2 - defender.staminaPercentage()) * defender.prefs.vore.cock; }
   };
 }
 
@@ -225,6 +288,41 @@ function wyrmCockSwallow(attacker) {
   };
 }
 
+function wyrmCockCrush(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let damage = attack(attacker, defender, attacker.str * attacker.flags.cockDepth);
+
+      return ["The wyrm's cock throbs and clenches, crushing the life from your body!"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 0.13; },
+    gameover: function() { return "Crushed to death in the cock of " + attacker.description("a"); }
+  };
+}
+
+function wyrmStomachDigest(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attack(attacker, defender, 25);
+      return ["The wyrm's swollen gut gurgles, swiftly melting you down."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "stomach";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; },
+    gameover: function() { return "Digested in the stomach of " + attacker.description("a"); }
+  };
+}
+
 function wyrmBallsDigest(attacker) {
   return {
     attackPlayer: function(defender) {
@@ -242,8 +340,61 @@ function wyrmBallsDigest(attacker) {
   };
 }
 
+function wyrmOralStruggle(attacker) {
+  return {
+    name: "Struggle",
+    desc: "Try to escape the wyrm's throat!",
+    attack: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        attacker.changeStamina(-15);
+        defender.flags.oralDepth -= 1;
+        if (defender.flags.oralDepth == 2) {
+          return ["You grunt and shove, forcing your legs out of the beast's jaws."];
+        } else if (defender.flags.oralDepth == 1) {
+          return ["Your struggles bear fruit, pushing your hips and belly out into the cool mountain air."];
+        } else if (defender.flags.oralDepth == 0) {
+          defender.flags.state = "combat";
+          attacker.flags.grappled = false;
+          return ["You manage to escape! Your eyes struggle to focus as your head slides from the wyrm's gullet, leaving you vulnerable for a moment - but the beast is no metter off than you, hacking and coughing as you rise to your feet."];
+        }
+      } else {
+        attacker.changeStamina(-25);
+        return ["You struggle, but it's of no use..."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return defender.flags.state == "oral"; }
+    ],
+    priority: 1,
+  };
+}
 
-function cockStruggle(attacker) {
+function wyrmStomachStruggle(attacker) {
+  return {
+    name: "Struggle",
+    desc: "Try to free yourself from the wyrm's guts!",
+    attack: function(defender) {
+      let success = statHealthCheck(attacker, defender, "str");
+      if (success) {
+        attacker.changeStamina(-5);
+        defender.flags.state = "oral";
+        defender.flags.oralDepth = 2;
+        return ["You struggle and squirm, forcing yourself back into the wyrm's hot throat. He's not letting you go just yet..."];
+      } else {
+        attacker.changeStamina(-10);
+        return ["You struggle, but it's of no use."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) { return defender.flags.state == "stomach"; }
+    ],
+    priority: 1,
+  };
+}
+
+
+function wyrmCockStruggle(attacker) {
   return {
     name: "Struggle",
     desc: "Try to pull yourself from the wyrm's cock!",
@@ -275,7 +426,7 @@ function cockStruggle(attacker) {
   };
 }
 
-function ballStruggle(attacker) {
+function wyrmBallStruggle(attacker) {
   return {
     name: "Struggle",
     desc: "Try to free yourself from the wyrm's balls!",
