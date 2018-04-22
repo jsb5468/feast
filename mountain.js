@@ -634,9 +634,9 @@ function wyvernPounce(attacker) {
       if (statHealthCheck(attacker, defender, "dex")) {
         attacker.flags.state = "grapple";
         defender.flags.grappled = true;
-        return ["The wyvern dives out of sight, vanishing behind an outcropping of jagged rock. You cautiously approach, peeking around the corner. You see nothing - and then, suddenly, the beast pounces from behind, driving you to the ground!"];
+        return ["The wyverness leaps forward, slamming into you and pinning you against the cave wall! You slide down to the floor as she roars in your face, snapping fangs splattering your snout with drool."];
       } else {
-        return ["The wyvern leaps out of sight, vanishing behind a jagged outcropping of rock. You creep up and peer around the corner, seeing nothing. A scrabble of claws on rock draws your attention, and you manage to duck as the beast comes careening in, leaping too high and slamming into the wall instead! Sneaky bastard..."];
+        return ["The wyverness pounces, hurtling towards you like a stone from a sling. You raise your arms in time to block; the impact knocks you to the floor, but you manage to throw her off in the process."];
       }
     },
     requirements: [
