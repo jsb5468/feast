@@ -2,13 +2,24 @@ function MountainExplore() {
   GameObject.call(this, "Explore");
 
   this.actions.push({
+    "name": "Wyvern male",
+    "action": function() {
+      startCombat(new MountainWyrm());
+    }
+  });
+
+  this.actions.push({
+    "name": "Wyvern female",
+    "action": function() {
+      startCombat(new MountainWyvern());
+    }
+  });
+
+  this.actions.push({
     "name": "Explore",
     "action": function() {
       let outcome = Math.random();
       advanceTime(60*15);
-
-      startCombat(new MountainWyvern());
-      return;
 
       if (outcome < 0.25) {
         startCombat(new MountainWyrm());
