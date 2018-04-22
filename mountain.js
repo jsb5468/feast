@@ -62,6 +62,7 @@ function MountainWyrm() {
 
   this.attacks.push(wyrmCockSwallow(this));
   this.attacks.push(wyrmCockCrush(this));
+  this.attacks.push(wyrmCockIngest(this));
 
   this.attacks.push(wyrmBallsDigest(this));
 
@@ -177,7 +178,7 @@ function wyrmPounce(attacker) {
     ],
     priority: 1,
     weight: function(attacker, defender) {
-      return 2.5 - 2 * defender.healthPercentage();
+      return 2.5 - 1.25 * defender.healthPercentage();
     }
   };
 }
@@ -300,6 +301,26 @@ function wyrmCockSwallow(attacker) {
       }
     ],
     priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function wyrmCockIngest(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.cockDepth = 5;
+      attacker.flags.state = "balls";
+      return ["Exhausted and weak, you can do little to resist as a long, smooth swallow sucks you all the way into the wyrm's swollen balls."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return defender.health <= 0 || defender.stamina <= 0;
+      }
+    ],
+    priority: 2,
     weight: function(attacker, defender) { return 1; }
   };
 }
