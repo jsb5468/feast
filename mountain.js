@@ -505,7 +505,7 @@ function MountainWyvern() {
   this.playerAttacks.push(flee);
 
   this.startCombat = function(player) {
-    return ["A shadow falls over you; a heartbeat later, a hound-sized wyvern swoops down, landing with a heavy <i>thump</i> on the rocky ground. He hisses and snarls at you, rearing up in an attempt to intimidate you..and showing off his throbbing shaft."];
+    return ["Your exploration is abruptly interrupted as you stumble into a female wyvern. She hisses and rears up, glistening slit framed by her scaly underbelly above and - most surprisingly - a pair of modestly-sized breasts below."];
   };
 
   this.finishCombat = function() {
@@ -514,7 +514,7 @@ function MountainWyvern() {
     else if (this.flags.state == "unbirth")
       return ["You expire in the dragon's cooch, crushed to death by the wyvern's lust."];
     else if (this.flags.state == "breasts")
-      return ["You fall limp in " + this.description("the") + "'s breasts."];
+      return ["You fall limp in " + this.description("the") + "'s breast."];
     else if (this.flags.state == "womb")
       return ["You expire in the dragon's womb, dissolved by her juices."];
     else if (this.flags.state == "stomach")
@@ -545,7 +545,7 @@ function wyvernTail(attacker) {
   return {
     attackPlayer: function(defender){
       let damage = attack(attacker, defender, attacker.dex);
-      return [attacker.description("The") + " lashes at you with his tail, dealing " + damage + " damage."];
+      return [attacker.description("The") + " lashes at you with her tail, dealing " + damage + " damage."];
     },
     requirements: [
       function(attacker, defender) {
@@ -607,23 +607,6 @@ function wyvernPounce(attacker) {
     weight: function(attacker, defender) {
       return 2.5 - 2 * defender.healthPercentage();
     }
-  };
-}
-
-function wyvernGrind(attacker) {
-  return {
-    attackPlayer: function(defender){
-      let damage = attack(attacker, defender, attacker.str / 3);
-      defender.changeStamina(-35);
-      return ["You squirm as the wyvern grinds his throbbing red shaft along your body, painting your chest and face with hot, musky fluids."];
-    },
-    requirements: [
-      function(attacker, defender) {
-        return attacker.flags.state == "grapple";
-      }
-    ],
-    priority: 1,
-    weight: function(attacker, defender) { return defender.staminaPercentage(); }
   };
 }
 
