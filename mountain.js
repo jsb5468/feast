@@ -359,7 +359,13 @@ function wyrmStomachDigest(attacker) {
   return {
     attackPlayer: function(defender) {
       attack(attacker, defender, 25);
-      return ["The wyrm's swollen gut gurgles, swiftly melting you down."];
+      return pickRandom([
+        ["The wyrm's swollen gut gurgles, swiftly melting you down."],
+        ["Powerful muscles grind and squeeze, trying to crush you alive."],
+        ["The tight confines pulse and throb, clenching tighter with every passing second."],
+        ["Tingling acid and intense heat swiftly wear you down."],
+        ["You can barely move, imprisoned in shrink-wrap-tight flesh and doused in acid."]
+      ]);
     },
     requirements: [
       function(attacker, defender) {
@@ -375,8 +381,13 @@ function wyrmStomachDigest(attacker) {
 function wyrmBallsDigest(attacker) {
   return {
     attackPlayer: function(defender) {
-      attack(attacker, defender, 25);
-      return ["The wyrm's overstuffed balls churn, swiftly melting you down into dragon seed."];
+      attack(attacker, defender, 50);
+      return pickRandom([
+        ["The wyrm's overstuffed balls churn, swiftly melting you down into dragon seed."],
+        ["Hot, musky cum bathes your softening skin. You're going to melt if you don't escape soon!"],
+        ["Your world rocks and churns as the wyrm thrusts against your melting body."],
+        ["Powerful pressure squeezes in on your body, smearing thick cum over your swiftly-digesting self."]
+      ]);
     },
     requirements: [
       function(attacker, defender) {
@@ -780,8 +791,14 @@ function wyvernUnbirthCrush(attacker) {
 function wyvernStomachDigest(attacker) {
   return {
     attackPlayer: function(defender) {
-      attack(attacker, defender, 25);
-      return ["The wyvern's swollen gut gurgles, swiftly melting you down."];
+      attack(attacker, defender, 50);
+      return pickRandom([
+        ["The wyvern's gut clenches hard, churning and crushing you with ease."],
+        ["Thick walls of muscle clench in slow, rolling waves of peristalsis - each one tighter than the last."],
+        ["Throbbing pressure bears down on you, mashing chyme into your skin and softening you up."],
+        ["Powerful acids douse you like rainwater in a storm, stinging and stewing you at a frightening pace."],
+        ["You can barely move in the wyverness' tight guts - and if you don't escape soon, you'll never move again."]
+      ]);
     },
     requirements: [
       function(attacker, defender) {
@@ -799,7 +816,18 @@ function wyvernWombDigest(attacker) {
     attackPlayer: function(defender) {
       attacker.flags.wombTurns += 1;
       attack(attacker, defender, 20 * attacker.flags.wombTurns);
-      return ["The wyvern's overstuffed womb churns, swiftly melting you down."];
+      switch(attacker.flags.wombTurns) {
+        case 1: return ["The wyverness' womb clenches lightly, kneading over your imprisoned form."];
+        case 2: return ["The pressure is stronger now - squeezing, kneading, crushing."];
+        case 3: return ["Your body is starting to turn soft...soaked and slathered in the wyverness' nectar."];
+        case 4: return ["The heat is becoming unbearable. Everything is tight, wet, and crushing."];
+        case 5: return ["Incredibly force clamps down on your body. She wants you <i>now.</i>"];
+        default: return pickRandom([
+          ["Your body is dissolving into the wyverness' juices."],
+          ["The crushing pressure is overwhelming."],
+          ["You're feeling truly trapped...unable to move, unable to think."]
+        ]);
+      }
     },
     requirements: [
       function(attacker, defender) {
@@ -848,7 +876,7 @@ function wyvernBreastSwallow(attacker) {
 
       attacker.flags.breastDepth += 1;
       if (attacker.flags.breastDepth >= 6) {
-        return["Lost entirely within overstuffed breast, you can only whimper and squirm as it melts you down to creamy milk."];
+        return ["Lost entirely within overstuffed breast, you can only whimper and squirm as it melts you down to creamy milk."];
       } else if (attacker.flags.breastDepth == 5) {
         return ["You're so very deep - and so very close to your demise. You cough and gag, choking on the wyvern's milk as she moans and splays out on the cave floor, leaking the creamy fluid and thrashing with pleasure."];
       } else if (attacker.flags.breastDepth == 4) {
@@ -994,7 +1022,8 @@ function wyvernWombStruggle(attacker) {
       }
     },
     requirements: [
-      function(attacker, defender) { return defender.flags.state == "womb"; }
+      function(attacker, defender) { return defender.flags.state == "womb"; },
+      function(attcker, defender) { return defender.flags.wombTurns <= 5; }
     ],
     priority: 1,
   };
