@@ -86,18 +86,24 @@ function MountainWyrm() {
   this.finishCombat = function() {
     if (this.flags.state == "combat")
       return [this.description("The") + " knocks you to the ground. You bash your head on a rock and black out."];
-    else if (this.flags.state == "cock")
-      return ["You expire in the dragon's shaft, crushed to death by the wyrm's lust."];
     else if (this.flags.state == "stomach")
       return ["You give one last heave...and digest."];
-    else if (this.flags.state == "balls")
-      return ["The wyrm's thick, clingy cum proves too much for your body to bear. Slowly, surely, your struggles begin to fade - melting muscles dwindling your strength away to nothing. Deep, satisfied growls reverberate through your captor's massive seed-soaked prison...the last thing you perceive before everything goes dark.",
-      newline,
-      "Your body takes several hours to melt, breaking down and dissolving into a lake of hot, churning cum. The weight is enough to pin the greedy beast to the ground, and there he lays - panting, groaning, already forgetting the struggle he made to consume you and digest you alive. All the beast cared about now was chasing that <i>release.</i>",
-      newline,
-      "The bubble-churn of flesh and bone becoming seed finally ends, and the scaly predator lets out a triumphant roar. He shifts onto his back, curling up to raise his snout to the tip of his foot-long shaft. Draconic jaws part and a slick tongue slithers out...and he begins to lick. Every stroke of wet muscle sends a jolt of ecstasy up his spine. All too eager to release its pent-up flood, his cock throbs and twitches, engoring with blood and spurting out gobs of precum with each quick, forceful <i>slurp</i>. His lust builds for a half-minute, and then...",
-      newline,
-      "The first shot of cum arcs through the air. A gallon of rich, clingy wyrm seed splatters against a cliff face, raining down on the dusty ground. The next lands squarely in the wyrm's jaws, gushing down his throat and stuffing his belly with what was once <i>you</i>...and coating the rest of his body, too. He roars and thrashes, every orasmic clench of muscle spraying pint after pint of his cum. The display drags on for an entire minute, slowly reducing in intensity - and then comes the finale, as a bulge rushes up his cock and erupts into the world. Your skull rockets from that predatory cock, bouncing off the wall and clattering to the ground amidst an ankle-deep pool of cum."];
+    else if (this.flags.state == "cock" || this.flags.state == "balls") {
+      let lines = [];
+      if (this.flags.state == "cock") {
+        lines = ["You expire in the dragon's shaft, crushed to death by the wyrm's lust. The greedy cock sucks you down deep, plunging you into a tight prison of cum-drenched flesh."];
+      } else {
+        lines = ["The wyrm's thick, clingy cum proves too much for your body to bear. Slowly, surely, your struggles begin to fade - melting muscles dwindling your strength away to nothing. Deep, satisfied growls reverberate through your captor's massive seed-soaked prison...the last thing you perceive before everything goes dark."];
+      }
+      return lines.concat([
+        newline,
+        "Your body takes several hours to melt, breaking down and dissolving into a lake of hot, churning cum. The weight is enough to pin the greedy beast to the ground, and there he lays - panting, groaning, already forgetting the struggle he made to consume you and digest you alive. All the beast cared about now was chasing that <i>release.</i>",
+        newline,
+        "The bubble-churn of flesh and bone becoming seed finally ends, and the scaly predator lets out a triumphant roar. He shifts onto his back, curling up to raise his snout to the tip of his foot-long shaft. Draconic jaws part and a slick tongue slithers out...and he begins to lick. Every stroke of wet muscle sends a jolt of ecstasy up his spine. All too eager to release its pent-up flood, his cock throbs and twitches, engoring with blood and spurting out gobs of precum with each quick, forceful <i>slurp</i>. His lust builds for a half-minute, and then...",
+        newline,
+        "The first shot of cum arcs through the air. A gallon of rich, clingy wyrm seed splatters against a cliff face, raining down on the dusty ground. The next lands squarely in the wyrm's jaws, gushing down his throat and stuffing his belly with what was once <i>you</i>...and coating the rest of his body, too. He roars and thrashes, every orasmic clench of muscle spraying pint after pint of his cum. The display drags on for an entire minute, slowly reducing in intensity - and then comes the finale, as a bulge rushes up his cock and erupts into the world. Your skull rockets from that predatory cock, bouncing off the wall and clattering to the ground amidst an ankle-deep pool of cum."
+      ]);
+    }
   };
 }
 
@@ -334,7 +340,7 @@ function wyrmCockIngest(attacker) {
 function wyrmCockCrush(attacker) {
   return {
     attackPlayer: function(defender) {
-      let damage = attack(attacker, defender, attacker.str * attacker.flags.cockDepth);
+      let damage = attack(attacker, defender, 50 * attacker.flags.cockDepth);
 
       return ["The wyrm's cock throbs and clenches, crushing the life from your body!"];
     },
