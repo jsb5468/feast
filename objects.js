@@ -111,7 +111,7 @@ function Bed() {
   this.actions.push({
     "name": "Whack off",
     "action": function() {
-      player.arousal = 100;
+      player.arousal = player.arousalLimit();
       advanceTime(240);
     }
   });

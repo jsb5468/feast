@@ -257,7 +257,7 @@ function updateDisplay() {
   document.getElementById("stat-str").innerHTML = "Str: " + player.str;
   document.getElementById("stat-dex").innerHTML = "Dex: " + player.dex;
   document.getElementById("stat-con").innerHTML = "Con: " + player.con;
-  document.getElementById("stat-arousal").innerHTML = "Arousal: " + round(player.arousal,0) + "/" + player.arousalLimit();
+  document.getElementById("stat-arousal").innerHTML = "Arousal: " + round(player.arousal,0) + "/" + round(player.arousalLimit(),0);
   document.getElementById("stat-stomach").innerHTML = "Stomach: " + round(player.stomach.fullness(),0) + "/" + player.stomach.capacity;
   if (player.prefs.pred.anal || player.prefs.scat)
     document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness(),0) + "/" + player.bowels.capacity;
@@ -878,13 +878,15 @@ let toSave = ["str","dex","con","name","species","health","stamina"];
 function saveGame() {
   let save = {};
 
-  save.player = JSON.stringify(player, function(key, value) {
-    if (toSave.includes(key) || key == "") {
-      return value;
-    } else {
-      return undefined;
-    }
-  });
+  save.player = {};
+
+  save.player.str = player.str;
+  save.player.dex = player.dex;
+  save.player.con = player.con;
+  save.player.name = player.name;
+  save.player.species = player.species;
+  save.player.health = player.health;
+  save.player.health = player.stamina;
 
   save.prefs = JSON.stringify(player.prefs);
 
@@ -903,7 +905,7 @@ function loadGame() {
   changeMode("explore");
   let save = JSON.parse(window.localStorage.getItem("save"));
 
-  let playerSave = JSON.parse(save.player);
+  let playerSave = save.player;
 
   for (let key in playerSave) {
     if (playerSave.hasOwnProperty(key)) {
