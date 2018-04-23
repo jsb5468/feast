@@ -257,7 +257,7 @@ function updateDisplay() {
   document.getElementById("stat-str").innerHTML = "Str: " + player.str;
   document.getElementById("stat-dex").innerHTML = "Dex: " + player.dex;
   document.getElementById("stat-con").innerHTML = "Con: " + player.con;
-  document.getElementById("stat-arousal").innerHTML = "Arousal: " + round(player.arousal,0) + "/" + player.arousalLimit();
+  document.getElementById("stat-arousal").innerHTML = "Arousal: " + round(player.arousal,0) + "/" + round(player.arousalLimit(),0);
   document.getElementById("stat-stomach").innerHTML = "Stomach: " + round(player.stomach.fullness(),0) + "/" + player.stomach.capacity;
   if (player.prefs.pred.anal || player.prefs.scat)
     document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness(),0) + "/" + player.bowels.capacity;
