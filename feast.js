@@ -878,13 +878,15 @@ let toSave = ["str","dex","con","name","species","health","stamina"];
 function saveGame() {
   let save = {};
 
-  save.player = JSON.stringify(player, function(key, value) {
-    if (toSave.includes(key) || key == "") {
-      return value;
-    } else {
-      return undefined;
-    }
-  });
+  save.player = {};
+
+  save.player.str = player.str;
+  save.player.dex = player.dex;
+  save.player.con = player.con;
+  save.player.name = player.name;
+  save.player.species = player.species;
+  save.player.health = player.health;
+  save.player.health = player.stamina;
 
   save.prefs = JSON.stringify(player.prefs);
 
@@ -903,7 +905,7 @@ function loadGame() {
   changeMode("explore");
   let save = JSON.parse(window.localStorage.getItem("save"));
 
-  let playerSave = JSON.parse(save.player);
+  let playerSave = save.player;
 
   for (let key in playerSave) {
     if (playerSave.hasOwnProperty(key)) {
