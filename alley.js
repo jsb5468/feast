@@ -1,5 +1,5 @@
 function KuroLuxray() {
-  Creature.call(this, "Kuro", 20, 40, 20);
+  Creature.call(this, "Kuro", 25, 30, 25);
 
   this.hasName = true;
 
@@ -12,7 +12,7 @@ function KuroLuxray() {
   this.attacks.push(kuroBat(this));
 
   this.attacks.push(kuroLick(this));
-  //this.attacks.push(kuroKnead(this));
+  this.attacks.push(kuroKnead(this));
   //this.attacks.push(kuroSlideSit(this));
   this.attacks.push(kuroOralVore(this));
 
@@ -25,7 +25,6 @@ function KuroLuxray() {
   this.attacks.push(kuroAnalPull(this));
   this.attacks.push(kuroAnalSqueeze(this));
   this.attacks.push(kuroAnalIngest(this));
-  //this.attacks.push(kuroAnalRest(this));
 
   this.attacks.push(kuroStomachDigest(this));
 
@@ -34,6 +33,15 @@ function KuroLuxray() {
   this.flags.distance = 6;
 
   this.playerAttacks = [];
+
+  this.playerAttacks.push(kuroPlayerRun);
+  this.playerAttacks.push(kuroPlayerEscape);
+  this.playerAttacks.push(kuroPlayerPawStruggle);
+  this.playerAttacks.push(kuroPlayerAssStruggle);
+  this.playerAttacks.push(kuroPlayerOralStruggle);
+  this.playerAttacks.push(kuroPlayerAnalStruggle);
+  this.playerAttacks.push(kuroPlayerStomachStruggleUp);
+  this.playerAttacks.push(kuroPlayerStomachStruggleDown);
 
   this.playerAttacks.push(pass);
 
@@ -146,6 +154,23 @@ function kuroLick(attacker) {
   };
 }
 
+function kuroKnead(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      defender.changeStamina(-45);
+
+      return ["Heavy paws knead over your body, smothering you against the pavement."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "paws";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.staminaPercentage(); }
+  };
+}
+
 function kuroOralVore(attacker) {
   return {
     attackPlayer: function(defender) {
@@ -162,7 +187,7 @@ function kuroOralVore(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1 - defender.staminaPercentage(); }
+    weight: function(attacker, defender) { return 2 - 1.5 * defender.staminaPercentage(); }
   };
 }
 
@@ -338,6 +363,262 @@ function kuroStomachDigest(attacker) {
     priority: 1,
     weight: function(attacker, defender) { return 1; },
     gameover: function() { return "Shrunk down and digested by Kuro"; }
+  };
+}
+
+function kuroPlayerRun(attacker) {
+  return {
+    name: "Run",
+    desc: "Run away!",
+    attack: function(defender) {
+      defender.flags.distance -= 1;
+
+      let line = pickRandom([
+        ["You run towards the entrance of the alley, trying not to think about what'll happen if you trip..."],
+        ["Your tiny footsteps echo off the canyonlike walls of the alley."],
+        ["You sprint towards the relative safety of the street, panting and gasping as the cat's heavy footfalls keep pace behind you."]
+      ]);
+
+      let distance = "";
+
+      if (defender.flags.distance > 5) {
+        distance = "You still have a long way to go.";
+      } else if (defender.flags.distance > 3) {
+        distance = "You're getting closer to freedom.";
+      } else if (defender.flags.distance > 1) {
+        distance = "You're only a dozen feet away now.";
+      } else if (defender.flags.distance == 1) {
+        distance = "Just a few more steps and you're free!";
+      } else {
+        distance = "You're out of the alley! Now you just need to turn the corner...";
+      }
+
+      return line.concat(newline,distance);
+    },
+    requirements: [
+      function(attacker, defender) {
+        return defender.flags.state == "chase";
+      },
+      function(attacker, defender) {
+        return defender.flags.distance > 0;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function kuroPlayerEscape(attacker) {
+  return {
+    name: "Escape",
+    desc: "Get away from the alley!",
+    attack: function(defender) {
+      changeMode("explore");
+      moveToByName("North Street","");
+      advanceTime(60 * 60 * 6 * (Math.random() + 0.2));
+      attacker.health = attacker.maxHealth * 0.2;
+      attacker.stamina = attacker.maxStamina * 0.2;
+      return ["You turn the corner and flee, leaving the predatory cat behind. You stumble along for a few minutes before collapsing under a bench and passing out. When you awaken, you're back to normal size - and a little bit woozy feeling."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return defender.flags.state == "chase";
+      },
+      function(attacker, defender) {
+        return defender.flags.distance <= 0;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function kuroPlayerPawStruggle(attacker) {
+  return {
+    name: "Struggle",
+    desc: "Squirm under the Luxray's toes",
+    attack: function(defender) {
+      let result = statHealthCheck(attacker, defender, "str");
+
+      if (result) {
+        defender.flags.state = "chase";
+        return ["You squirm out from beneath the Luxray's crushing paws!"];
+      } else {
+        return ["You squirm and writhe...but get nowhere, pinned hard against the pavement."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return defender.flags.state == "paws";
+      }, function(attacker, defender) {
+        return attacker.health > 0 && attacker.stamina > 0;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function kuroPlayerAssStruggle(attacker) {
+  return {
+    name: "Struggle",
+    desc: "Squirm under the Luxray's ass",
+    attack: function(defender) {
+      let result = statHealthCheck(attacker, defender, "str");
+
+      if (result) {
+        defender.flags.state = "chase";
+        return ["You push and thrust and squeeze...and free yourself! The cat takes a moment to notice you've escaped, and you're back in a sprint by the time he's raised himself back up."];
+      } else {
+        return ["You push and shove and writhe...and do nothing but pleasure Kuro, smearing your face in his bitter pucker."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return defender.flags.state == "sit";
+      }, function(attacker, defender) {
+        return attacker.health > 0 && attacker.stamina > 0;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function kuroPlayerOralStruggle(attacker) {
+  return {
+    name: "Struggle",
+    desc: "Try to escape the Luxray's gullet...",
+    attack: function(defender) {
+      let result = statHealthCheck(attacker, defender, "str");
+
+      if (result) {
+        defender.flags.oralstage--;
+
+        if (defender.flags.oralstage == 0) {
+          defender.flags.state = "paws";
+          return ["You strain and struggle to push open those massive jaws...and succeed! Your soaking-wet body tumbles to the ground as you force the cat to spit you own.",newline,"The cat promptly stomps on you."];
+        } else if (defender.flags.oralstage == 1 ) {
+          return ["Your struggles bear fruit, and you manage to drag yourself back up the cat's throat, much to his surprise."];
+        }
+      } else {
+        return ["You struggle and grind against slick flesh...to no avail."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return defender.flags.state == "oral";
+      }, function(attacker, defender) {
+        return attacker.health > 0 && attacker.stamina > 0;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+
+function kuroPlayerAnalStruggle(attacker) {
+  return {
+    name: "Struggle",
+    desc: "Writhe in the Luxray's ass",
+    attack: function(defender) {
+      let result = statHealthCheck(attacker, defender, "str");
+
+      if (result) {
+        defender.flags.analstage--;
+
+        if (defender.flags.analstage == 0) {
+          defender.flags.state = "sit";
+          return ["You give one last mighty heave, pushing yourself out from Kuro's pucker and falling to the ground.",newline,"A moment later, his ass lands hard on you, pinning you hard."];
+        } else if (defender.flags.analstage == 1) {
+          return ["You're so very close now. You squirm and press, shoving your lower body back out of the Luxray's ass."];
+        } else if (defender.flags.analstage == 2) {
+          return ["You push yourself against arching walls of muscle, workign you way out of the Luxray's bowels bit-by-bit. You pray you're going the right direction..."];
+        } else if (defender.flags.analstage == 3) {
+          return ["You slide from Kuro's small intestine. At least you have more room to breathe now."];
+        } else if (defender.flags.analstage == 4) {
+          return ["The cat's guts are tangled and winding. You blindly squirm and struggle, making slow, steady progress against those waves of peristalsis."];
+        } else if (defender.flags.analstage == 5) {
+          return ["You drag yourself away from the upper half of the cat's small intestine...but there's so very <i>far</i> to go."];
+        }
+      } else {
+        return ["You struggle and grind against slick muscle...to no avail."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return defender.flags.state == "anal";
+      }, function(attacker, defender) {
+        return attacker.health > 0 && attacker.stamina > 0;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+
+function kuroPlayerStomachStruggleUp(attacker) {
+  return {
+    name: "Struggle up!",
+    desc: "Try to escape before you're digested by pushing into Kuro's throat.",
+    attack: function(defender) {
+      let result = statHealthCheck(attacker, defender, "str");
+
+      if (result) {
+        defender.flags.state = "oral";
+        defender.flags.oralstage = 2;
+        return ["You grip the tight sphincter at the top of the cat's stomach and pull with all your might...and pry it open! You shove your head and shoulders in, pulling the rest of your body into the cat's ripppling throat as it tries to pack you back down."];
+      } else {
+        return pickRandom([
+          ["You shove both hands into the tight ring of muscle locking you in that wretched stomach and pull...and get nowhere."],
+          ["You're too busy being mashed up by crushing peristalsis to struggle."],
+          ["You try to find your footing to push into the cat's throat. A lazy roll and <i>belch</i> throws you into the chyme."]
+        ]);
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return defender.flags.state == "stomach";
+      }, function(attacker, defender) {
+        return attacker.health > 0 && attacker.stamina > 0;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+
+function kuroPlayerStomachStruggleDown(attacker) {
+  return {
+    name: "Struggle down!",
+    desc: "Try to escape before you're digested by pushing into Kuro's bowels.",
+    attack: function(defender) {
+      let result = statHealthCheck(attacker, defender, "str");
+
+      if (result) {
+        defender.flags.state = "anal";
+        defender.flags.analstage = 4;
+        return ["You grip the tight sphincter at the bottom of the cat's stomach and pull with all your might...and pry it open! Your entire body plunges in in an instant, and you're now sealed into the cat's intestines. Was this really such a good idea...?"];
+      } else {
+        return pickRandom([
+          ["You shove both hands into the tight ring of muscle locking you in that wretched stomach and pull...and get nowhere."],
+          ["You're too busy being mashed up by crushing peristalsis to struggle."],
+          ["You try to find your footing to push into the cat's guts. A lazy roll and <i>belch</i> throws you into the chyme."]
+        ]);
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return defender.flags.state == "stomach";
+      }, function(attacker, defender) {
+        return attacker.health > 0 && attacker.stamina > 0;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
   };
 }
 
