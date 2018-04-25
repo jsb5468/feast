@@ -16,16 +16,18 @@ function KuroLuxray() {
   //this.attacks.push(kuroSlideSit(this));
   this.attacks.push(kuroOralVore(this));
 
-  this.attacks.push(kuroSmother(this));
+  this.attacks.push(kuroAnalSmother(this));
   this.attacks.push(kuroAnalVore(this));
 
-  //this.attacks.push(kuroSwallow(this));
+  this.attacks.push(kuroOralSuckle(this));
+  this.attacks.push(kuroOralSwallow(this));
 
-  //this.attacks.push(kuroAnalPull(this));
-  //this.attacks.push(kuroAnalSqueeze(this));
+  this.attacks.push(kuroAnalPull(this));
+  this.attacks.push(kuroAnalSqueeze(this));
+  this.attacks.push(kuroAnalIngest(this));
   //this.attacks.push(kuroAnalRest(this));
 
-  //this.attacks.push(kuroDigest(this));
+  this.attacks.push(kuroStomachDigest(this));
 
   this.flags.state = "chase";
 
@@ -36,6 +38,18 @@ function KuroLuxray() {
   this.playerAttacks.push(pass);
 
   this.prefs.prey = false;
+
+  this.startCombat = function(player) {
+    player.flags.teases = 0;
+    return ["Vertigo abruptly overwhelms you. Stumbling and grasping for something to steady yourself with, you eventually find yourself lying on the floor...and only a few inches tall. You scramble to your feet, ears perking at the sound of footfalls. Alas, it is not a chance of rescue - rather, it's a massive black-and-yellow cat, skulking from the shadows and licking his lips."];
+  };
+
+  this.finishCombat = function() {
+    switch(this.flags.state) {
+      case "stomach":
+        return ["You pass out in the Luxray's gut, gradually melting away..."];
+    }
+  };
 }
 
 function kuroBat(attacker) {
@@ -66,7 +80,7 @@ function kuroBat(attacker) {
       }
     ],
     priority: 1,
-    weight: function() { return 1; }
+    weight: function(attacker, defender) { return 1; }
   };
 }
 
@@ -88,7 +102,7 @@ function kuroPounce(attacker) {
       }
     ],
     priority: 1,
-    weight: function() { return 1; }
+    weight: function(attacker, defender) { return 1; }
   };
 }
 
@@ -111,7 +125,7 @@ function kuroSit(attacker) {
       }
     ],
     priority: 1,
-    weight: function() { return 1; }
+    weight: function(attacker, defender) { return 1; }
   };
 }
 
@@ -136,6 +150,7 @@ function kuroOralVore(attacker) {
   return {
     attackPlayer: function(defender) {
       attacker.flags.state = "oral";
+      attacker.flags.oralstage = 1;
       return ["Pinned and helpless, you can do little but squirm as the big cat's jaws lower to envelop you...hot, slimy tongue curling under your pinned body, cradling you in muscle and easing you into that powerful maw. He suckles on you for a long minute, sloshing you from side to side - savoring your fear, no doubt."];
     },
     requirements: [
@@ -147,11 +162,54 @@ function kuroOralVore(attacker) {
       }
     ],
     priority: 1,
-    weight: function() { return 1 - defender.staminaPercentage(); }
+    weight: function(attacker, defender) { return 1 - defender.staminaPercentage(); }
   };
 }
 
-function kuroSmother(attacker) {
+function kuroOralSuckle(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      defender.changeStamina(-35);
+
+      return ["Hot, wet flesh grinds over your body as Kuro slurps and sucks on your bite-sized frame."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "oral";
+      },
+      function(attacker, defender) {
+        return attacker.flags.oralstage == 1;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+
+function kuroOralSwallow(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.oralstage++;
+
+      if (attacker.flags.oralstage == 2) {
+        return ["The Luxray flicks back his head, tossing you against the roof of that slimy, humid maw...and then letting you slide right down into his tight throat. A powerful <i>glk</i> of muscle grasps your body and sucks you down deep, your struggles forming faint bulges in the big cat's bared neck."];
+      } else if (attacker.flags.oralstage == 3) {
+        attacker.flags.state = "stomach";
+        return ["One final swallow tugs you down into Kuro's tight, sloppy stomach."];
+      }
+    },
+    requirements: [
+        function(attacker, defender) {
+          return attacker.flags.state == "oral";
+        }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 2/3; }
+  };
+}
+
+function kuroAnalSmother(attacker) {
   return {
     attackPlayer: function(defender) {
       defender.changeStamina(-45);
@@ -172,8 +230,9 @@ function kuroAnalVore(attacker) {
   return {
     attackPlayer: function(defender) {
       attacker.flags.state = "anal";
+      attacker.flags.analstage = 1;
 
-      return ["The heavy cat's weight shifts and slides...and his soft pucker takes you in. He eases himself down just an inch or two, enough to slide you entirely within...churring and swishing his tail as you're locked into his bitter, musky bowels."];
+      return ["The heavy cat's weight shifts and slides...and his soft pucker takes you in. He eases himself down just an inch or two, enough to slide your upper body within...churring and swishing his tail as you're locked into his bitter, musky bowels. He clenches firmly, sealing that donut around your hips and easing you further inside."];
     },
     requirements: [
       function(attacker, defender) {
@@ -184,9 +243,104 @@ function kuroAnalVore(attacker) {
       }
     ],
     priority: 1,
-    weight: function() { return 1; }
+    weight: function(attacker, defender) { return 1; }
   };
 }
+
+function kuroAnalPull(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.analstage++;
+
+      if (attacker.flags.analstage == 2) {
+        return ["A slow, unstoppable squeeze drags you deeper into the Luxray's bowels."];
+      } else if (attacker.flags.analstage == 3) {
+        return ["The fleshy walls grow tighter as you're clenched up against the big cat's small intestine."];
+      } else if (attacker.flags.analstage == 4) {
+        return ["A wet <i>shlllck</i> fills your ears as you're sucked into tighter, mazelike guts, pressed and squeezed on from every direction..."];
+      } else if (attacker.flags.analstage == 5) {
+        return ["You're dragged so very deep, disoriented and lost in a haze of musk and humidity. The walls ripple and clench with a slow, steady rhythm."];
+      } else if (attacker.flags.analstage == 6) {
+        attacker.flags.state = "stomach";
+        return ["Kuro's guts clench hard, squeezing you headfirst into his gurgling stomach and smothering you in sloppy flesh."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "anal";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function kuroAnalSqueeze(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attack(attacker, defender, 15);
+      defender.changeStamina(-25);
+
+      return pickRandom([
+        ["Muscular walls clench and squeeze your little body, wearing you down."],
+        ["A long, drawn-out squeeze grips your body, smearing your face against those musky, meaty walls."],
+        ["Your body is bent and squeezed by unrelenting force."]
+      ]);
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "anal";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function kuroAnalIngest(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.analstage = 6;
+      attacker.flags.state = "stomach";
+
+      return ["Exhauted and beaten, you dimly feel yourself being dragged all the way into the cat's gut...sucked so very deep in one smooth, satisfying clench."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "anal";
+      },
+      function(attacker, defender) {
+        return defender.health <= 0 || defender.stamina <= 0;
+      }
+    ],
+    priority: 2,
+    weight: function(attacker, defender) { return 1; }
+  };
+}
+function kuroStomachDigest(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attack(attacker, defender, 33);
+      return pickRandom([
+        ["Powerful muscle grinds and squeezes your body, wearing you down in the depths of the Luxray."],
+        ["You moan and whimper, smothered and squashed in a pit of flesh and frothy slime."],
+        ["The Luxray's stomach gurgles and bubbles as it melts you down."],
+        ["Hot flesh clenches all around, grinding your body into the acidic slime."],
+        ["A soft <i>burp</i> spills from the cat's jaws as he digests you down."],
+        ["Deep, thrumming purrs and thick, slimy sloshes are all you can hear in the Luxray's deepest depths..."]
+      ]);
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "stomach";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; },
+    gameover: function() { return "Shrunk down and digested by Kuro"; }
+  };
+}
+
 
 function template(attacker) {
   return {
@@ -197,6 +351,6 @@ function template(attacker) {
 
     ],
     priority: 1,
-    weight: function() { return 1; }
+    weight: function(attacker, defender) { return 1; }
   };
 }
