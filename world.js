@@ -130,6 +130,27 @@ let locationsSrc = [
         "name": "Seedy Bar",
         "dir": NORTH,
         "desc": "You step into the bar."
+      },
+      {
+        "name": "Dark Alley",
+        "dir": WEST,
+        "desc": "You step into the darkness..."
+      }
+    ]
+  },
+  {
+    "name": "Dark Alley",
+    "desc": "A dark, claustrophobic alley",
+    "conn": [
+      {
+        "name": "Alley",
+        "dir": EAST,
+        "desc": "You emerge from the darkness"
+      }
+    ],
+    "hooks": [
+      function() {
+        startCombat(new KuroLuxray());
       }
     ]
   },
