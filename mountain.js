@@ -99,7 +99,9 @@ function MountainWyrm() {
         newline,
         "Your body takes several hours to melt, breaking down and dissolving into a lake of hot, churning cum. The weight is enough to pin the greedy beast to the ground, and there he lays - panting, groaning, already forgetting the struggle he made to consume you and digest you alive. All the beast cared about now was chasing that <i>release.</i>",
         newline,
-        "The bubble-churn of flesh and bone becoming seed finally ends, and the scaly predator lets out a triumphant roar. He shifts onto his back, curling up to raise his snout to the tip of his foot-long shaft. Draconic jaws part and a slick tongue slithers out...and he begins to lick. Every stroke of wet muscle sends a jolt of ecstasy up his spine. All too eager to release its pent-up flood, his cock throbs and twitches, engoring with blood and spurting out gobs of precum with each quick, forceful <i>slurp</i>. His lust builds for a half-minute, and then...",
+        "Dwarfed as he is by the sheer size of his own orbs, the dragon begins to thrust. He rocks back and forth, bracing himself against a jagged outcropping of rock to press down into his glorping, gurgling balls. Powerful <i>gllrrrrps</i> are punctuated by staccato bursts of <i>blorps</i> and <i>pops</i> of bubbling, frothing cum.",
+        newline,
+        "The bubble-churn of flesh and bone becoming seed begins to taper off, and the scaly predator lets out a triumphant roar. He shifts onto his back, curling up to raise his snout to the tip of his foot-long shaft. Draconic jaws part and a slick tongue slithers out...and he begins to lick. Every stroke of wet muscle sends a jolt of ecstasy up his spine. All too eager to release its pent-up flood, his cock throbs and twitches, engoring with blood and spurting out gobs of precum with each quick, forceful <i>slurp</i>. The tempest of gurgling cum is punctuated by the <i>shlllk-shlllk</i> of lust-lubricated flesh, his hindpaws straining to squeeze on his turgid cock to stimulate it just a <i>little more</i>. His lust builds for a half-minute, and then...",
         newline,
         "The first shot of cum arcs through the air. A gallon of rich, clingy wyrm seed splatters against a cliff face, raining down on the dusty ground. The next lands squarely in the wyrm's jaws, gushing down his throat and stuffing his belly with what was once <i>you</i>...and coating the rest of his body, too. He roars and thrashes, every orasmic clench of muscle spraying pint after pint of his cum. The display drags on for an entire minute, slowly reducing in intensity - and then comes the finale, as a bulge rushes up his cock and erupts into the world. Your skull rockets from that predatory cock, bouncing off the wall and clattering to the ground amidst an ankle-deep pool of cum."
       ]);
@@ -576,6 +578,8 @@ function MountainWyvern() {
 
       result.push("The wyverness stirs, gradually easing herself over towards the cave's wall - struggling to move under the weight of your former body. She pants and moans, tail swishing from side to side before abruptly curling in and stabbing at her oozing, glistening slit. The dull-pointed tip plunges in perfectly, sending a shock of pleasure up her spine and eliciting a strong, deep <i>growl</i> of delight.",
       newline,
+      "Thick, churning glorps rock her overstuffed womb. Every twitch, every quiver, every squeeze - each and every one elicits a storm of <i>schlrrrorps</i> and <i>shllllks</i> as your molten body is sloshed about in fatal, maternal depths.",
+      newline,
       "Her efforts grow more forceful as her already-powerful lust builds and builds. Moans and gasps echo off the hard, craggy walls. The wyverness' tail sinks deeper and deeper, breaching into her womb and letting out splatters of hot, sticky femcum. Your remains spray out in fist-sized globs, hitting the wall behind her and flowing down to the ground.",
       newline,
       "Then comes the orgasm.",
@@ -587,7 +591,19 @@ function MountainWyvern() {
       return result;
     }
     else if (this.flags.state == "breasts")
-      return ["You fall limp in the wyverness' breast."];
+      return [
+        "You let out a final gasp, air trickling from your mouth and bubbling up through the rich dragon-milk. Your instincts force you to breathe, and you suck in a lungful of the creamy fluid...and then, you black out, struggles slowly to a stop in that massively overfilled breast.",
+        newline,
+        "The wyverness moans with pleasure, rocking softly from side to side as her breast begins to properly break you down. What was once a subtle sloshing grows incredibly loud, her cream beginning to bubble and froth as it works to turn <i>you</i> into more of it. Panting and huffing and churring nice and lowly, the beast drifts off into a brief slumber.",
+        newline,
+        "The churning grows ever-stronger as she sleeps. Thick, wet <i>blorps</i> rock the cave as the stretchy breast clenches in on your fading body, grinding enzymes into your flesh and breaking it down like soaked tissue paper. <i>Shlrrrp-glrrrpkh</i> - and now it's even tighter. So intense is her digestion that it nearly sounds of boiling, with a low, bubbling roar occasionally interrupted by a sloppy slosh of another hunk of your body falling apart and melting away.",
+        newline,
+        "An hour later, the wyverness stirs. She moans and stretches, lazily rolling onto her side - making a soft <i>splash</i> as she disturbs a puddle of her leaking milk. Her eyes widen at the sight of her massive breast, which still easily dwarfs her own body...and she lets out a victorious roar. Your identity - whatever <i>you</i> were - is long gone from her mind; all she knows now is how very <i>full</i> she is.",
+        newline,
+        "And then, she gets to work. She scoots herself towards the wall, every move forcing out a half-cup of fatty milk and smearing it across the floor. A long minute later, she gets close enough to lift herself up with her forepaws...and then drop back down. The impact opens her up like a breached dam, forcing out a powerful jet of milk that sprays across the wall, splattering the floor all around her in the warm fluid. She roars and moans, gasping for breath and panting and thrusting and reveling in the sheer ecstasy of her dominance over...well, whatever it was she'd melted down.",
+        newline,
+        "Now halfway empty, she curls up and gets her forepaws around her huge breast. A few strong squeezes get her flowing again, now lashing the fifteen-foot ceiling with pulses of milk. She rolls and thrashes and soaks herself in the fluid, licking up a little...and letting the rest flow away. It flows from the cave and seeps into the gritty earth beyond, your wasted life soaking into the earth as she soaks in the afterglow."
+      ];
     else if (this.flags.state == "stomach")
       return ["You give one last heave...and digest."];
   };
