@@ -150,7 +150,8 @@ let locationsSrc = [
     ],
     "hooks": [
       function() {
-        startCombat(new KuroLuxray());
+        if (player.prefs.prey && (player.prefs.vore.oral > 0 || player.prefs.vore.anal > 0))
+          startCombat(new KuroLuxray());
       }
     ]
   },

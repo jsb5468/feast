@@ -13,7 +13,6 @@ function KuroLuxray() {
 
   this.attacks.push(kuroLick(this));
   this.attacks.push(kuroKnead(this));
-  //this.attacks.push(kuroSlideSit(this));
   this.attacks.push(kuroOralVore(this));
 
   this.attacks.push(kuroAnalSmother(this));
@@ -107,6 +106,9 @@ function kuroPounce(attacker) {
     requirements: [
       function(attacker, defender) {
         return attacker.flags.state == "chase";
+      },
+      function(attacker, defender) {
+        return defender.prefs.prey && defender.prefs.vore.oral > 0;
       }
     ],
     priority: 1,
@@ -130,6 +132,9 @@ function kuroSit(attacker) {
     requirements: [
       function(attacker, defender) {
         return attacker.flags.state == "chase";
+      },
+      function(attacker, defender) {
+        return defender.prefs.prey && defender.prefs.vore.anal > 0;
       }
     ],
     priority: 1,
@@ -187,7 +192,7 @@ function kuroOralVore(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 2 - 1.5 * defender.staminaPercentage(); }
+    weight: function(attacker, defender) { return 2 - 1 * defender.staminaPercentage(); }
   };
 }
 
@@ -207,10 +212,9 @@ function kuroOralSuckle(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return defender.staminaPercentage() * 1.25; }
   };
 }
-
 
 function kuroOralSwallow(attacker) {
   return {
@@ -268,7 +272,7 @@ function kuroAnalVore(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return 2 - defender.staminaPercentage(); }
   };
 }
 
@@ -581,8 +585,12 @@ function kuroPlayerStomachStruggleUp(attacker) {
     requirements: [
       function(attacker, defender) {
         return defender.flags.state == "stomach";
-      }, function(attacker, defender) {
+      },
+      function(attacker, defender) {
         return attacker.health > 0 && attacker.stamina > 0;
+      },
+      function(attacker, defender) {
+        return attacker.prefs.vore.oral > 0;
       }
     ],
     priority: 1,
@@ -615,21 +623,10 @@ function kuroPlayerStomachStruggleDown(attacker) {
         return defender.flags.state == "stomach";
       }, function(attacker, defender) {
         return attacker.health > 0 && attacker.stamina > 0;
+      },
+      function(attacker, defender) {
+        return attacker.prefs.vore.anal > 0;
       }
-    ],
-    priority: 1,
-    weight: function(attacker, defender) { return 1; }
-  };
-}
-
-
-function template(attacker) {
-  return {
-    attackPlayer: function(defender) {
-
-    },
-    requirements: [
-
     ],
     priority: 1,
     weight: function(attacker, defender) { return 1; }
