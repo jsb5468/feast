@@ -14,10 +14,10 @@ function KuroLuxray() {
   this.attacks.push(kuroLick(this));
   //this.attacks.push(kuroKnead(this));
   //this.attacks.push(kuroSlideSit(this));
-  //this.attacks.push(kuroOralVore(this));
+  this.attacks.push(kuroOralVore(this));
 
   this.attacks.push(kuroSmother(this));
-  //this.attacks.push(kuroAnalVore(this));
+  this.attacks.push(kuroAnalVore(this));
 
   //this.attacks.push(kuroSwallow(this));
 
@@ -132,6 +132,25 @@ function kuroLick(attacker) {
   };
 }
 
+function kuroOralVore(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.state = "oral";
+      return ["Pinned and helpless, you can do little but squirm as the big cat's jaws lower to envelop you...hot, slimy tongue curling under your pinned body, cradling you in muscle and easing you into that powerful maw. He suckles on you for a long minute, sloshing you from side to side - savoring your fear, no doubt."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "paws";
+      },
+      function(attacker, defender) {
+        return defender.prefs.prey && defender.prefs.vore.oral > 0;
+      }
+    ],
+    priority: 1,
+    weight: function() { return 1 - defender.staminaPercentage(); }
+  };
+}
+
 function kuroSmother(attacker) {
   return {
     attackPlayer: function(defender) {
@@ -146,6 +165,26 @@ function kuroSmother(attacker) {
     ],
     priority: 1,
     weight: function(attacker, defender) { return defender.staminaPercentage(); }
+  };
+}
+
+function kuroAnalVore(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      attacker.flags.state = "anal";
+
+      return ["The heavy cat's weight shifts and slides...and his soft pucker takes you in. He eases himself down just an inch or two, enough to slide you entirely within...churring and swishing his tail as you're locked into his bitter, musky bowels."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "sit";
+      },
+      function(attacker, defender) {
+        return defender.prefs.prey && defender.prefs.vore.anal > 0;
+      }
+    ],
+    priority: 1,
+    weight: function() { return 1; }
   };
 }
 
