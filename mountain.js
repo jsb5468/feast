@@ -566,12 +566,28 @@ function MountainWyvern() {
   this.finishCombat = function() {
     if (this.flags.state == "combat")
       return [this.description("The") + " knocks you to the ground. You bash your head on a rock and black out."];
-    else if (this.flags.state == "unbirth")
-      return ["You expire in the dragon's cooch, crushed to death by the wyvern's lust."];
+    else if (this.flags.state == "unbirth" || this.flags.state == "womb") {
+      let result = [];
+      if (this.flags.state == "unbirth")
+        result.push("You expire in the dragon's cooch, crushed to death by the wyvern's lust. A long, lustful wave of quivering muscle sucks you into her innermost depths - her hot, dripping womb - and, soon after, your body dissolves.");
+      else if (this.flags.state == "womb")
+        result.push("You expire in the dragon's womb, crushed in a vice-grip of muscle and slowly dissolved by her juices. Your thrashing, shrink-wrap-tigh bulge has ceased to move, and over the course of a half-hour, it loses its shape...melting down to a nice, heavy heap of femcum.");
+      result.push(newline);
+
+      result.push("The wyverness stirs, gradually easing herself over towards the cave's wall - struggling to move under the weight of your former body. She pants and moans, tail swishing from side to side before abruptly curling in and stabbing at her oozing, glistening slit. The dull-pointed tip plunges in perfectly, sending a shock of pleasure up her spine and eliciting a strong, deep <i>growl</i> of delight.",
+      newline,
+      "Her efforts grow more forceful as her already-powerful lust builds and builds. Moans and gasps echo off the hard, craggy walls. The wyverness' tail sinks deeper and deeper, breaching into her womb and letting out splatters of hot, sticky femcum. Your remains spray out in fist-sized globs, hitting the wall behind her and flowing down to the ground.",
+      newline,
+      "Then comes the orgasm.",
+      newline,
+      "An earsplitting roar of pleasure bursts from her depths as the floodgates open. A flock of birds outside startles and takes flight; the walls themselves seem to shake for the briefest of moments. The wyverness' nethers twitch, spasm, and open wide, expelling a firehose torrent of her slick nectar. The force shoves her hips to the floor, spraying the wall, ceiling, and floor in an unstoppable display of lust.",
+      newline,
+      "She rolls onto her side as her lower belly shrinks down to around her size, then onto her stomach - thrusting and humping, shooting out powerful spurts of femcum that lash back fifteen feet, if not more. Utter euphoria wracks her entire body, and as the final spasms squeeze out the last gallons that were once your tender, delicious frame, she passes out, tongue lolling out and eyes half-lidded amongst an oozing pool of nectar.");
+
+      return result;
+    }
     else if (this.flags.state == "breasts")
-      return ["You fall limp in " + this.description("the") + "'s breast."];
-    else if (this.flags.state == "womb")
-      return ["You expire in the dragon's womb, dissolved by her juices."];
+      return ["You fall limp in the wyverness' breast."];
     else if (this.flags.state == "stomach")
       return ["You give one last heave...and digest."];
   };
