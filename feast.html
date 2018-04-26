@@ -198,14 +198,6 @@
           <input type="text" id="character-species" name="species" placeholder="nerd"/>
         </li>
         <li>
-          <label for="character-prefs-scat">Disposal/scat</label>
-          <input type="checkbox" id="character-prefs-scat" name="prefs-scat"/>
-        </li>
-        <li>
-          <label for="character-prefs-prey">Player can be eaten</label>
-          <input type="checkbox" id="character-prefs-prey" name="prefs-prey" checked="true" />
-        </li>
-        <li>
           <ul class="pref-list">
             <div>Player stuff</div>
             <li class="pref-select">
@@ -245,6 +237,16 @@
               <label class="pref-prefer" for="character-parts-breast-vore" checked="true">Enable Vore</label>
             </li>
           </ul>
+          <ul class="pref-list">
+          <div>Disposal stuff</div>
+          <li class="pref-select">
+            <span class="pref-type">Scat</span>
+            <input type="radio" class="pref-radio" id="character-prefs-scat-off" name="prefs-scat" value="false" />
+            <label class="pref-disable" for="character-prefs-scat-off">Disable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-scat-on" name="prefs-scat" checked="true" value="true" />
+            <label class="pref-enable" for="character-prefs-scat-on" checked="true">Enable</label>
+          </li>
+        </ul>
         <li>
           <ul class="pref-list">
             <div>Enemy vore types</div>

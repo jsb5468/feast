@@ -393,8 +393,15 @@ function generateSettings() {
       settings[form[i].name] = form[i].checked;
     } else if (form[i].type == "radio") {
       let name = form[i].name;
-      if (form[i].checked)
-        settings[name] = form[i].value;
+      if (form[i].checked) {
+        if (form[i].value == "true")
+          settings[name] = true;
+        else if (form[i].value == "false")
+          settings[name] = false;
+        else
+          settings[name] = form[i].value;
+      }
+
     } else if (form[i].type == "select-one") {
       settings[form[i].name] = form[i][form[i].selectedIndex].value;
     }
@@ -436,16 +443,19 @@ function applySettings(settings) {
 
 // turn things like "1" into a number
 function transformVorePrefs(prefs) {
+  let prey = false;
   for (let key in prefs.vore) {
     if (prefs.vore.hasOwnProperty(key)) {
       switch(prefs.vore[key]) {
         case "0": prefs.vore[key] = 0; break;
-        case "1": prefs.vore[key] = 0.5; break;
-        case "2": prefs.vore[key] = 1; break;
-        case "3": prefs.vore[key] = 2; break;
+        case "1": prefs.vore[key] = 0.5; prey = true; break;
+        case "2": prefs.vore[key] = 1; prey = true; break;
+        case "3": prefs.vore[key] = 2; prey = true; break;
       }
     }
   }
+
+  prefs.prey = prey;
   return prefs;
 }
 
