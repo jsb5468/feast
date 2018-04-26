@@ -79,6 +79,8 @@ function MountainWyrm() {
   this.playerAttacks.push(pass);
   this.playerAttacks.push(flee);
 
+  this.flags.cockTurns = 0;
+
   this.startCombat = function(player) {
     return ["A shadow falls over you; a heartbeat later, a hound-sized wyrm swoops down, landing with a heavy <i>thump</i> on the rocky ground. He hisses and snarls at you, rearing up in an attempt to intimidate you..and showing off his throbbing shaft."];
   };
@@ -90,7 +92,7 @@ function MountainWyrm() {
       return [
         "You give one last heave - one last bid to escape - and fail utterly, falling limp in the wyvern's powerful stomach. He lets our a triumphant roar before settling in, letting out your last breath as part of a sharp, crass <i>BELCH</i>. He growls and moans lowly, rocking to and fro as your body falls apart like slow-cooked meat.",
         newline,
-        "He stirs after a long half-hour, cock throbbing and twitching with pent-up pleaure. Your body is gone, now little more than bubbling chyme...save for a rather conspicuous bulge in his gut. He clenches his belly hard, shoving it from his stomach and into that draconic throat. It rises up, buoyed by a surging, gurgling eruption of gas...and then, as a final insult to your obliterated life, the wyvern belches out your skull and a dozen-or-so bones. On it drags for a solid second, and in the joy of the moment, his ecstasy tips over the edge, lashing the ground with thick ropes of his sticky, potent seed. The sheer power of the release echoes off distant mountains as the half-digested bones clatter down a steep cliff, coming to rest amongst a heap of former adventurers...just another addition to the ever-growing pile. Oh well."
+        "He stirs after a long half-hour, cock throbbing and twitching with pent-up pleasure. Your body is gone, now little more than bubbling chyme...save for a rather conspicuous bulge in his gut. He clenches his belly hard, shoving it from his stomach and into that draconic throat. It rises up, buoyed by a surging, gurgling eruption of gas...and then, as a final insult to your obliterated life, the wyvern belches out your skull and a dozen-or-so bones. On it drags for a solid second, and in the joy of the moment, his ecstasy tips over the edge, lashing the ground with thick ropes of his sticky, potent seed. The sheer power of the release echoes off distant mountains as the half-digested bones clatter down a steep cliff, coming to rest amongst a heap of former adventurers...just another addition to the ever-growing pile. Oh well."
       ];
     else if (this.flags.state == "cock" || this.flags.state == "balls") {
       let lines = [];
@@ -302,6 +304,7 @@ function wyrmCockSwallow(attacker) {
   return {
     attackPlayer: function(defender) {
       attacker.flags.cockDepth += 1;
+      attacker.flags.cockTurns += 1;
       if (attacker.flags.cockDepth == 5) {
         attacker.flags.state = "balls";
         return ["A final clench of cock-flesh sucks you down into the wyrm's massive, sloshing balls."];
@@ -320,6 +323,24 @@ function wyrmCockSwallow(attacker) {
     ],
     priority: 1,
     weight: function(attacker, defender) { return 1; }
+  };
+}
+
+function wyrmCockSqueeze(attacker) {
+  return {
+    attackPlayer: function(defender) {
+      let damage = attack(attacker, defender, 5 * attacker.flags.cockDepth);
+
+      return ["The rock-hard shaft squeezes in on you."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; },
+    gameover: function() { return "Crushed to death in the cock of " + attacker.description("a"); }
   };
 }
 
@@ -346,17 +367,20 @@ function wyrmCockIngest(attacker) {
 function wyrmCockCrush(attacker) {
   return {
     attackPlayer: function(defender) {
-      let damage = attack(attacker, defender, 50 * attacker.flags.cockDepth);
+      let damage = attack(attacker, defender, 100 * attacker.flags.cockDepth);
 
       return ["The wyrm's cock throbs and clenches, crushing the life from your body!"];
     },
     requirements: [
       function(attacker, defender) {
         return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return attacker.flags.cockTurns >= 10;
       }
     ],
-    priority: 1,
-    weight: function(attacker, defender) { return 0.13; },
+    priority: 3,
+    weight: function(attacker, defender) { return 1; },
     gameover: function() { return "Crushed to death in the cock of " + attacker.description("a"); }
   };
 }
