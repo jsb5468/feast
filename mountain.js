@@ -2,32 +2,16 @@ function MountainExplore() {
   GameObject.call(this, "Explore");
 
   this.actions.push({
-    "name": "Wyvern male",
+    "name": "Wander around",
     "action": function() {
       startCombat(new MountainWyrm());
     }
   });
 
   this.actions.push({
-    "name": "Wyvern female",
+    "name": "Enter the cave",
     "action": function() {
       startCombat(new MountainWyvern());
-    }
-  });
-
-  this.actions.push({
-    "name": "Explore",
-    "action": function() {
-      let outcome = Math.random();
-      advanceTime(60*15);
-
-      if (outcome < 0.25) {
-        startCombat(new MountainWyrm());
-      } else if (outcome < 0.5) {
-        startCombat(new MountainWyvern());
-      } else {
-        update(["You wander around for a bit, but haven't found your way out yet."]);
-      }
     }
   });
 }

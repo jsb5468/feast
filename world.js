@@ -228,7 +228,7 @@ let locationsSrc = [
       {
         "name": "Mountains",
         "dir": EAST,
-        "desc": "You head up into the mountains."
+        "desc": "You head up into the mountains, passing by a...noticeably stained sign reading \"WATCH OUT FOR HORNY DRAGONS\". Weird. You see a cave off in the distance, as well as some jagged cliffs and plateaus to explore."
       },
       {
         "name": "Woods",
