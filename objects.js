@@ -33,7 +33,16 @@ function Toilet() {
       if (player.bowels.waste == 0) {
         lines.push("But nothing happens.");
       } else {
-        lines.push("You grunt and clench, squeezing out the remains of your former prey.");
+        if (player.bowels.waste <= 25) {
+          lines.push("You grunt and clench, squeezing out the remains of your former prey.");
+        } else if (player.bowels.waste <= 50) {
+          lines.push("A crass fart precedes a thick, heavy log of waste. Your intestines strain to force out the heavy heap of shit.");
+        } else if (player.bowels.waste <= 100) {
+          lines.push("You barely need to strain to let out your former prey - they're all too eager to flow out, emerging as forearm-thick (and long) logs of scat that crackle as they pile up in the bowl, filling it more than halfway with long-dead prey.");
+        } else {
+          lines.push("Your bowels vent an inordinate amount of scat, tailhole opening wide to unleash a bowl-filling heap of your dead prey. You moan and grunt, rippling farts punctuating the swift, steady outflow of chunky shit.");
+        }
+
         player.bowels.waste = 0;
       }
 
