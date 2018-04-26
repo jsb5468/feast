@@ -87,7 +87,11 @@ function MountainWyrm() {
     if (this.flags.state == "combat")
       return [this.description("The") + " knocks you to the ground. You bash your head on a rock and black out."];
     else if (this.flags.state == "stomach")
-      return ["You give one last heave...and digest."];
+      return [
+        "You give one last heave - one last bid to escape - and fail utterly, falling limp in the wyvern's powerful stomach. He lets our a triumphant roar before settling in, letting out your last breath as part of a sharp, crass <i>BELCH</i>. He growls and moans lowly, rocking to and fro as your body falls apart like slow-cooked meat.",
+        newline,
+        "He stirs after a long half-hour, cock throbbing and twitching with pent-up pleaure. Your body is gone, now little more than bubbling chyme...save for a rather conspicuous bulge in his gut. He clenches his belly hard, shoving it from his stomach and into that draconic throat. It rises up, buoyed by a surging, gurgling eruption of gas...and then, as a final insult to your obliterated life, the wyvern belches out your skull and a dozen-or-so bones. The sheer power of the release echoes off distant mountains as the half-digested bones clatter down a steep cliff, coming to rest amongst a heap of those from past travelers. Oh well."
+      ];
     else if (this.flags.state == "cock" || this.flags.state == "balls") {
       let lines = [];
       if (this.flags.state == "cock") {
@@ -605,7 +609,11 @@ function MountainWyvern() {
         "Now halfway empty, she curls up and gets her forepaws around her huge breast. A few strong squeezes get her flowing again, now lashing the fifteen-foot ceiling with pulses of milk. She rolls and thrashes and soaks herself in the fluid, licking up a little...and letting the rest flow away. It flows from the cave and seeps into the gritty earth beyond, your wasted life soaking into the earth as she soaks in the afterglow."
       ];
     else if (this.flags.state == "stomach")
-      return ["You give one last heave...and digest."];
+      return [
+        "You give one last heave - one last bid to escape - and fail utterly, slumping down and falling unconscious in the boiling guts of the predatory wyverness. She sighs and groans as your body succumbs to her searing acids, crushed and smothered as a cacophony of <i>bloorshes</i> and <i>grrrkllgbklbks</i> fill the cave with the sound of your wretched demise.",
+        newline,
+        "She falls asleep for a short while, perched atop her own belly...eventually awakening as her snout brushes the floor, your liquefied remains draining from her acrid stomach at a slow, steady pace. One lump remains, though, and as she lets out a lazy <i>yaaaaawn</i>, it begins to shift. She saunters toward the cave's mouth, pressing down on her gut and twitching a few times...and then, with a great heave, horking up your skull. It erupts from her jaws - pitted by acid and cracked down the middle - and bounces off a wall, clattering down a sheer cliff face and joining a heap of well-weathered bones far below..."
+      ]
   };
 }
 
