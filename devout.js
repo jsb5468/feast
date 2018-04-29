@@ -98,9 +98,19 @@ function Deno() {
   // begin cock vore
   this.attacks.push({
     attackPlayer: function(defender) {
-      attacker.flags.state = "cock";
-      attacker.flags.cock.depth = 0;
-      return ["Deno cock vore start"];
+      attacker.flags.cock.rubs = 0;
+      attacker.flags.cock.submits = 0;
+
+      if (attacker.flags.state == "grab") {
+        attacker.flags.state = "cock";
+        attacker.flags.cock.depth = 0;
+        return ["Deno cock vore start"];
+      }
+      else if (attacker.flags.state == "grind") {
+        attacker.flags.state = "cock";
+        attacker.flags.cock.depth = 7;
+        return ["Deno cock vore start - in deep!"];
+      }
     },
     requirements: [
       function(attacker, defender) {
@@ -111,7 +121,7 @@ function Deno() {
         return attacker.arousal >= 70;
       }
     ],
-    priority: 1,
+    priority: 2,
     weight: function(attacker, defender) { return 1; }
   });
 
@@ -144,7 +154,7 @@ function Deno() {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return 1 + attacker.flags.cock.rubs; }
   });
 
   // first stage cock concentrate
@@ -161,7 +171,7 @@ function Deno() {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return 1 + attacker.flags.cock.submits; }
   });
 
 
@@ -271,6 +281,69 @@ function Deno() {
       requirements: [
         function(attacker, defender) {
           return defender.flags.state == "grab";
+        }
+      ]
+    };
+  });
+
+  // Cock vore, first stage struggle
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Struggle",
+      desc: "Struggle in Deno's throbbing shaft!",
+      attack: function(defender) {
+        defender.addArousal(2);
+        if (statHealthCheck(attacker, defender, "str")) {
+          defender.flags.cock.depth--;
+          return ["You struggle in Deno's shaft."];
+        } else {
+          defender.flags.cock.depth++;
+          return ["You slip deeper into Deno's shaft."];
+        }
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "cock";
+        }
+      ]
+    };
+  });
+
+  // Cock vore, first stage rub
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Rub",
+      desc: "Rub the clenching walls.",
+      attack: function(defender) {
+        defender.addArousal(5);
+        defender.flags.cock.depth++;
+        defender.flags.cock.rubs++;
+        return ["You rub at the walls of Deno's shaft as it tugs you deeper."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "cock";
+        }
+      ]
+    };
+  });
+
+  // Cock vore, first stage submit
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Submit",
+      desc: "Surrender to the dragon's greedy shaft.",
+      attack: function(defender) {
+        defender.flags.cock.depth++;
+        defender.flags.cock.submits++;
+        return ["You fall limp as Deno's shaft tugs you deeper."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "cock";
         }
       ]
     };
