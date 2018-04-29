@@ -288,7 +288,7 @@ function Deno() {
     attackPlayer: function(defender) {
       attacker.addArousal(-10);
       attack(attacker, defender, 10);
-      
+
       return ["Deno relaxes, letting you stew in his balls."];
     },
     requirements: [
@@ -300,7 +300,93 @@ function Deno() {
     weight: function(attacker, defender) { return 1; }
   });
 
+  // end rest
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "balls";
+      attacker.addArousal(-10);
 
+      return ["Deno seems done relaxing..."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "balls-relax";
+      },
+      function(attacker, defender) {
+        return attacker.arousal <= 10;
+      }
+    ],
+    priority: 2,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // concentrate in balls
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(-10);
+
+      return ["Deno concentrates."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "balls";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // stroke in balls
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(10);
+
+      return ["Deno strokes."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "balls";
+      },
+      function(attacker, defender) {
+        return attacker.arousal < 70;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // grind in balls
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(10);
+
+      return ["Deno strokes."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "balls";
+      },
+      function(attacker, defender) {
+        return attacker.arousal < 70;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // tense in balls
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      return ["Deno tenses up."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "balls";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
 
   // cock release
   this.attacks.push({
@@ -587,6 +673,70 @@ function Deno() {
       requirements: [
         function(attacker, defender) {
           return defender.flags.state == "cock";
+        }
+      ]
+    };
+  });
+
+  // Struggle in balls while resting
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Struggle",
+      desc: "Struggle in Deno's throbbing balls!",
+      attack: function(defender) {
+        defender.addArousal(5);
+        if (statHealthCheck(attacker, defender, "str") && statHealthCheck(attacker, defender, "str")) {
+          defender.flags.state = "cock";
+          defender.flags.cock.depth = 13;
+          defender.flags.cock.struggles = 0;
+          defender.flags.cock.rubs = 0;
+          defender.flags.cock.submits = 0;
+          return ["Your struggles propel you back into the dragon's shaft!"];
+        } else {
+          return ["You struggle against the walls..without much effect."];
+        }
+
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "balls-relax";
+        }
+      ]
+    };
+  });
+
+  // Rub in balls while resting
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Rub",
+      desc: "Rub the clenching walls.",
+      attack: function(defender) {
+        defender.addArousal(7);
+        return ["You rub at the walls of Deno's balls."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "balls-relax";
+        }
+      ]
+    };
+  });
+
+  // Rest in balls while resting
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Rest",
+      desc: "Regain your strength.",
+      attack: function(defender) {
+        player.changeStamina(player.maxStamina/5);
+        return ["You cease your struggles for a moment, regaining stamina."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "balls-relax";
         }
       ]
     };
