@@ -365,6 +365,7 @@ function Deno() {
 
       if (attacker.arousal >= 60) {
         attacker.flags.balls.focus = "";
+        attacker.flags.balls.streak = 0;
       }
 
       return ["Deno strokes!"];
@@ -407,6 +408,7 @@ function Deno() {
 
       if (attacker.arousal >= 60) {
         attacker.flags.balls.focus = "";
+        attacker.flags.balls.streak = 0;
       }
 
       return ["Deno grinds against the ground."];
