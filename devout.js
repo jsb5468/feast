@@ -105,6 +105,10 @@ function Deno() {
         attacker.flags.state = "cock";
         attacker.flags.cock.depth = 0;
         return ["Deno cock vore start"];
+      } else if (attacker.flags.state == "maw") {
+        attacker.flags.state = "cock";
+        attacker.flags.cock.depth = 3;
+        return ["Deno cock vore start - in halfway!"];
       }
       else if (attacker.flags.state == "grind") {
         attacker.flags.state = "cock";
@@ -115,7 +119,8 @@ function Deno() {
     requirements: [
       function(attacker, defender) {
         return attacker.flags.state == "grab" ||
-        attacker.flags.state == "grind";
+        attacker.flags.state == "grind" ||
+        attacker.flags.state == "maw";
       },
       function(attacker, defender) {
         return attacker.arousal >= 70;
@@ -196,6 +201,101 @@ function Deno() {
     priority: 3,
     weight: function(attacker, defender) { return 1; }
   });
+
+  // vortex oral vore
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      if (statHealthCheck(attacker, defender, "str")) {
+        attacker.flags.state = "stomach";
+        return ["Deno vortex: Deno wins, swallowed."];
+      } else {
+        attacker.flags.state = "maw";
+        return ["Deno vortex: Deno loses, in maw."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "combat";
+      },
+      function(attacker, defender) {
+        return defender.prefs.vore.oral > 0;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // grind in stomach
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(10);
+      return ["Deno grinds in stomach."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "stomach";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // cough up from stomach
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "maw";
+      return ["Deno coughs up."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "stomach";
+      },
+      function(attacker, defender) {
+        return attacker.arousal >= 70;
+      }
+    ],
+    priority: 2,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // chew in maw
+
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attack(attacker, defender, attacker.str);
+      return ["Deno chews."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "maw";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // swallow in maw
+
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "stomach";
+      return ["Deno swallows."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "maw";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+// maw to cock
+
+
+
+
 
   /** PLAYER ATTACKS **/
 
