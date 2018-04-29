@@ -174,6 +174,28 @@ function Deno() {
     weight: function(attacker, defender) { return 1 + attacker.flags.cock.submits; }
   });
 
+  // first stage cock release
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(-100);
+
+      attacker.flags.state = "combat";
+
+      attacker.flags.cock.depth++;
+
+      return ["Deno cock orgasm"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return attacker.arousal >= 100;
+      }
+    ],
+    priority: 3,
+    weight: function(attacker, defender) { return 1; }
+  });
 
   /** PLAYER ATTACKS **/
 
