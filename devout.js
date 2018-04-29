@@ -22,6 +22,8 @@ function Deno() {
 
   this.flags.grab = {};
 
+  this.flags.balls = {};
+
   this.arousal = 0;
 
   this.addArousal = function(amount) {
@@ -355,6 +357,30 @@ function Deno() {
     weight: function(attacker, defender) { return 1; }
   });
 
+
+  // stroke up to 60
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(5);
+
+      if (attacker.arousal >= 60) {
+        attacker.flags.balls.focus = "";
+      }
+
+      return ["Deno strokes!"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "balls";
+      },
+      function(attacker, defender) {
+        return attacker.flags.balls.focus == "stroke";
+      }
+    ],
+    priority: 2,
+    weight: function(attacker, defender) { return 1; }
+  });
+
   // grind in balls
   this.attacks.push({
     attackPlayer: function(defender) {
@@ -371,6 +397,29 @@ function Deno() {
       }
     ],
     priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // grind up to 60
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(5);
+
+      if (attacker.arousal >= 60) {
+        attacker.flags.balls.focus = "";
+      }
+
+      return ["Deno grinds against the ground."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "balls";
+      },
+      function(attacker, defender) {
+        return attacker.flags.balls.focus == "grind";
+      }
+    ],
+    priority: 2,
     weight: function(attacker, defender) { return 1; }
   });
 
@@ -737,6 +786,93 @@ function Deno() {
       requirements: [
         function(attacker, defender) {
           return defender.flags.state == "balls-relax";
+        }
+      ]
+    };
+  });
+
+  // Struggle in balls
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Struggle",
+      desc: "Struggle in Deno's throbbing balls!",
+      attack: function(defender) {
+        defender.addArousal(2);
+        if (defender.flags.balls.focus == "grind") {
+          return ["It's too chaotic to struggle!"];
+        }
+        else if (statHealthCheck(attacker, defender, "str") && statHealthCheck(attacker, defender, "str")) {
+          defender.flags.state = "cock";
+          defender.flags.cock.depth = 13;
+          defender.flags.cock.struggles = 0;
+          defender.flags.cock.rubs = 0;
+          defender.flags.cock.submits = 0;
+          return ["Your struggles propel you back into the dragon's shaft!"];
+        } else {
+          return ["You struggle against the walls..without much effect."];
+        }
+
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "balls";
+        }
+      ]
+    };
+  });
+
+  // Rub in balls
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Rub",
+      desc: "Rub the clenching walls.",
+      attack: function(defender) {
+        defender.addArousal(5);
+          if (defender.flags.balls.action != "rub") {
+            defender.flags.balls.streak = 0;
+            defender.flags.balls.action = "rub";
+          }
+        defender.flags.balls.streak++;
+
+        if (defender.flags.balls.streak >= Math.floor(Math.random() * 3 + 3)) {
+          defender.flags.balls.focus = "grind";
+        }
+
+        return ["You rub at the walls of Deno's balls."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "balls";
+        }
+      ]
+    };
+  });
+
+  // Rest in balls
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Rest",
+      desc: "Regain your strength.",
+      attack: function(defender) {
+        if (defender.flags.balls.action != "rest") {
+          defender.flags.balls.streak = 0;
+          defender.flags.balls.action = "rest";
+        }
+        defender.flags.balls.streak++;
+
+        if (defender.flags.balls.streak >= Math.floor(Math.random() * 3 + 3)) {
+          defender.flags.balls.focus = "stroke";
+        }
+
+        player.changeStamina(player.maxStamina/5);
+        return ["You cease your struggles for a moment, regaining stamina."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "balls";
         }
       ]
     };
