@@ -20,8 +20,6 @@ function Deno() {
 
   this.flags.cock = {};
 
-  this.flags.cock.depth = 0;
-
   this.flags.grab = {};
 
   this.arousal = 0;
@@ -33,7 +31,13 @@ function Deno() {
   };
 
   this.status = function(player) {
-    return ["Deno arousal: " + this.arousal];
+    let result = ["Deno arousal: " + this.arousal,newline];
+
+    if (this.flags.state == "cock") {
+      result = result.concat("Cock depth: " + this.flags.cock.depth);
+    }
+
+    return result;
   };
 
   this.attacks = [];
@@ -75,16 +79,91 @@ function Deno() {
   // grinding
   this.attacks.push({
     attackPlayer: function(defender) {
+      attacker.addArousal(15);
+
       return ["Deno grind"];
     },
     requirements: [
       function(attacker, defender) {
         return attacker.flags.state == "grind";
+      },
+      function(attacker, defender) {
+        return attacker.arousal < 70;
       }
     ],
     priority: 1,
     weight: function(attacker, defender) { return 1; }
   });
+
+  // begin cock vore
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "cock";
+      attacker.flags.cock.depth = 0;
+      return ["Deno cock vore start"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "grab" ||
+        attacker.flags.state == "grind";
+      },
+      function(attacker, defender) {
+        return attacker.arousal >= 70;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // first stage cock grind
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(2);
+
+      return ["Deno cock grind"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // first stage cock stroke
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(4);
+
+      return ["Deno cock stroke"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // first stage cock concentrate
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(-8);
+      attacker.flags.cock.depth++;
+
+      return ["Deno cock concentrate"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
 
   /** PLAYER ATTACKS **/
 
