@@ -1,3 +1,12 @@
+function DenoDemo() {
+  GameObject.call(this, "Deno Demo");
+  this.actions.push({
+    "name": "Deno Fight",
+    "action": function() {
+      startCombat(new Deno());
+    }
+  });
+}
 function Deno() {
   Creature.call(this, "Deno", 35, 20, 45);
 

@@ -32,7 +32,8 @@ let locationsSrc = [
     ],
     "objs": [
       Bed,
-      Journal
+      Journal,
+      DenoDemo
     ],
   },
   {
