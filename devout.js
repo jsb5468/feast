@@ -289,7 +289,7 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(-10);
-      attack(attacker, defender, 10);
+      attack(attacker, defender, attacker.arousal / 5);
 
       return ["Deno relaxes, letting you stew in his balls."];
     },
@@ -307,6 +307,7 @@ function Deno() {
     attackPlayer: function(defender) {
       attacker.flags.state = "balls";
       attacker.addArousal(-10);
+      attack(attacker, defender, attacker.arousal / 5);
 
       return ["Deno seems done relaxing..."];
     },
@@ -326,6 +327,7 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(-10);
+      attack(attacker, defender, attacker.arousal / 5);
 
       return ["Deno concentrates."];
     },
@@ -342,6 +344,7 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(10);
+      attack(attacker, defender, attacker.arousal / 5);
 
       return ["Deno strokes."];
     },
@@ -362,6 +365,7 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(5);
+      attack(attacker, defender, attacker.arousal / 5);
 
       if (attacker.arousal >= 60) {
         attacker.flags.balls.focus = "";
@@ -386,6 +390,7 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(10);
+      attack(attacker, defender, attacker.arousal / 5);
 
       return ["Deno strokes."];
     },
@@ -405,6 +410,7 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(5);
+      attack(attacker, defender, attacker.arousal / 5);
 
       if (attacker.arousal >= 60) {
         attacker.flags.balls.focus = "";
@@ -428,6 +434,7 @@ function Deno() {
   // tense in balls
   this.attacks.push({
     attackPlayer: function(defender) {
+      attack(attacker, defender, attacker.arousal / 5);
       return ["Deno tenses up."];
     },
     requirements: [
