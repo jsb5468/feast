@@ -14,6 +14,8 @@ function ForestExplore() {
         startCombat(new Wolf());
       } else if (outcome < 0.6) {
         startCombat(new AlphaWolf());
+      } else if (outcome < 0.75) {
+        startCombat(new Anaconda());
       } else {
         update(["You explore the forest for a while, but don't find anything."]);
       }
@@ -301,4 +303,101 @@ function wolfBelch(attacker) {
     weight: function(attacker, defender) { return 1; },
     gameover: function() { return "Reduced to a belch by " + attacker.description("a"); }
   };
+}
+
+function Anaconda() {
+  Creature.call(this, "Anaconda", 30, 10, 20);
+
+  this.hasName = false;
+
+  this.description = function(prefix) { return prefix + " anaconda"; };
+
+  this.flags.state = "combat";
+
+  this.flags.oral = {};
+
+  this.flags.grapple = {};
+
+  let attacker = this;
+
+  this.attacks = [];
+
+  // hiss at player
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      return pickRandom([
+        ["The anaconda raises its head and hisses"],
+        ["The hulking serpent narrows its eyes and hisses at you"]
+      ]);
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "combat";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // slap player with tail
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      if (statHealthCheck(attacker, defender, "dex")) {
+        let damage = attack(attacker, defender, "str");
+        return ["The snake's tail whips around, smacking you for " + damage + " damage!"];
+      } else {
+        return ["The serpent's tail lashes at you, but you manage to stay out of its way."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "combat";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // grab player with tail
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      if (statHealthCheck(attacker, defender, "dex")) {
+        let damage = attack(attacker, defender, "str");
+        return ["The snake's tail whips around and grabs you! A tight embrace of smooth, cold scales grips your entire upper body, a lazy <i>clench</i> of muscle suppressing your meek struggles."];
+      } else {
+        return ["The anaconda tries to snatch you up in its tail. You dodge out of the way."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "combat";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 4 - 4 * defender.healthPercentage(); }
+  });
+
+  // 
+
+  /** PLAYER ATTACKS **/
+
+  this.playerAttacks = [];
+
+  // pass in combat
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Pass",
+        desc: "Do nothing",
+        attack: function(defender) {
+          return ["You do nothing."];
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "combat";
+          }
+        ]
+      };
+    }
+  );
 }
