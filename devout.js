@@ -264,6 +264,44 @@ function Deno() {
     weight: function(attacker, defender) { return attacker.flags.cock.last == "submit" ? 2 : 1; }
   });
 
+  // pull into balls
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "balls-relax";
+
+      return ["Deno pulls you into his balls."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.depth >= 14;
+      }
+    ],
+    priority: 2,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // rest in balls
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(-10);
+      attack(attacker, defender, 10);
+      
+      return ["Deno relaxes, letting you stew in his balls."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "balls-relax";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+
   // cock release
   this.attacks.push({
     attackPlayer: function(defender) {
@@ -372,22 +410,6 @@ function Deno() {
     priority: 1,
     weight: function(attacker, defender) { return 1; }
   });
-
-  // swallow in maw
-  this.attacks.push({
-    attackPlayer: function(defender) {
-      attacker.flags.state = "stomach";
-      return ["Deno swallows."];
-    },
-    requirements: [
-      function(attacker, defender) {
-        return attacker.flags.state == "maw";
-      }
-    ],
-    priority: 1,
-    weight: function(attacker, defender) { return 1; }
-  });
-
 
   /** PLAYER ATTACKS **/
 
