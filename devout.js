@@ -24,14 +24,16 @@ function Deno() {
 
   this.flags.grab = {};
 
-  this.arousal = function(amount) {
-    this.flags.arousal += amount;
-    this.flags.arousal = Math.max(100,this.flags.arousal);
-    this.flags.arousal = Math.min(0,this.flags.arousal);
+  this.arousal = 0;
+
+  this.addArousal = function(amount) {
+    this.arousal += amount;
+    this.arousal = Math.min(100,this.arousal);
+    this.arousal = Math.max(0,this.arousal);
   };
 
   this.status = function(player) {
-    return ["Deno arousal: " + this.flags.arousal];
+    return ["Deno arousal: " + this.arousal];
   };
 
   this.attacks = [];
@@ -135,7 +137,7 @@ function Deno() {
           return ["You struggle out from beneath the massive beast!"];
         } else {
           defender.flags.grab.struggles++;
-          defender.arousal((defender.flags.grab.struggles > 1 ? 20 : 10));
+          defender.addArousal((defender.flags.grab.struggles > 1 ? 20 : 10));
           if (defender.flags.grab.struggles == 1) {
             return [
               "You struggle, but it's useless. The dragon is too heavy.",
@@ -167,7 +169,7 @@ function Deno() {
       desc: "Just lie there.",
       attack: function(defender) {
         defender.flags.grab.submits++;
-        defender.arousal(-5);
+        defender.addArousal(-5);
         if (defender.flags.grab.submits == 1) {
           return [
             "You lie still, putting up no resistance to the overpowering beast.",
