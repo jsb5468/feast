@@ -314,9 +314,27 @@ function Anaconda() {
 
   this.flags.state = "combat";
 
+  this.flags.tail = {};
   this.flags.oral = {};
-
   this.flags.grapple = {};
+  this.flags.stomach = {};
+
+  this.stomachPull = function(amount) {
+    this.flags.stomach.depth += amount;
+
+    this.flags.stomach.depth = Math.max(0, this.flags.stomach.depth);
+    this.flags.stomach.depth = Math.min(30, this.flags.stomach.depth);
+  };
+
+  this.status = function() {
+    if (this.flags.state == "oral") {
+      return ["Oral depth: " + this.flags.oral.depth];
+    } else if (this.flags.state == "stomach") {
+      return ["Stomach depth: " + this.flags.stomach.depth];
+    } else {
+      return [];
+    }
+  };
 
   let attacker = this;
 
@@ -343,7 +361,7 @@ function Anaconda() {
   this.attacks.push({
     attackPlayer: function(defender) {
       if (statHealthCheck(attacker, defender, "dex")) {
-        let damage = attack(attacker, defender, "str");
+        let damage = attack(attacker, defender, attacker.str);
         return ["The snake's tail whips around, smacking you for " + damage + " damage!"];
       } else {
         return ["The serpent's tail lashes at you, but you manage to stay out of its way."];
@@ -362,7 +380,9 @@ function Anaconda() {
   this.attacks.push({
     attackPlayer: function(defender) {
       if (statHealthCheck(attacker, defender, "dex")) {
-        let damage = attack(attacker, defender, "str");
+        attacker.flags.state = "grapple";
+        attacker.flags.tail.turns = 0;
+        let damage = attack(attacker, defender, attacker.str/2);
         return ["The snake's tail whips around and grabs you! A tight embrace of smooth, cold scales grips your entire upper body, a lazy <i>clench</i> of muscle suppressing your meek struggles."];
       } else {
         return ["The anaconda tries to snatch you up in its tail. You dodge out of the way."];
@@ -377,7 +397,110 @@ function Anaconda() {
     weight: function(attacker, defender) { return 4 - 4 * defender.healthPercentage(); }
   });
 
-  // 
+  // squeeze in tail
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.tail.turns++;
+      let damage = attack(attacker, defender, attacker.str / 2 * attacker.flags.tail.turns);
+      defender.changeStamina(attacker.str / 2 * attacker.flags.tail.turns);
+      return ["Snake squeeze."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "grapple";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.healthPercentage(); }
+  });
+
+  // swallow from tail
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "oral";
+      attacker.flags.oral.depth = 1;
+      return ["Snake vore."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "grapple";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.healthPercentage(); }
+  });
+
+  // swallow player
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.oral.depth++;
+      return ["Snake swallow."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "oral";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.healthPercentage(); }
+  });
+
+  // squeeze
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attack(attacker, defender, attacker.str/2);
+      defender.changeStamina(-attacker.str/2);
+      return pickRandom([
+        ["Powerful, rippling walls clench around your imprisoned body, wearing your out."],
+        ["The peristaltic pressure peaks as you're crushed and ground, squeezed and smothered in the anaconda's powerful gullet."],
+        ["The pressure is immense, squeezing and grinding your body like a stick of gum being chewed."]
+      ]);
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "oral";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.healthPercentage(); }
+  });
+
+  // pull into stomach
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "stomach";
+      attacker.flags.stomach.depth = 3;
+      return ["Snake stomach."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "oral";
+      },
+      function(attacker, defender) {
+        return attacker.flags.oral.depth >= 4;
+      }
+    ],
+    priority: 2,
+    weight: function(attacker, defender) { return defender.healthPercentage(); }
+  });
+
+  // digest
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attack(attacker, defender, attacker.con / 5 + attacker.con / 20 * attacker.flags.stomach.depth);
+      defender.changeStamina(-attacker.con / 5 - attacker.con / 20 * attacker.flags.stomach.depth);
+      attacker.stomachPull(Math.floor(Math.random()*4+4));
+      return ["Snake digest."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "stomach";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.healthPercentage(); }
+  });
+
 
   /** PLAYER ATTACKS **/
 
@@ -395,6 +518,148 @@ function Anaconda() {
         requirements: [
           function(attacker, defender) {
             return defender.flags.state == "combat";
+          }
+        ]
+      };
+    }
+  );
+
+  // struggle in coils
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Struggle",
+        desc: "Try to escape the coils!",
+        attack: function(defender) {
+          if (statHealthCheck(attacker, defender, "str")) {
+            defender.flags.state = "combat";
+            return ["Escaped"];
+          } else {
+            return ["No effect"];
+          }
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "grapple";
+          }
+        ]
+      };
+    }
+  );
+
+  // pass in coils
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Submit",
+        desc: "Do nothing",
+        attack: function(defender) {
+          return ["You do nothing."];
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "grapple";
+          }
+        ]
+      };
+    }
+  );
+
+  // struggle in throat
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Struggle",
+        desc: "Try to escape the snake's gullet",
+        attack: function(defender) {
+          if (statHealthCheck(attacker, defender, "str")) {
+            defender.flags.oral.depth--;
+            if (defender.flags.oral.depth < 0) {
+              defender.flags.state = "oral";
+              return ["Escaped"];
+            } else {
+              return ["Up the throat"];
+            }
+          } else {
+            return ["No effect"];
+          }
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "oral";
+          }
+        ]
+      };
+    }
+  );
+
+  // pass in throat
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Submit",
+        desc: "Do nothing",
+        attack: function(defender) {
+          return ["You do nothing."];
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "oral";
+          }
+        ]
+      };
+    }
+  );
+
+  // struggle in stomach
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Struggle",
+        desc: "Try to struggle free!",
+        attack: function(defender) {
+          if (statHealthCheck(attacker, defender, "str") ||
+          statHealthCheck(attacker, defender, "str")) {
+            let distance = attacker.str / 10 + Math.floor(Math.random() * -attacker.str / 10);
+            defender.stomachPull(-distance);
+
+            if (defender.flags.stomach.depth <= 0) {
+              if (statHealthCheck(attacker, defender, "str")) {
+                defender.flags.state = "oral";
+                defender.flags.oral.depth = 3;
+                return ["Pulled into throat"];
+              } else {
+                return ["Stuck at entrance"];
+              }
+            } else {
+              return ["Dragged self " + distance + " forward"];
+            }
+          } else {
+            return ["Struggling didn't work"];
+          }
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "stomach";
+          }
+        ]
+      };
+    }
+  );
+
+  // pass in stomach
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Rest",
+        desc: "Rest and recover stamina",
+        attack: function(defender) {
+          attacker.changeStamina(attacker.maxStamina / 5);
+          return ["You rest in the snake's squeezing stomach."];
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "stomach";
           }
         ]
       };
