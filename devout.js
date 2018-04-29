@@ -98,6 +98,7 @@ function Deno() {
   // begin cock vore
   this.attacks.push({
     attackPlayer: function(defender) {
+      attacker.flags.cock.struggles = 0;
       attacker.flags.cock.rubs = 0;
       attacker.flags.cock.submits = 0;
 
@@ -140,6 +141,9 @@ function Deno() {
     requirements: [
       function(attacker, defender) {
         return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.depth <= 7;
       }
     ],
     priority: 1,
@@ -156,6 +160,9 @@ function Deno() {
     requirements: [
       function(attacker, defender) {
         return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.depth <= 7;
       }
     ],
     priority: 1,
@@ -173,13 +180,91 @@ function Deno() {
     requirements: [
       function(attacker, defender) {
         return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.depth <= 7;
       }
     ],
     priority: 1,
     weight: function(attacker, defender) { return 1 + attacker.flags.cock.submits; }
   });
 
-  // first stage cock release
+  // second stage cock grind
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(2);
+
+      return ["Deno cock grind deep"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.depth > 7;
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.last == "rub" ||
+        attacker.flags.cock.last == "submit";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return attacker.flags.cock.last == "rub" ? 2 : 1; }
+  });
+
+  // second stage cock struggle response
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      if (attacker.flags.cock.struggles >= 3) {
+        attacker.flags.cock.struggles = 0;
+        attacker.flags.cock.depth++;
+        return ["Deno grabs and massages you down."];
+      } else if (attacker.flags.cock.struggles >= 2) {
+        return ["Deno tenses and focuses."];
+      } else {
+        return ["Deno shivers."];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.depth > 7;
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.last == "struggle";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // second stage cock concentrate
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(-8);
+      attacker.flags.cock.depth++;
+
+      return ["Deno cock concentrate deep"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "cock";
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.depth > 7;
+      },
+      function(attacker, defender) {
+        return attacker.flags.cock.last == "rub" ||
+        attacker.flags.cock.last == "submit";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return attacker.flags.cock.last == "submit" ? 2 : 1; }
+  });
+
+  // cock release
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(-100);
@@ -259,7 +344,6 @@ function Deno() {
   });
 
   // chew in maw
-
   this.attacks.push({
     attackPlayer: function(defender) {
       attack(attacker, defender, attacker.str);
@@ -275,7 +359,6 @@ function Deno() {
   });
 
   // swallow in maw
-
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.flags.state = "stomach";
@@ -290,11 +373,20 @@ function Deno() {
     weight: function(attacker, defender) { return 1; }
   });
 
-
-// maw to cock
-
-
-
+  // swallow in maw
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "stomach";
+      return ["Deno swallows."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "maw";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
 
 
   /** PLAYER ATTACKS **/
@@ -408,7 +500,7 @@ function Deno() {
     };
   });
 
-  // Cock vore, first stage struggle
+  // Cock vore, struggle
   this.playerAttacks.push(
     function(attacker) {
     return {
@@ -416,6 +508,11 @@ function Deno() {
       desc: "Struggle in Deno's throbbing shaft!",
       attack: function(defender) {
         defender.addArousal(2);
+        defender.flags.cock.last = "struggle";
+        if (defender.flags.cock.depth > 7)
+          defender.flags.cock.struggles++;
+        else
+          defender.flags.cock.struggles = 0;
         if (statHealthCheck(attacker, defender, "str")) {
           defender.flags.cock.depth--;
           return ["You struggle in Deno's shaft."];
@@ -432,7 +529,7 @@ function Deno() {
     };
   });
 
-  // Cock vore, first stage rub
+  // Cock vore, rub
   this.playerAttacks.push(
     function(attacker) {
     return {
@@ -442,6 +539,7 @@ function Deno() {
         defender.addArousal(5);
         defender.flags.cock.depth++;
         defender.flags.cock.rubs++;
+        defender.flags.cock.last = "rub";
         return ["You rub at the walls of Deno's shaft as it tugs you deeper."];
       },
       requirements: [
@@ -452,7 +550,7 @@ function Deno() {
     };
   });
 
-  // Cock vore, first stage submit
+  // Cock vore, submit
   this.playerAttacks.push(
     function(attacker) {
     return {
@@ -461,6 +559,7 @@ function Deno() {
       attack: function(defender) {
         defender.flags.cock.depth++;
         defender.flags.cock.submits++;
+        defender.flags.cock.last = "submit";
         return ["You fall limp as Deno's shaft tugs you deeper."];
       },
       requirements: [
