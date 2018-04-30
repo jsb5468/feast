@@ -305,6 +305,7 @@ function Fen() {
 
   this.attacks.push(new devourPlayer(this));
   this.attacks.push(new devourPlayerAnal(this));
+  this.attacks.push(new devourPlayerSoul(this));
   this.attacks.push(new leer(this));
   this.backupAttack = new poke(this);
 
@@ -316,6 +317,8 @@ function Fen() {
 
   this.digests.push(new instakillPlayerStomach(this));
   this.digests.push(new instakillPlayerBowels(this));
+  this.digests.push(new fenPlayerBowelsSoul(this));
+  this.digests.push(new instakillPlayerStomachSoul(this));
 
   this.backupDigest = new digestPlayerStomach(this, 50);
 }

@@ -546,6 +546,28 @@ function devourPlayerAnal(attacker) {
   };
 }
 
+function devourPlayerSoul(attacker) {
+  return {
+    requirements: [
+      function(attacker, defender) { return attacker.leering == true; }
+    ],
+    attackPlayer: function(defender) {
+      attacker.flags.voreType = "oral-soul";
+      changeMode("eaten");
+      return [
+        "Fen's gaze locks with yours, and you freeze up like a deer in headlights. A brief pulse of amber light washes through them...and he rips out your soul, sucking your essence out from your gaping mouth with terrifying ease. You watch it flow forth from your own eyes for several seconds before you're pulled out entirely, leaving your mind in a helpless, wispy cloud.",
+        newline,
+        "You pour into the crux's jaws like water, crammed into his throat and devoured in an instant. The rippling walls contain you as easily as they would any other prey, and before long you're plunged into a roiling hellscape of acid and slime."
+      ];
+    }, conditions: [
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.soul > 0; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.prefs.vore.soul;}
+  };
+}
+
 function leer(attacker) {
   return {
     name: "Leer",
@@ -602,6 +624,23 @@ function instakillPlayerStomach(predator) {
   };
 }
 
+function instakillPlayerStomachSoul(predator) {
+  return {
+    digest: function(player) {
+      player.health = -100;
+      return ["Your soul catches alight in the horrific depths of the crux's stomach, breaking up and melting in seconds. You're gone..."];
+    },
+    priority: 1,
+    weight: function(attacker, defender) { return 1; },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.voreType == "oral-soul";
+      }
+    ],
+    gameover: function() { return "Soul dissolved by Fen's stomach"; }
+  };
+}
+
 function instakillPlayerBowels(predator) {
   return {
     digest: function(player) {
@@ -613,6 +652,26 @@ function instakillPlayerBowels(predator) {
     requirements: [
       function(attacker, defender) {
         return attacker.flags.voreType == "anal";
+      }
+    ],
+    gameover: function() { return "Absorbed into Fen's bowels"; }
+  };
+}
+
+function fenPlayerBowelsSoul(predator) {
+  return {
+    digest: function(player) {
+      predator.flags.voreType = "oral-soul";
+      return ["Fen's crushing bowels obliterate your body in seconds, breaking you like a bug underfoot and ripping out your soul. Your dazed, helpless essence is drawn up into his stomach..."];
+    },
+    priority: 1,
+    weight: function(attacker, defender) { return defender.prefs.vore.soul; },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.voreType == "anal";
+      },
+      function(attacker, defender) {
+        return defender.prefs.vore.soul > 0;
       }
     ],
     gameover: function() { return "Absorbed into Fen's bowels"; }
