@@ -336,6 +336,8 @@ function Anaconda() {
 
   this.hasName = false;
 
+  this.mass = 2000;
+
   this.description = function(prefix) {
     if (prefix == "a")
       return "an anaconda";
@@ -378,7 +380,7 @@ function Anaconda() {
         case 1: return ["You're trapped at the top of the serpent's throat."];
         case 2: return ["Your body is a heavy bulge, hanging five feet down the snake's gullet."];
         case 3: return ["Hot flesh squeezes all around you, grinding on your body as you're held perilously close to the anaconda's stomach."];
-        case 4: return ["Unyielding flesh holds you tight against the entrance of the serpent's stomach. One last swallow and you're going in."]
+        case 4: return ["Unyielding flesh holds you tight against the entrance of the serpent's stomach. One last swallow and you're going in."];
       }
     } else if (this.flags.state == "stomach") {
       if (this.flags.stomach.depth <= 1) {
@@ -610,10 +612,205 @@ function Anaconda() {
     gameover: function() { return "Digested alive by " + attacker.description("a"); }
   });
 
+  // struggle when grabbed
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      if (statHealthCheck(attacker, defender, "str")) {
+        attacker.flags.state = "combat";
+        return ["Anaconda escape"];
+      } else {
+        attacker.changeStamina(-25);
+        return ["Anaconda struggles"];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "grabbed";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // struggle when swallowed
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      if (statHealthCheck(attacker, defender, "str")) {
+        defender.flags.oral.depth--;
+
+        if (defender.flags.oral.depth < 0) {
+          attacker.flags.state = "combat";
+          return ["Anaconda escape"];
+        } else {
+          return ["Anaconda squirms up"];
+        }
+      } else {
+        attacker.changeStamina(-25);
+        return ["Anaconda struggles"];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "player-oral";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+  // struggle when digesting
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      if (statHealthCheck(attacker, defender, "str")) {
+        defender.flags.oral.depth = 5;
+        attacker.flags.state = "player-oral";
+        return ["Anaconda in throat"];
+      } else {
+        attacker.changeStamina(-25);
+        return ["Anaconda struggles"];
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "player-stomach";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
 
   /** PLAYER ATTACKS **/
 
   this.playerAttacks = [];
+
+  // grab in combat
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Grab",
+        desc: "Grab the oversized noodle!",
+        attack: function(defender) {
+          if (statHealthCheck(attacker, defender, "str")) {
+            defender.flags.state = "grabbed";
+            return ["Grab snake"];
+          } else {
+            return ["No grab"];
+          }
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "combat";
+          }
+        ]
+      };
+    }
+  );
+
+  // grab in combat
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Throttle",
+        desc: "Squeeze the snake's neck!",
+        attack: function(defender) {
+          if (statHealthCheck(attacker, defender, "str") || statHealthCheck(attacker, defender, "str")) {
+            attack(attacker, defender, defender.maxHealth/20);
+            defender.changeStamina(-defender.maxStamina/10);
+            return ["Squeeze snake"];
+          } else {
+            return ["No squeeze"];
+          }
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "grabbed";
+          }
+        ]
+      };
+    }
+  );
+
+  // devour in combat
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Devour",
+        desc: "Swallow the snake!",
+        attack: function(defender) {
+          if (statHealthCheck(attacker, defender, "str") || statHealthCheck(attacker, defender, "str")) {
+            defender.flags.state = "player-oral";
+            attacker.flags.oral = {};
+            attacker.flags.oral.depth = 0;
+            return ["Swallow snake"];
+          } else {
+            return ["No swallow"];
+          }
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "grabbed";
+          }
+        ]
+      };
+    }
+  );
+
+  // swallow in combat
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Swallow",
+        desc: "Swallow the snake!",
+        attack: function(defender) {
+          if (statHealthCheck(attacker, defender, "str") || statHealthCheck(attacker, defender, "str")) {
+            attacker.flags.oral.depth++;
+
+            if (attacker.flags.oral.depth == 6) {
+              defender.flags.state = "player-stomach";
+              return ["Snake in stomach"];
+            } else {
+              return ["Swallow snake"];
+            }
+          } else {
+            return ["No swallow"];
+          }
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "player-oral";
+          }
+        ]
+      };
+    }
+  );
+
+  // digest snake
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Digest",
+        desc: "Subdue your prey",
+        attack: function(defender) {
+          defender.changeStamina(-defender.maxStamina/5);
+
+          if (defender.stamina <= 0) {
+            changeMode("explore");
+            player.stomach.feed(defender);
+            return ["Snake subdued."];
+          } else {
+            return ["Snake digests."];
+          }
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "player-stomach";
+          }
+        ]
+      };
+    }
+  );
+
 
   // pass in combat
   this.playerAttacks.push(
