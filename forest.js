@@ -336,7 +336,14 @@ function Anaconda() {
 
   this.hasName = false;
 
-  this.description = function(prefix) { return prefix + " anaconda"; };
+  this.description = function(prefix) {
+    if (prefix == "a")
+      return "an anaconda";
+    if (prefix == "A")
+      return "A anaconda";
+    else
+     return prefix + " anaconda";
+   };
 
   this.flags.state = "combat";
 
@@ -367,9 +374,24 @@ function Anaconda() {
 
   this.status = function() {
     if (this.flags.state == "oral") {
-      return ["Oral depth: " + this.flags.oral.depth];
+      switch(this.flags.oral.depth) {
+        case 1: return ["You're trapped at the top of the serpent's throat."];
+        case 2: return ["Your body is a heavy bulge, hanging five feet down the snake's gullet."];
+        case 3: return ["Hot flesh squeezes all around you, grinding on your body as you're held perilously close to the anaconda's stomach."];
+        case 4: return ["Unyielding flesh holds you tight against the entrance of the serpent's stomach. One last swallow and you're going in."]
+      }
     } else if (this.flags.state == "stomach") {
-      return ["Stomach depth: " + this.flags.stomach.depth];
+      if (this.flags.stomach.depth <= 1) {
+        return ["You're held up right against the entrance to the snake's sloppy gut."];
+      } else if (this.flags.stomach.depth < 10) {
+        return ["The rippling stomach squeezes on your slick, delicious body."];
+      } else if (this.flags.stomach.depth < 20) {
+        return ["You're trapped halway into the anaconda's crushing stomach."];
+      } else if (this.flags.stomach.depth < 30) {
+        return ["The anaconda's guts seem endless - rippling, churning, crushing."];
+      } else {
+        return ["You're so very deep..."];
+      }
     } else {
       return [];
     }
@@ -400,7 +422,7 @@ function Anaconda() {
   this.attacks.push({
     attackPlayer: function(defender) {
       if (statHealthCheck(attacker, defender, "str")) {
-        let damage = attack(attacker, defender, attacker.str);
+        let damage = attack(attacker, defender, attacker.str/2);
         return ["The snake's tail whips around, smacking you for " + damage + " damage!"];
       } else {
         return ["The serpent's tail lashes at you, but you manage to stay out of its way."];
@@ -421,6 +443,7 @@ function Anaconda() {
       if (statHealthCheck(attacker, defender, "str")) {
         attacker.flags.state = "grapple";
         attacker.flags.tail.turns = 0;
+        attacker.flags.tail.submits = 0;
         let damage = attack(attacker, defender, attacker.str/2);
         return ["The snake's tail whips around and grabs you! A tight embrace of smooth, cold scales grips your entire upper body, a lazy <i>clench</i> of muscle suppressing your meek struggles."];
       } else {
@@ -471,7 +494,7 @@ function Anaconda() {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.healthPercentage(); }
+    weight: function(attacker, defender) { return 1 - defender.healthPercentage() + attacker.flags.tail.submits; }
   });
 
   // swallow player
@@ -492,7 +515,7 @@ function Anaconda() {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.healthPercentage(); }
+    weight: function(attacker, defender) { return 1; }
   });
 
   // squeeze
@@ -512,7 +535,8 @@ function Anaconda() {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.healthPercentage(); }
+    weight: function(attacker, defender) { return defender.healthPercentage(); },
+    gameover: function() { return "Crushed and digested by " + attacker.description("a"); }
   });
 
   // pull into stomach
@@ -583,7 +607,7 @@ function Anaconda() {
     ],
     priority: 1,
     weight: function(attacker, defender) { return defender.healthPercentage(); },
-    gameover: function() { return "Digested alive by " + attacker.description("an"); }
+    gameover: function() { return "Digested alive by " + attacker.description("a"); }
   });
 
 
@@ -620,7 +644,11 @@ function Anaconda() {
             defender.flags.state = "combat";
             return ["You pry your way of the snake's coils!"];
           } else {
-            return ["Your struggles accomplish nothing."];
+            return pickRandom([
+              ["You struggle without effect."],
+              ["Your struggles do nothing."],
+              ["The snake's crushing coils hold you fast."]
+            ]);
           }
         },
         requirements: [
@@ -639,6 +667,7 @@ function Anaconda() {
         name: "Submit",
         desc: "Do nothing",
         attack: function(defender) {
+          defender.flags.tail.submits++;
           return ["You lie limp in the coils."];
         },
         requirements: [
