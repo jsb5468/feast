@@ -546,13 +546,70 @@ function devourPlayerAnal(attacker) {
   };
 }
 
+function devourPlayerHard(attacker) {
+  return {
+    requirements: [
+      function(attacker, defender) { return attacker.leering == true; }
+    ],
+    attackPlayer: function(defender) {
+      attacker.flags.voreType = "hard";
+      attacker.flags.hardTurns = 0;
+      changeMode("eaten");
+      return [
+        "Fen lunges at you, closing the gap in an instant, and slams you against a wall. His terrible jaws split wide and dive in, clamping around your shoulder and - with a disgusting <i>CRUNCH</i> - severs your left arm. His claws rake along your chest and shred your skin, ripping open your chest and breaking your ribcage with a mighty shove.",
+      ];
+    }, conditions: [
+      function(attacker, defender) { return defender.prefs.prey; },
+      function(attacker, defender) { return defender.prefs.vore.hard > 0; }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.prefs.vore.hard;}
+  };
+}
+
+function fenFeedHard(attacker) {
+  return {
+    digest: function(defender) {
+      attacker.flags.hardTurns++;
+      switch(attacker.flags.hardTurns) {
+        case 1: return ["Growling and grunting, he holds you fast with one hand as he scarfs down your arm with the other, cracking bone and shredding flesh with ease...before leaning in and taking a small bite from your neck, cutting open your windpipe."];
+        case 2: return ["Fen's jaws sever your other arm, ripping open your chest as he tears it free and swallows whole, a bulge forming in his neck as your limb sinks into his boiling stomach."];
+        case 3: return ["The beast grabs your bloodied stumps and hoists you overhead, casually taking int your legs to the knees and shattering them with a crushing bite. <i>Glrrrrrph</i>."];
+        case 4: return ["Another wretched bite severs your body above the hips, pulling your mostly-intact thighs down to be digested. Blood and gore pours from your body, staining the ground and the beast's fur with equal abandon."];
+        case 5: return ["The crux disembowels you in seconds, consuming your body with unrelenting speed. You're little more than a bleeding, twitching chest and head..."];
+        case 6: if (defender.prefs.vore.soul <= 0) {
+          defender.health = -100;
+        } else {
+          attacker.flags.voreType = "hard-soul";
+        }
+
+        let lines = ["Taking pity - if that's the right word - the beast turns you over and stuffs your head into his maw, crushing your skull between bloody, jagged fangs like a grape."];
+
+        if (defender.prefs.vore.soul > 0) {
+          lines.push(newline);
+          lines.push("...but he isn't done with you yet, ripping your soul from your dying, destroyed body and sucking it down into his hellish stomach. Your wispy essence stews amongst a thick, bubbling stew of meat and bone.");
+        }
+
+        return lines;
+      }
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.voreType == "hard";
+      }
+    ],
+    priority: 1,
+    gameover: function() { return "Ripped to shreds and consumed alive by " + attacker.description("a"); }
+  };
+}
+
 function devourPlayerSoul(attacker) {
   return {
     requirements: [
       function(attacker, defender) { return attacker.leering == true; }
     ],
     attackPlayer: function(defender) {
-      attacker.flags.voreType = "oral-soul";
+      attacker.flags.voreType = "soul";
       changeMode("eaten");
       return [
         "Fen's gaze locks with yours, and you freeze up like a deer in headlights. A brief pulse of amber light washes through them...and he rips out your soul, sucking your essence out from your gaping mouth with terrifying ease. You watch it flow forth from your own eyes for several seconds before you're pulled out entirely, leaving your mind in a helpless, wispy cloud.",
@@ -611,7 +668,13 @@ function instakillPlayerStomach(predator) {
   return {
     digest: function(player) {
       player.health = -100;
-      return ["The stomach walls churn, clench, and swiftly crush you into nothingness."];
+      let lines = ["The stomach walls churn, clench, and swiftly crush you into nothingness."];
+
+      if (player.prefs.scat == true) {
+        fenAddScatEnding(lines);
+      }
+
+      return lines;
     },
     priority: 1,
     weight: function(attacker, defender) { return 1; },
@@ -628,16 +691,31 @@ function instakillPlayerStomachSoul(predator) {
   return {
     digest: function(player) {
       player.health = -100;
-      return ["Your soul catches alight in the horrific depths of the crux's stomach, breaking up and melting in seconds. You're gone..."];
+      let lines = ["Your soul catches alight in the horrific depths of the crux's stomach, breaking up and melting in seconds. You're gone..."];
+
+      if (player.prefs.scat == true && (predator.flags.voreType != "soul")) {
+        fenAddScatEnding(lines);
+      }
+
+      return lines;
     },
     priority: 1,
     weight: function(attacker, defender) { return 1; },
     requirements: [
       function(attacker, defender) {
-        return attacker.flags.voreType == "oral-soul";
+        return attacker.flags.voreType == "oral-soul" || attacker.flags.voreType == "hard-soul" ||
+        attacker.flags.voreType == "soul";
       }
     ],
-    gameover: function() { return "Soul dissolved by Fen's stomach"; }
+    gameover: function() {
+      if (predator.flags.voreType == "soul") {
+        return "Soul obliterated by Fen's abyssal gut";
+      } else if (predator.flags.voreType == "oral-soul") {
+        return "Body and soul digested by Fen's crushing stomach";
+      } else if (predator.flags.voreType == "hard-soul") {
+        return "Ripped to shreds, devoured alive, and soul obliterated by Fen";
+      }
+    }
   };
 }
 
@@ -645,7 +723,13 @@ function instakillPlayerBowels(predator) {
   return {
     digest: function(player) {
       player.health = -100;
-      return ["Fen's intestines clench, and clench and <i>clench</i> - and in seconds, you're gone, just another victim of the beast's ravenous body."];
+      let lines = ["Fen's intestines clench, and clench and <i>clench</i>. Your flesh and fat liquefy; your bones groan, break, and dissolve. He takes everything from you, absorbing your obliterated body with a slow, unstoppable squeeze - and in seconds, you're gone, just another victim of the beast's ravenous body"];
+
+      if (player.prefs.scat == true) {
+        fenAddScatEnding(lines);
+      }
+
+      return lines;
     },
     priority: 1,
     weight: function(attacker, defender) { return 1; },
@@ -656,6 +740,11 @@ function instakillPlayerBowels(predator) {
     ],
     gameover: function() { return "Absorbed into Fen's bowels"; }
   };
+}
+
+function fenAddScatEnding(lines) {
+  lines.push(newline);
+  lines.push("The beast growls and squats down, muscular thighs bulging as he holds up the weight of two creatures...before his pucker opens wide and releases a thick, greasy log of scat. He snarls as the smooth, bone-flecked shit piles up in the street, tongue lolling out as your acid-pitted skull peeks out...and shatters as he clenches, raining broken hunks of bone down onto your unrecognizable remains.");
 }
 
 function fenPlayerBowelsSoul(predator) {
