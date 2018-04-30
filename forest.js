@@ -47,20 +47,6 @@ function AnacondaTest() {
   });
 }
 
-function PowerUp() {
-  GameObject.call(this, "Powerup");
-
-  this.actions.push({
-    "name": "Powerup",
-    "action": function() {
-      player.str += 10;
-      player.dex += 10;
-      player.con += 10;
-      updateDisplay();
-    }
-  });
-}
-
 function Wolf() {
   Creature.call(this, "Wolf", 10, 15, 15);
 
