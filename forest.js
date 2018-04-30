@@ -35,6 +35,32 @@ function ForestExplore() {
   });
 }
 
+
+function AnacondaTest() {
+  GameObject.call(this, "Anaconda Test");
+
+  this.actions.push({
+    "name": "Anaconda Test",
+    "action": function() {
+      startCombat(new Anaconda());
+    }
+  });
+}
+
+function PowerUp() {
+  GameObject.call(this, "Powerup");
+
+  this.actions.push({
+    "name": "Powerup",
+    "action": function() {
+      player.str += 10;
+      player.dex += 10;
+      player.con += 10;
+      updateDisplay();
+    }
+  });
+}
+
 function Wolf() {
   Creature.call(this, "Wolf", 10, 15, 15);
 
@@ -306,7 +332,7 @@ function wolfBelch(attacker) {
 }
 
 function Anaconda() {
-  Creature.call(this, "Anaconda", 30, 10, 20);
+  Creature.call(this, "Anaconda", 60, 10, 20);
 
   this.hasName = false;
 
@@ -324,6 +350,19 @@ function Anaconda() {
 
     this.flags.stomach.depth = Math.max(0, this.flags.stomach.depth);
     this.flags.stomach.depth = Math.min(30, this.flags.stomach.depth);
+  };
+
+  this.startCombat = function(player) {
+    return ["An anaconda slithers from the bushes."];
+  };
+
+  this.finishCombat = function() {
+    if (this.flags.state == "combat")
+      return ["You fall to your knees, barely aware as the anaconda lashes forward to gulp you down..."];
+    else if (this.flags.state == "oral")
+      return ["You black out in the snake's crushing throat. At least you won't have to experience your slow digestion..."];
+    else if (this.flags.state == "stomach")
+      return ["The snake's stomach is too much to bear, and you black out as your body begins to collapse under the pressure."];
   };
 
   this.status = function() {
@@ -360,7 +399,7 @@ function Anaconda() {
   // slap player with tail
   this.attacks.push({
     attackPlayer: function(defender) {
-      if (statHealthCheck(attacker, defender, "dex")) {
+      if (statHealthCheck(attacker, defender, "str")) {
         let damage = attack(attacker, defender, attacker.str);
         return ["The snake's tail whips around, smacking you for " + damage + " damage!"];
       } else {
@@ -379,7 +418,7 @@ function Anaconda() {
   // grab player with tail
   this.attacks.push({
     attackPlayer: function(defender) {
-      if (statHealthCheck(attacker, defender, "dex")) {
+      if (statHealthCheck(attacker, defender, "str")) {
         attacker.flags.state = "grapple";
         attacker.flags.tail.turns = 0;
         let damage = attack(attacker, defender, attacker.str/2);
@@ -403,7 +442,12 @@ function Anaconda() {
       attacker.flags.tail.turns++;
       let damage = attack(attacker, defender, attacker.str / 2 * attacker.flags.tail.turns);
       defender.changeStamina(attacker.str / 2 * attacker.flags.tail.turns);
-      return ["Snake squeeze."];
+      return pickRandom([
+        ["Tight, crushing coils bear down..."],
+        ["Stars fill your eyes as the snake crushes you alive."],
+        ["You gasp silently, struggling for breath."],
+        ["Your bones creak under the strain as the anaconda squeezes you like a toy."]
+      ]);
     },
     requirements: [
       function(attacker, defender) {
@@ -419,7 +463,7 @@ function Anaconda() {
     attackPlayer: function(defender) {
       attacker.flags.state = "oral";
       attacker.flags.oral.depth = 1;
-      return ["Snake vore."];
+      return ["The snake's head swoops in close - and then its jaws split open. You struggle and strain against the beast's crushing scales, its gaping throat taking you in with terrifying ease...enveloping your head, shoulders, chest, hips, and legs in one smooth motion. It hefts its head up before throwing it up high, letting gravity drag you all the way down into its velvety throat. A hot, wet <i>glurrk</i> seals you away..."];
     },
     requirements: [
       function(attacker, defender) {
@@ -434,7 +478,13 @@ function Anaconda() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.flags.oral.depth++;
-      return ["Snake swallow."];
+      return pickRandom([
+        ["A light swallow sucks you deeper."],
+        ["You slip deeper still, tugged into the abyss by powerful muscle."],
+        ["Powerful muscle pulls you down deep."],
+        ["The snake swallows, tugging you deeper and deeper..."],
+        ["<i>Glrp.</i> Down you go."]
+      ]);
     },
     requirements: [
       function(attacker, defender) {
@@ -470,7 +520,7 @@ function Anaconda() {
     attackPlayer: function(defender) {
       attacker.flags.state = "stomach";
       attacker.flags.stomach.depth = 3;
-      return ["Snake stomach."];
+      return ["The snake's throat clenches one last time, sucking you down into the beast's long, crushing stomach. You slide in a few feet, the entrance sealing shut behind you...sealing you away in that acidic pit."];
     },
     requirements: [
       function(attacker, defender) {
@@ -487,10 +537,44 @@ function Anaconda() {
   // digest
   this.attacks.push({
     attackPlayer: function(defender) {
-      attack(attacker, defender, attacker.con / 5 + attacker.con / 20 * attacker.flags.stomach.depth);
-      defender.changeStamina(-attacker.con / 5 - attacker.con / 20 * attacker.flags.stomach.depth);
+      let damage = attacker.con / 5 + attacker.con / 20 * attacker.flags.stomach.depth;
+
+      if (attacker.flags.stomach.depth >= 30) {
+        damage *= 2;
+
+      }
+      attack(attacker, defender, damage);
+      defender.changeStamina(-damage);
       attacker.stomachPull(Math.floor(Math.random()*4+4));
-      return ["Snake digest."];
+      if (attacker.flags.stomach.depth <= 10) {
+        return pickRandom([
+          ["Light pressure squeezes on your body."],
+          ["The rippling walls clench around you."],
+          ["Faint tingling dances across your skin."]
+        ]);
+      } else if (attacker.flags.stomach.depth <= 20) {
+        return pickRandom([
+          ["Thick, slimy chyme sloshes over your body."],
+          ["The pressure is getting painful."],
+          ["Powerful clenches of muscle bear down."],
+          ["You struggle to breathe as the snake constricts you within."]
+        ]);
+      } else if (attacker.flags.stomach.depth < 30) {
+        return pickRandom([
+          ["The pressure is crushing you to death."],
+          ["Agonizing acids sear your skin."],
+          ["The snake hisses as it feels your body break."],
+          ["You're melting and breaking in the snake's crushing stomach."],
+          ["Trapped in the depths of the snake, you squirm and struggle as it melts you alive."]
+        ]);
+      } else {
+        return pickRandom([
+          ["You whimper with pain as the snake crushes you alive."],
+          ["Crushing muscle grinds you against the end of the snake's gut."],
+          ["You feel your body falling apart."],
+          ["The rippling walls are too much to bear. You're going to melt..."]
+        ]);
+      }
     },
     requirements: [
       function(attacker, defender) {
@@ -498,7 +582,8 @@ function Anaconda() {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.healthPercentage(); }
+    weight: function(attacker, defender) { return defender.healthPercentage(); },
+    gameover: function() { return "Digested alive by " + attacker.description("an"); }
   });
 
 
@@ -533,9 +618,9 @@ function Anaconda() {
         attack: function(defender) {
           if (statHealthCheck(attacker, defender, "str")) {
             defender.flags.state = "combat";
-            return ["Escaped"];
+            return ["You pry your way of the snake's coils!"];
           } else {
-            return ["No effect"];
+            return ["Your struggles accomplish nothing."];
           }
         },
         requirements: [
@@ -554,7 +639,7 @@ function Anaconda() {
         name: "Submit",
         desc: "Do nothing",
         attack: function(defender) {
-          return ["You do nothing."];
+          return ["You lie limp in the coils."];
         },
         requirements: [
           function(attacker, defender) {
@@ -576,12 +661,12 @@ function Anaconda() {
             defender.flags.oral.depth--;
             if (defender.flags.oral.depth < 0) {
               defender.flags.state = "oral";
-              return ["Escaped"];
+              return ["With a tremendous burst of strength, you force yourself into the snake's maw! It hisses and retches, spewing you out onto the forest floor."];
             } else {
-              return ["Up the throat"];
+              return ["You claw your way up the snake's throat"];
             }
           } else {
-            return ["No effect"];
+            return ["You struggle...and get nowhere."];
           }
         },
         requirements: [
@@ -600,7 +685,8 @@ function Anaconda() {
         name: "Submit",
         desc: "Do nothing",
         attack: function(defender) {
-          return ["You do nothing."];
+          defender.flags.oral.depth++;
+          return ["You let the snake's throat claim you..."];
         },
         requirements: [
           function(attacker, defender) {
@@ -620,22 +706,22 @@ function Anaconda() {
         attack: function(defender) {
           if (statHealthCheck(attacker, defender, "str") ||
           statHealthCheck(attacker, defender, "str")) {
-            let distance = attacker.str / 10 + Math.floor(Math.random() * -attacker.str / 10);
+            let distance = attacker.str / 10 + Math.floor(Math.random() * +attacker.str / 10);
             defender.stomachPull(-distance);
 
             if (defender.flags.stomach.depth <= 0) {
               if (statHealthCheck(attacker, defender, "str")) {
                 defender.flags.state = "oral";
                 defender.flags.oral.depth = 3;
-                return ["Pulled into throat"];
+                return ["You shove yourself into the entrance to the snake's wretched stomach - and break through! You slide back into its throat."];
               } else {
-                return ["Stuck at entrance"];
+                return ["You shove yourself into the entrance to the snake's wretched stomach - and get stuck. The tight of ring of muscle is unyielding."];
               }
             } else {
-              return ["Dragged self " + distance + " forward"];
+              return ["You drag yourself " + distance + " feet forward, still imprisoned within the snake's bubbling gut."];
             }
           } else {
-            return ["Struggling didn't work"];
+            return ["Your thrashes and squirms elicit a low hiss from the snake."];
           }
         },
         requirements: [
