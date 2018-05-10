@@ -574,7 +574,7 @@ function fenFeedHard(attacker) {
       switch(attacker.flags.hardTurns) {
         case 1: return ["Growling and grunting, he holds you fast with one hand as he scarfs down your arm with the other, cracking bone and shredding flesh with ease...before leaning in and taking a small bite from your neck, cutting open your windpipe."];
         case 2: return ["Fen's jaws sever your other arm, ripping open your chest as he tears it free and swallows whole, a bulge forming in his neck as your limb sinks into his boiling stomach."];
-        case 3: return ["The beast grabs your bloodied stumps and hoists you overhead, casually taking int your legs to the knees and shattering them with a crushing bite. <i>Glrrrrrph</i>."];
+        case 3: return ["The beast grabs your bloodied stumps and hoists you overhead, casually taking in your legs to the knees and shattering them with a crushing bite. <i>Glrrrrrph</i>."];
         case 4: return ["Another wretched bite severs your body above the hips, pulling your mostly-intact thighs down to be digested. Blood and gore pours from your body, staining the ground and the beast's fur with equal abandon."];
         case 5: return ["The crux disembowels you in seconds, consuming your body with unrelenting speed. You're little more than a bleeding, twitching chest and head..."];
         case 6: if (defender.prefs.vore.soul <= 0) {
@@ -583,7 +583,7 @@ function fenFeedHard(attacker) {
           attacker.flags.voreType = "hard-soul";
         }
 
-        let lines = ["Taking pity - if that's the right word - the beast turns you over and stuffs your head into his maw, crushing your skull between bloody, jagged fangs like a grape."];
+        let lines = ["Taking pity - if that's the right word - the beast turns you over and stuffs your head into his maw, cutting it off and swallowing it whole."];
 
         if (defender.prefs.vore.soul > 0) {
           lines.push(newline);
