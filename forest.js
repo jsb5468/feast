@@ -388,7 +388,7 @@ function Anaconda() {
       } else if (this.flags.stomach.depth < 10) {
         return ["The rippling stomach squeezes on your slick, delicious body."];
       } else if (this.flags.stomach.depth < 20) {
-        return ["You're trapped halway into the anaconda's crushing stomach."];
+        return ["You're trapped halfway into the anaconda's crushing stomach."];
       } else if (this.flags.stomach.depth < 30) {
         return ["The anaconda's guts seem endless - rippling, churning, crushing."];
       } else {
@@ -488,6 +488,7 @@ function Anaconda() {
     attackPlayer: function(defender) {
       attacker.flags.state = "oral";
       attacker.flags.oral.depth = 1;
+      changeBackground("eaten");
       return ["The snake's head swoops in close - and then its jaws split open. You struggle and strain against the beast's crushing scales, its gaping throat taking you in with terrifying ease...enveloping your head, shoulders, chest, hips, and legs in one smooth motion. It hefts its head up before throwing it up high, letting gravity drag you all the way down into its velvety throat. A hot, wet <i>glurrk</i> seals you away..."];
     },
     requirements: [
@@ -693,9 +694,12 @@ function Anaconda() {
         attack: function(defender) {
           if (statHealthCheck(attacker, defender, "str")) {
             defender.flags.state = "grabbed";
-            return ["Grab snake"];
+            return ["You lunge at the monstrous snake, leaping into the air and coming down hard behind its blunt, scaly head. Snake wranglin' has never been this exciting!"];
           } else {
-            return ["No grab"];
+            defender.flags.state = "oral";
+            defender.flags.oral.depth = 1;
+            changeBackground("eaten");
+            return ["You leap at the monstrous snake, hopping into the air in a bid to grab its neck. Its jaws split wide open, and instead of grappling the snake, you plunge head-first into its gullet."];
           }
         },
         requirements: [
@@ -886,7 +890,8 @@ function Anaconda() {
           if (statHealthCheck(attacker, defender, "str")) {
             defender.flags.oral.depth--;
             if (defender.flags.oral.depth < 0) {
-              defender.flags.state = "oral";
+              defender.flags.state = "combat";
+              changeBackground("combat");
               return ["With a tremendous burst of strength, you force yourself into the snake's maw! It hisses and retches, spewing you out onto the forest floor."];
             } else {
               return ["You claw your way up the snake's throat"];
