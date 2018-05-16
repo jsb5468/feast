@@ -24,6 +24,10 @@ function Deno() {
 
   this.flags.balls = {};
 
+  this.flags.finisher = 0;
+
+  this.flags.walk = 0;
+
   this.arousal = 0;
 
   this.addArousal = function(amount) {
@@ -266,6 +270,7 @@ function Deno() {
     weight: function(attacker, defender) { return attacker.flags.cock.last == "submit" ? 2 : 1; }
   });
 
+
   // pull into balls
   this.attacks.push({
     attackPlayer: function(defender) {
@@ -285,6 +290,7 @@ function Deno() {
     weight: function(attacker, defender) { return 1; }
   });
 
+
   // rest in balls
   this.attacks.push({
     attackPlayer: function(defender) {
@@ -301,6 +307,7 @@ function Deno() {
     priority: 1,
     weight: function(attacker, defender) { return 1; }
   });
+
 
   // end rest
   this.attacks.push({
@@ -323,6 +330,7 @@ function Deno() {
     weight: function(attacker, defender) { return 1; }
   });
 
+
   // concentrate in balls
   this.attacks.push({
     attackPlayer: function(defender) {
@@ -339,6 +347,7 @@ function Deno() {
     priority: 1,
     weight: function(attacker, defender) { return 1; }
   });
+
 
   // stroke in balls
   this.attacks.push({
@@ -369,7 +378,6 @@ function Deno() {
 
       if (attacker.arousal >= 60) {
         attacker.flags.balls.focus = "";
-        attacker.flags.balls.streak = 0;
       }
 
       return ["Deno strokes!"];
@@ -386,13 +394,14 @@ function Deno() {
     weight: function(attacker, defender) { return 1; }
   });
 
+
   // grind in balls
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(10);
       attack(attacker, defender, attacker.arousal / 5);
 
-      return ["Deno strokes."];
+      return ["Deno grinds."];
     },
     requirements: [
       function(attacker, defender) {
@@ -406,6 +415,7 @@ function Deno() {
     weight: function(attacker, defender) { return 1; }
   });
 
+
   // grind up to 60
   this.attacks.push({
     attackPlayer: function(defender) {
@@ -414,10 +424,9 @@ function Deno() {
 
       if (attacker.arousal >= 60) {
         attacker.flags.balls.focus = "";
-        attacker.flags.balls.streak = 0;
       }
 
-      return ["Deno grinds against the ground."];
+      return ["Deno grinds against the ground up to 60."];
     },
     requirements: [
       function(attacker, defender) {
@@ -430,6 +439,7 @@ function Deno() {
     priority: 2,
     weight: function(attacker, defender) { return 1; }
   });
+
 
   // tense in balls
   this.attacks.push({
@@ -445,6 +455,222 @@ function Deno() {
     priority: 1,
     weight: function(attacker, defender) { return 1; }
   });
+
+
+  // walk
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attack(attacker, defender, attacker.arousal / 15);
+      ++attacker.flags.walk;
+        attacker.addArousal(-10);
+      return ["Deno walks."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "walking";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // finish walk
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "mounted";
+      return ["Deno stops his walk."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "walking";
+      },
+      function(attacker, defender) {
+        return attacker.flags.walk >= 20;
+      }
+    ],
+    priority: 2,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // mount thrust 0
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(5);
+      return ["Deno grinds"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "mounted";
+      },
+      function(attacker, defender) {
+        return attacker.flags.arousal < 20;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // mount thrust 1
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(5);
+      return ["Deno thrusts"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "mounted";
+      },
+      function(attacker, defender) {
+        return attacker.flags.arousal >= 20 && attacker.flags.arousal < 40;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // mount thrust 2
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(5);
+      return ["Deno thrusts harder"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "mounted";
+      },
+      function(attacker, defender) {
+        return attacker.flags.arousal >= 40 && attacker.flags.arousal < 60;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // mount thrust 3
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.addArousal(5);
+      return ["Deno thrusts very hard"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "mounted";
+      },
+      function(attacker, defender) {
+        return attacker.flags.arousal >= 60 && attacker.flags.arousal < 80;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // mount concentrate
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.arousal -= 10;
+      return ["Deno pauses and concentrates"];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "mounted";
+      },
+      function(attacker, defender) {
+        return attacker.flags.arousal >= 80 && attacker.flags.arousal < 100;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // mount orgasm
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attacker.flags.state = "mounted";
+      return ["Deno orgasms."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "mounted";
+      },
+      function(attacker, defender) {
+        return attacker.flags.arousal >= 100;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // mount post-orgasm crush
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      attack(attacker, defender, 33);
+      return ["You struggle in the tight chamber."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "stuffed";
+      },
+      function(attacker, defender) {
+        return attacker.flags.arousal >= 100;
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // mount fatal orgasm
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      defender.health = -100;
+      return ["You melt and shoot out of Deno."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "stuffed";
+      },
+      function(attacker, defender) {
+        return defender.flags.health <= 0;
+      }
+    ],
+    priority: 2,
+    weight: function(attacker, defender) { return 1; }
+  });
+
+
+  // finish in balls
+  this.attacks.push({
+    attackPlayer: function(defender) {
+      ++attacker.flags.finisher;
+
+      if (attacker.flags.finisher == 3) {
+        defender.health = -100;
+        return ["Deno finishes you off"];
+      } else {
+        return ["Deno is finishing you off: " + attacker.flags.finisher];
+      }
+
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "balls";
+      },
+      function(attacker, defender) {
+        return defender.health <= 0;
+      }
+    ],
+    priority: 3,
+    weight: function(attacker, defender) { return 1; }
+  });
+
 
   // cock release
   this.attacks.push({
@@ -468,6 +694,7 @@ function Deno() {
     priority: 3,
     weight: function(attacker, defender) { return 1; }
   });
+
 
   // vortex oral vore
   this.attacks.push({
@@ -872,7 +1099,11 @@ function Deno() {
         }
         defender.flags.balls.streak++;
 
-        if (defender.flags.balls.streak >= Math.floor(Math.random() * 3 + 3)) {
+        if (defender.flags.balls.streak >= 10 && defender.flags.arousal < 50) {
+          defender.flags.state = "walking";
+          return ["The dragon starts walking"];
+        }
+        else if (defender.flags.balls.streak >= Math.floor(Math.random() * 3 + 3)) {
           defender.flags.balls.focus = "stroke";
         }
 
@@ -882,6 +1113,134 @@ function Deno() {
       requirements: [
         function(attacker, defender) {
           return defender.flags.state == "balls";
+        }
+      ]
+    };
+  });
+
+  // Struggle in balls while walking
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Struggle",
+      desc: "Struggle in Deno's throbbing balls!",
+      attack: function(defender) {
+        defender.addArousal(2);
+        if (statHealthCheck(attacker, defender, "str") && statHealthCheck(attacker, defender, "str")) {
+          defender.flags.state = "cock";
+          defender.flags.cock.depth = 13;
+          defender.flags.cock.struggles = 0;
+          defender.flags.cock.rubs = 0;
+          defender.flags.cock.submits = 0;
+          return ["Your struggles propel you back into the dragon's shaft!"];
+        } else {
+          return ["You struggle against the walls..without much effect."];
+        }
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "walking";
+        }
+      ]
+    };
+  });
+
+  // Rub in balls while walking
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Rub",
+      desc: "Rub the clenching walls.",
+      attack: function(defender) {
+        defender.addArousal(5);
+
+        return ["You rub at the walls of Deno's balls."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "walking";
+        }
+      ]
+    };
+  });
+
+  // Rest in balls while walking
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Rest",
+      desc: "Regain your strength.",
+      attack: function(defender) {
+        player.changeStamina(player.maxStamina/5);
+        return ["You cease your struggles for a moment, regaining stamina."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "walking";
+        }
+      ]
+    };
+  });
+
+  // Struggle in balls while mounted
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Struggle",
+      desc: "Struggle in Deno's throbbing balls!",
+      attack: function(defender) {
+        defender.addArousal(2);
+        if (statHealthCheck(attacker, defender, "str") && statHealthCheck(attacker, defender, "str")) {
+          defender.flags.state = "cock";
+          defender.flags.cock.depth = 13;
+          defender.flags.cock.struggles = 0;
+          defender.flags.cock.rubs = 0;
+          defender.flags.cock.submits = 0;
+          return ["Your struggles propel you back into the dragon's shaft!"];
+        } else {
+          return ["You struggle against the walls..without much effect."];
+        }
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "mounted";
+        }
+      ]
+    };
+  });
+
+  // Rub in balls while mounted
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Rub",
+      desc: "Rub the clenching walls.",
+      attack: function(defender) {
+        defender.addArousal(5);
+
+        return ["You rub at the walls of Deno's balls."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "mounted";
+        }
+      ]
+    };
+  });
+
+  // Rest in balls while mounted
+  this.playerAttacks.push(
+    function(attacker) {
+    return {
+      name: "Rest",
+      desc: "Regain your strength.",
+      attack: function(defender) {
+        player.changeStamina(player.maxStamina/5);
+        return ["You cease your struggles for a moment, regaining stamina."];
+      },
+      requirements: [
+        function(attacker, defender) {
+          return defender.flags.state == "mounted";
         }
       ]
     };
