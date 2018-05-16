@@ -721,9 +721,9 @@ function Anaconda() {
           if (statHealthCheck(attacker, defender, "str") || statHealthCheck(attacker, defender, "str")) {
             attack(attacker, defender, defender.maxHealth/20);
             defender.changeStamina(-defender.maxStamina/10);
-            return ["Squeeze snake"];
+            return ["You wrap your arms around the base of the scaly beast's head and squeeze, trying to choke the snake out."];
           } else {
-            return ["No squeeze"];
+            return ["You wrap your arms around the base of the scaly beast's head and squeeze, but you can't get a good enough grip to choke it."];
           }
         },
         requirements: [
@@ -746,9 +746,11 @@ function Anaconda() {
             defender.flags.state = "player-oral";
             attacker.flags.oral = {};
             attacker.flags.oral.depth = 0;
-            return ["Swallow snake"];
+            return ["Throwing any sense of caution to the wind, you push yourself forward and open wide, stuffing the snake's blunt head into your jaws and swallowing! The beast thrashes and writhes as it begins to panic."];
           } else {
-            return ["No swallow"];
+            defender.flags.state = "oral";
+            defender.flags.oral.depth = 1;
+            return ["Your stomach grumbles, and you decide this snake would be a delicious snack. You push yourself forward and open wide...and then snake does too. You feed yourself face-first into its gaping maw, the massive beast effortlessly taking you in to the hips and gulping you down. Oops."];
           }
         },
         requirements: [
@@ -772,12 +774,19 @@ function Anaconda() {
 
             if (attacker.flags.oral.depth == 6) {
               defender.flags.state = "player-stomach";
-              return ["Snake in stomach"];
+              return ["One final swallow drags the anaconda's thrashing tail down your throat. You groan and lounge back, massively stuffed belly churning and gurgling around your prey."];
             } else {
-              return ["Swallow snake"];
+              return pickRandom([
+                ["You gulp the snake further down, its huge body steadily expanding your already taut belly."],
+                ["A powerful <i>gulp</i> sucks the snake deeper into your body."],
+                ["Smooth scales glide down your gullet"]
+              ]);
             }
           } else {
-            return ["No swallow"];
+            return pickRandom([
+              ["You swallow firmly, but the snake's smooth body resists you."],
+              ["Your swallows aren't enough to overcome the snake's massive bulk."]
+            ]);
           }
         },
         requirements: [
@@ -801,14 +810,39 @@ function Anaconda() {
           if (defender.stamina <= 0) {
             changeMode("explore");
             player.stomach.feed(defender);
-            return ["Snake subdued."];
+            return ["The snake's thrashes and struggles have subsided a little. It's just food now."];
           } else {
-            return ["Snake digests."];
+            return pickRandom([
+              ["You groan and knead on your massive gut, feeling the snake slowly break down."],
+              ["Your stomach snarls and bubbles as the snake's struggles wane."],
+              ["A crass belch pours from your maw as you roll gently from side to side, slowly subduing the snake."]
+            ]);
           }
         },
         requirements: [
           function(attacker, defender) {
             return defender.flags.state == "player-stomach";
+          }
+        ]
+      };
+    }
+  );
+
+
+  // punch in combat
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Punch",
+        desc: "Punch that damn snake",
+        attack: function(defender) {
+          let damage = attack(attacker, defender, attacker.str);
+
+          return ["You slug the snake in the snout for " + damage + " damage"];
+        },
+        requirements: [
+          function(attacker, defender) {
+            return defender.flags.state == "combat";
           }
         ]
       };
