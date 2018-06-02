@@ -80,6 +80,8 @@ button {
 #actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: start;
+  height: 100%;
   width: 40%;
   padding: 15px;
 }
@@ -107,7 +109,8 @@ button {
 
 #combat-desc {
   width: 200px;
-  height: 400px;
+  height: 200px;
+  margin: 15px;
   background: #222;
 }
 
