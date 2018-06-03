@@ -186,9 +186,14 @@ button {
   text-align: center;
 }
 
-#character-form-list {
+.character-form-list {
   margin: auto;
   list-style-type: none;
+  display: none;
+}
+
+#character-step-1 {
+  display: block;
 }
 
 #character-form {
@@ -227,6 +232,10 @@ button {
 .pref-radio:checked + label.pref-prefer {
   background: #44a2c7;
   color: #eee;
+}
+
+.pref-hidden {
+  visibility: hidden;
 }
 
 .pref-select {

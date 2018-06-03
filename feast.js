@@ -350,7 +350,13 @@ function moveTo(room,desc="You go places lol", loading=false) {
   updateDisplay();
 }
 
+function next_step(stage) {
+  document.querySelector("#character-step-" + (stage - 1)).style.display = "none";
+  document.querySelector("#character-step-" + stage).style.display = "block";
+}
+
 window.addEventListener('load', function(event) {
+  document.getElementById("character-step-1-next").addEventListener("click", function() { next_step(2); });
   document.getElementById("start-button").addEventListener("click", start, false);
 });
 
