@@ -29,17 +29,6 @@
 
   <div id="game">
     <div id="game-and-stats">
-      <div id="log">
-        <div>
-          Welcome to Feast v0.2.8
-        </div>
-        <div>
-          &nbsp;
-        </div>
-        <div>
-          It's early morning, and you feel like eating a bunch of people
-        </div>
-      </div>
       <div class="stats">
         <div id="player-stats">
           <div class="stat-line" id="time">Time: to file a bug report, because you shouldn't see this!</div>
@@ -60,6 +49,19 @@
           <button class="stat-button" id="stat-button-status">Status</button>
           <button class="stat-button" id="log-button">Log: Enabled</button>
         </div>
+      </div>
+      <div id="log">
+        <div>
+          Welcome to Feast v0.2.8
+        </div>
+        <div>
+          &nbsp;
+        </div>
+        <div>
+          It's early morning, and you feel like eating a bunch of people
+        </div>
+      </div>
+      <div class="stats">
         <div id="foe-stats">
           FOE
           <div class="stat-line" id="stat-foe-name">Vim: 21</div>
@@ -111,41 +113,6 @@
           </table>
         </div>
         <div id="actions">
-          <table>
-            <tr>
-              <th>
-                <button class="action-button" id="action-look">Look</button>
-              </th>
-              <th>
-                <button class="inactive-button action-button" disabled="true"></button>
-              </th>
-              <th>
-                <button class="inactive-button action-button" disabled="true"></button>
-              </th>
-            </tr>
-            <tr>
-              <th>
-                <button class="inactive-button action-button" disabled="true"></button>
-              </th>
-              <th>
-                <button class="inactive-button action-button" disabled="true"></button>
-              </th>
-              <th>
-                <button class="inactive-button action-button" disabled="true"></button>
-              </th>
-            </tr>
-            <tr>
-              <th>
-                <button class="inactive-button action-button" disabled="true"></button>
-              </th>
-              <th>
-                <button class="inactive-button action-button" disabled="true"></button>
-              </th>
-              <th>
-                <button class="inactive-button action-button" disabled="true"></button>
-              </th>
-            </tr>
-          </table>
         </div>
       </div>
       <div class="selector" id="selector-combat">
@@ -189,7 +156,7 @@
       <a href="https://discord.gg/7pdcVhD">Discord</a>
     </p>
     <form id="character-form">
-      <ul id="character-form-list">
+      <ul class="character-form-list" id="character-step-1">
         <li>
           <label for="character-name">Name</label>
           <input type="text" id="character-name" name="name" placeholder="Player"/>
@@ -204,7 +171,7 @@
             <li class="pref-select">
               <span class="pref-type">Ass</span>
               <input type="radio" class="pref-radio" id="character-parts-anal-off" disabled="true" name="parts-anal" value="0" />
-              <label class="pref-disable pref-gray" for="character-parts-anal-off">Disable</label>
+              <label class="pref-disable pref-hidden" for="character-parts-anal-off">Disable</label>
               <input type="radio" class="pref-radio" id="character-parts-anal-on" name="parts-anal" checked="true" value="1" />
               <label class="pref-enable" for="character-parts-anal-on" checked="true">Enable</label>
               <input type="radio" class="pref-radio" id="character-parts-anal-vore" name="parts-anal" checked="true" value="2" />
@@ -237,110 +204,115 @@
               <input type="radio" class="pref-radio" id="character-parts-breast-vore" name="parts-breast" checked="true" value="2" />
               <label class="pref-prefer" for="character-parts-breast-vore" checked="true">Enable Vore</label>
             </li>
-          </ul>
-          <ul class="pref-list">
-          <div>Disposal stuff</div>
-          <li class="pref-select">
-            <span class="pref-type">Scat</span>
-            <input type="radio" class="pref-radio" id="character-prefs-scat-off" name="prefs-scat" checked="true" value="false" />
-            <label class="pref-disable" for="character-prefs-scat-off">Disable</label>
-            <input type="radio" class="pref-radio" id="character-prefs-scat-on" name="prefs-scat" value="true" />
-            <label class="pref-enable" for="character-prefs-scat-on">Enable</label>
-          </li>
-        </ul>
-        <li>
-          <ul class="pref-list">
-            <div>Enemy vore types</div>
             <li class="pref-select">
-              <span class="pref-type">Oral</span>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-oral-0" name="prefs-vore-oral" value="0" />
-              <label class="pref-disable" for="character-prefs-vore-oral-0">Disable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-oral-1" name="prefs-vore-oral" value="1" />
-              <label class="pref-avoid" for="character-prefs-vore-oral-1">Avoid</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-oral-2" name="prefs-vore-oral" checked="true" value="2" />
-              <label class="pref-enable" for="character-prefs-vore-oral-2">Enable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-oral-3" name="prefs-vore-oral" value="3" />
-              <label class="pref-prefer" for="character-prefs-vore-oral-3">Prefer</label>
-            </li>
-            <li class="pref-select">
-              <span class="pref-type">Cock</span>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-cock-0" name="prefs-vore-cock" value="0" />
-              <label class="pref-disable" for="character-prefs-vore-cock-0">Disable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-cock-1" name="prefs-vore-cock" value="1" />
-              <label class="pref-avoid" for="character-prefs-vore-cock-1">Avoid</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-cock-2" name="prefs-vore-cock" checked="true" value="2" />
-              <label class="pref-enable" for="character-prefs-vore-cock-2">Enable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-cock-3" name="prefs-vore-cock" value="3" />
-              <label class="pref-prefer" for="character-prefs-vore-cock-3">Prefer</label>
-            </li>
-            <li class="pref-select">
-              <span class="pref-type">Anal</span>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-anal-0" name="prefs-vore-anal" value="0" />
-              <label class="pref-disable" for="character-prefs-vore-anal-0">Disable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-anal-1" name="prefs-vore-anal" value="1" />
-              <label class="pref-avoid" for="character-prefs-vore-anal-1">Avoid</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-anal-2" name="prefs-vore-anal" checked="true" value="2" />
-              <label class="pref-enable" for="character-prefs-vore-anal-2">Enable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-anal-3" name="prefs-vore-anal" value="3" />
-              <label class="pref-prefer" for="character-prefs-vore-anal-3">Prefer</label>
-            </li>
-            <li class="pref-select">
-              <span class="pref-type">Tail</span>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-tail-0" name="prefs-vore-tail" value="0" />
-              <label class="pref-disable" for="character-prefs-vore-tail-0">Disable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-tail-1" name="prefs-vore-tail" value="1" />
-              <label class="pref-avoid" for="character-prefs-vore-tail-1">Avoid</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-tail-2" name="prefs-vore-tail" checked="true" value="2" />
-              <label class="pref-enable" for="character-prefs-vore-tail-2">Enable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-tail-3" name="prefs-vore-tail" value="3" />
-              <label class="pref-prefer" for="character-prefs-vore-tail-3">Prefer</label>
-            </li>
-            <li class="pref-select">
-              <span class="pref-type">Unbirth</span>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-unbirth-0" name="prefs-vore-unbirth" value="0" />
-              <label class="pref-disable" for="character-prefs-vore-unbirth-0">Disable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-unbirth-1" name="prefs-vore-unbirth" value="1" />
-              <label class="pref-avoid" for="character-prefs-vore-unbirth-1">Avoid</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-unbirth-2" name="prefs-vore-unbirth" checked="true" value="2" />
-              <label class="pref-enable" for="character-prefs-vore-unbirth-2">Enable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-unbirth-3" name="prefs-vore-unbirth" value="3" />
-              <label class="pref-prefer" for="character-prefs-vore-unbirth-3">Prefer</label>
-            </li>
-            <li class="pref-select">
-              <span class="pref-type">Breast</span>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-breast-0" name="prefs-vore-breast" value="0" />
-              <label class="pref-disable" for="character-prefs-vore-breast-0">Disable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-breast-1" name="prefs-vore-breast" value="1" />
-              <label class="pref-avoid" for="character-prefs-vore-breast-1">Avoid</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-breast-2" name="prefs-vore-breast" checked="true" value="2" />
-              <label class="pref-enable" for="character-prefs-vore-breast-2">Enable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-breast-3" name="prefs-vore-breast" value="3" />
-              <label class="pref-prefer" for="character-prefs-vore-breast-3">Prefer</label>
-            </li>
-            <li class="pref-select">
-              <span class="pref-type">Hard</span>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-hard-0" name="prefs-vore-hard" checked="true" value="0" />
-              <label class="pref-disable" for="character-prefs-vore-hard-0">Disable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-hard-1" name="prefs-vore-hard" value="1" />
-              <label class="pref-avoid" for="character-prefs-vore-hard-1">Avoid</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-hard-2" name="prefs-vore-hard" value="2" />
-              <label class="pref-enable" for="character-prefs-vore-hard-2">Enable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-hard-3" name="prefs-vore-hard" value="3" />
-              <label class="pref-prefer" for="character-prefs-vore-hard-3">Prefer</label>
-            </li>
-            <li class="pref-select">
-              <span class="pref-type">Soul</span>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-soul-0" name="prefs-vore-soul" checked="true" value="0" />
-              <label class="pref-disable" for="character-prefs-vore-soul-0">Disable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-soul-1" name="prefs-vore-soul" value="1" />
-              <label class="pref-avoid" for="character-prefs-vore-soul-1">Avoid</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-soul-2" name="prefs-vore-soul" value="2" />
-              <label class="pref-enable" for="character-prefs-vore-soul-2">Enable</label>
-              <input type="radio" class="pref-radio" id="character-prefs-vore-soul-3" name="prefs-vore-soul" value="3" />
-              <label class="pref-prefer" for="character-prefs-vore-soul-3">Prefer</label>
+              <span class="pref-type">Scat</span>
+              <input type="radio" class="pref-radio" id="character-prefs-scat-off" name="prefs-scat" checked="true" value="false" />
+              <label class="pref-disable" for="character-prefs-scat-off">Disable</label>
+              <input type="radio" class="pref-radio" id="character-prefs-scat-on" name="prefs-scat"  checked="true" value="true" />
+              <label class="pref-enable" for="character-prefs-scat-on">Enable</label>
+              <input type="radio" class="pref-radio" id="character-parts-scat-wat" disabled="true" name="prefs-scat" value="2" />
+              <label class="pref-prefer pref-hidden" for="character-parts-scat-wat">Enable Vore</label>
             </li>
           </ul>
         </li>
+        <li>
+          <button type="button" id="character-step-1-next">Next</button>
+        </li>
+      </ul>
+      <ul class="character-form-list" id="character-step-2">
+      <li>
+        <ul class="pref-list">
+          <div>Enemy vore types</div>
+          <li class="pref-select">
+            <span class="pref-type">Oral</span>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-oral-0" name="prefs-vore-oral" value="0" />
+            <label class="pref-disable" for="character-prefs-vore-oral-0">Disable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-oral-1" name="prefs-vore-oral" value="1" />
+            <label class="pref-avoid" for="character-prefs-vore-oral-1">Avoid</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-oral-2" name="prefs-vore-oral" checked="true" value="2" />
+            <label class="pref-enable" for="character-prefs-vore-oral-2">Enable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-oral-3" name="prefs-vore-oral" value="3" />
+            <label class="pref-prefer" for="character-prefs-vore-oral-3">Prefer</label>
+          </li>
+          <li class="pref-select">
+            <span class="pref-type">Cock</span>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-cock-0" name="prefs-vore-cock" value="0" />
+            <label class="pref-disable" for="character-prefs-vore-cock-0">Disable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-cock-1" name="prefs-vore-cock" value="1" />
+            <label class="pref-avoid" for="character-prefs-vore-cock-1">Avoid</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-cock-2" name="prefs-vore-cock" checked="true" value="2" />
+            <label class="pref-enable" for="character-prefs-vore-cock-2">Enable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-cock-3" name="prefs-vore-cock" value="3" />
+            <label class="pref-prefer" for="character-prefs-vore-cock-3">Prefer</label>
+          </li>
+          <li class="pref-select">
+            <span class="pref-type">Anal</span>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-anal-0" name="prefs-vore-anal" value="0" />
+            <label class="pref-disable" for="character-prefs-vore-anal-0">Disable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-anal-1" name="prefs-vore-anal" value="1" />
+            <label class="pref-avoid" for="character-prefs-vore-anal-1">Avoid</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-anal-2" name="prefs-vore-anal" checked="true" value="2" />
+            <label class="pref-enable" for="character-prefs-vore-anal-2">Enable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-anal-3" name="prefs-vore-anal" value="3" />
+            <label class="pref-prefer" for="character-prefs-vore-anal-3">Prefer</label>
+          </li>
+          <li class="pref-select">
+            <span class="pref-type">Tail</span>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-tail-0" name="prefs-vore-tail" value="0" />
+            <label class="pref-disable" for="character-prefs-vore-tail-0">Disable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-tail-1" name="prefs-vore-tail" value="1" />
+            <label class="pref-avoid" for="character-prefs-vore-tail-1">Avoid</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-tail-2" name="prefs-vore-tail" checked="true" value="2" />
+            <label class="pref-enable" for="character-prefs-vore-tail-2">Enable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-tail-3" name="prefs-vore-tail" value="3" />
+            <label class="pref-prefer" for="character-prefs-vore-tail-3">Prefer</label>
+          </li>
+          <li class="pref-select">
+            <span class="pref-type">Unbirth</span>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-unbirth-0" name="prefs-vore-unbirth" value="0" />
+            <label class="pref-disable" for="character-prefs-vore-unbirth-0">Disable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-unbirth-1" name="prefs-vore-unbirth" value="1" />
+            <label class="pref-avoid" for="character-prefs-vore-unbirth-1">Avoid</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-unbirth-2" name="prefs-vore-unbirth" checked="true" value="2" />
+            <label class="pref-enable" for="character-prefs-vore-unbirth-2">Enable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-unbirth-3" name="prefs-vore-unbirth" value="3" />
+            <label class="pref-prefer" for="character-prefs-vore-unbirth-3">Prefer</label>
+          </li>
+          <li class="pref-select">
+            <span class="pref-type">Breast</span>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-breast-0" name="prefs-vore-breast" value="0" />
+            <label class="pref-disable" for="character-prefs-vore-breast-0">Disable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-breast-1" name="prefs-vore-breast" value="1" />
+            <label class="pref-avoid" for="character-prefs-vore-breast-1">Avoid</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-breast-2" name="prefs-vore-breast" checked="true" value="2" />
+            <label class="pref-enable" for="character-prefs-vore-breast-2">Enable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-breast-3" name="prefs-vore-breast" value="3" />
+            <label class="pref-prefer" for="character-prefs-vore-breast-3">Prefer</label>
+          </li>
+          <li class="pref-select">
+            <span class="pref-type">Hard</span>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-hard-0" name="prefs-vore-hard" checked="true" value="0" />
+            <label class="pref-disable" for="character-prefs-vore-hard-0">Disable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-hard-1" name="prefs-vore-hard" value="1" />
+            <label class="pref-avoid" for="character-prefs-vore-hard-1">Avoid</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-hard-2" name="prefs-vore-hard" value="2" />
+            <label class="pref-enable" for="character-prefs-vore-hard-2">Enable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-hard-3" name="prefs-vore-hard" value="3" />
+            <label class="pref-prefer" for="character-prefs-vore-hard-3">Prefer</label>
+          </li>
+          <li class="pref-select">
+            <span class="pref-type">Soul</span>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-soul-0" name="prefs-vore-soul" checked="true" value="0" />
+            <label class="pref-disable" for="character-prefs-vore-soul-0">Disable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-soul-1" name="prefs-vore-soul" value="1" />
+            <label class="pref-avoid" for="character-prefs-vore-soul-1">Avoid</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-soul-2" name="prefs-vore-soul" value="2" />
+            <label class="pref-enable" for="character-prefs-vore-soul-2">Enable</label>
+            <input type="radio" class="pref-radio" id="character-prefs-vore-soul-3" name="prefs-vore-soul" value="3" />
+            <label class="pref-prefer" for="character-prefs-vore-soul-3">Prefer</label>
+          </li>
+        </ul>
+      </li>
         <li>
           <button type="button" id="start-button">Start</button>
         </li>

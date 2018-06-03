@@ -66,6 +66,10 @@ button {
   user-select: none;
 }
 
+#compass {
+  padding: 10px;
+}
+
 .compass-button {
   width: 100px;
   height: 100px;
@@ -73,9 +77,18 @@ button {
   user-select: none;
 }
 
+#actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  height: 100%;
+  width: 40%;
+  padding: 15px;
+}
+
 .action-button {
-  width: 100px;
-  height: 100px;
+  flex: 1 0 200px;
+  height: 50px;
   font-size: 18px;
   user-select: none;
 }
@@ -96,7 +109,8 @@ button {
 
 #combat-desc {
   width: 200px;
-  height: 400px;
+  height: 200px;
+  margin: 15px;
   background: #222;
 }
 
@@ -148,12 +162,13 @@ button {
 #game-and-stats {
   margin: auto;
   height: 500px;
-  width: 700px;
+  max-width: 1000px;
+  padding: 15px;
   display: flex;
 }
 
 #footer {
-  width: 500px;
+  max-width: 800px;
   margin: auto;
 }
 
@@ -171,9 +186,14 @@ button {
   text-align: center;
 }
 
-#character-form-list {
+.character-form-list {
   margin: auto;
   list-style-type: none;
+  display: none;
+}
+
+#character-step-1 {
+  display: block;
 }
 
 #character-form {
@@ -212,6 +232,10 @@ button {
 .pref-radio:checked + label.pref-prefer {
   background: #44a2c7;
   color: #eee;
+}
+
+.pref-hidden {
+  visibility: hidden;
 }
 
 .pref-select {

@@ -305,17 +305,25 @@ function Fen() {
 
   this.attacks.push(new devourPlayer(this));
   this.attacks.push(new devourPlayerAnal(this));
+  this.attacks.push(new devourPlayerSoul(this));
+  this.attacks.push(new devourPlayerHard(this));
   this.attacks.push(new leer(this));
   this.backupAttack = new poke(this);
 
   this.struggles = [];
 
   this.struggles.push(new rub(this));
+  this.struggles.push(new whimper(this));
+  this.struggles.push(new gurgle(this));
+  this.struggles.push(new twitch(this));
 
   this.digests = [];
 
   this.digests.push(new instakillPlayerStomach(this));
   this.digests.push(new instakillPlayerBowels(this));
+  this.digests.push(new fenPlayerBowelsSoul(this));
+  this.digests.push(new fenFeedHard(this));
+  this.digests.push(new instakillPlayerStomachSoul(this));
 
   this.backupDigest = new digestPlayerStomach(this, 50);
 }
@@ -712,9 +720,69 @@ function rub(predator) {
         "escape": "stuck",
         "lines": ["You rub the crushing walls. At least " + predator.description("the") + " is getting something out of this."]
       };
-    }
+    },
+    requirements: [
+      function(defender, attacker) {
+        return defender.flags.voreType != "hard";
+      }
+    ]
   };
 }
+
+function whimper(predator) {
+  return {
+    name: "Whimper",
+    desc: "<i>Whiiiiine</i>",
+    struggle: function(player) {
+      return {
+        "escape": "stuck",
+        "lines": ["You whimper weakly."]
+      };
+    },
+    requirements: [
+      function(defender, attacker) {
+        return defender.flags.voreType == "hard" && defender.flags.hardTurns == 0;
+      }
+    ]
+  };
+}
+
+function gurgle(predator) {
+  return {
+    name: "Gurgle",
+    desc: "gurgle gurgle",
+    struggle: function(player) {
+      return {
+        "escape": "stuck",
+        "lines": ["You let out a faint gurgling sound."]
+      };
+    },
+    requirements: [
+      function(defender, attacker) {
+        return defender.flags.voreType == "hard" && defender.flags.hardTurns == 1 || defender.flags.hardTurns == 2;
+      }
+    ]
+  };
+}
+
+function twitch(predator) {
+  return {
+    name: "Twitch",
+    desc: "<i>twitch</i>",
+    struggle: function(player) {
+      return {
+        "escape": "stuck",
+        "lines": ["You twitch."]
+      };
+    },
+    requirements: [
+      function(defender, attacker) {
+        return defender.flags.voreType == "hard" && defender.flags.hardTurns >= 3;
+      }
+    ]
+  };
+}
+
 
 function submit(predator) {
   return {

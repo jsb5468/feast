@@ -6,8 +6,6 @@ let currentDialog = null;
 let currentFoe = null;
 
 let dirButtons = [];
-let actionButtons = [];
-
 let mode = "explore";
 let actions = [];
 let time = 9*60*60;
@@ -117,19 +115,17 @@ function updateExploreCompass() {
 function updateExploreActions() {
   updateActions();
 
-  for (let i = 0; i < actionButtons.length; i++) {
-    if (i < actions.length) {
-      actionButtons[i].disabled = false;
-      actionButtons[i].innerHTML = actions[i].name;
-      actionButtons[i].classList.remove("inactive-button");
-      actionButtons[i].classList.add("active-button");
-    }
-    else {
-      actionButtons[i].disabled = true;
-      actionButtons[i].innerHTML = "";
-      actionButtons[i].classList.remove("active-button");
-      actionButtons[i].classList.add("inactive-button");
-    }
+  let actionButtons = document.querySelector("#actions");
+
+  actionButtons.innerHTML = "";
+
+  for (let i = 0; i < actions.length; i++) {
+    let button = document.createElement("button");
+    button.innerHTML = actions[i].name;
+    button.classList.add("active-button");
+    button.classList.add("action-button");
+    button.addEventListener("click", function() { actions[i].action(); });
+    actionButtons.appendChild(button);
   }
 }
 
@@ -354,7 +350,13 @@ function moveTo(room,desc="You go places lol", loading=false) {
   updateDisplay();
 }
 
+function next_step(stage) {
+  document.querySelector("#character-step-" + (stage - 1)).style.display = "none";
+  document.querySelector("#character-step-" + stage).style.display = "block";
+}
+
 window.addEventListener('load', function(event) {
+  document.getElementById("character-step-1-next").addEventListener("click", function() { next_step(2); });
   document.getElementById("start-button").addEventListener("click", start, false);
 });
 
@@ -365,7 +367,6 @@ function start() {
   document.getElementById("game").style.display = "block";
   document.getElementById("stat-button-status").addEventListener("click", status, false);
   document.getElementById("log-button").addEventListener("click", toggleLog, false);
-  loadActions();
   loadCompass();
   loadDialog();
   world = createWorld();
@@ -677,17 +678,6 @@ function loadDialog() {
   dialogButtons = Array.from( document.querySelectorAll(".dialog-button"));
   for (let i = 0; i < dialogButtons.length; i++) {
     dialogButtons[i].addEventListener("click", function() { dialogClicked(i); });
-  }
-}
-
-function actionClicked(index) {
-  actions[index].action();
-}
-
-function loadActions() {
-  actionButtons = Array.from( document.querySelectorAll(".action-button"));
-  for (let i = 0; i < actionButtons.length; i++) {
-    actionButtons[i].addEventListener("click", function() { actionClicked(i); });
   }
 }
 
