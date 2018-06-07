@@ -1,3 +1,15 @@
+
+function ArokhaTest() {
+  GameObject.call(this, "Arokha Test");
+
+  this.actions.push({
+    "name": "Arokha Test",
+    "action": function() {
+      startCombat(new Arokha());
+    }
+  });
+}
+
 function Arokha() {
   Creature.call(this, "Arokha", 15, 30, 25);
 

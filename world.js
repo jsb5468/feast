@@ -34,6 +34,7 @@ let locationsSrc = [
       Bed,
       Journal,
       AnacondaTest,
+      ArokhaTest,
     ],
   },
   {
