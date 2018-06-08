@@ -16,9 +16,11 @@ function Deno() {
 
   this.flags.state = "combat";
 
-  this.flags.arousal = 0;
+  this.arousal = 0;
 
   this.flags.cock = {};
+
+  this.flags.cock.mounted = false;
 
   this.flags.grab = {};
 
@@ -44,6 +46,19 @@ function Deno() {
     }
 
     return result;
+  };
+
+  this.startCombat = function(player) {
+    player.flags.teases = 0;
+    return ["Don't get eaten by Deno's dick lol"];
+  };
+
+  this.finishCombat = function() {
+    switch(this.flags.state) {
+      case "balls": return ["You melt away into cum inside the beast's balls."];
+      case "mounted": return ["At least you'll fill Deno's mate well."];
+      case "stuffed": return ["You dissolve into cum inside of Deno's mate."];
+    }
   };
 
   this.attacks = [];
@@ -274,7 +289,11 @@ function Deno() {
   // pull into balls
   this.attacks.push({
     attackPlayer: function(defender) {
-      attacker.flags.state = "balls-relax";
+      if (attacker.flags.cock.mounted) {
+        attacker.flags.state = "mounted";
+      } else {
+        attacker.flags.state = "balls-relax";
+      }
 
       return ["Deno pulls you into his balls."];
     },
@@ -479,6 +498,8 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.flags.state = "mounted";
+      attacker.flags.cock.mounted = true;
+
       return ["Deno stops his walk."];
     },
     requirements: [
@@ -505,7 +526,7 @@ function Deno() {
         return attacker.flags.state == "mounted";
       },
       function(attacker, defender) {
-        return attacker.flags.arousal < 20;
+        return attacker.arousal < 20;
       }
     ],
     priority: 1,
@@ -517,6 +538,7 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(5);
+      attack(attacker, defender, attacker.arousal / 15);
       return ["Deno thrusts"];
     },
     requirements: [
@@ -524,7 +546,7 @@ function Deno() {
         return attacker.flags.state == "mounted";
       },
       function(attacker, defender) {
-        return attacker.flags.arousal >= 20 && attacker.flags.arousal < 40;
+        return attacker.arousal >= 20 && attacker.arousal < 40;
       }
     ],
     priority: 1,
@@ -536,6 +558,7 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(5);
+      attack(attacker, defender, attacker.arousal / 15);
       return ["Deno thrusts harder"];
     },
     requirements: [
@@ -543,7 +566,7 @@ function Deno() {
         return attacker.flags.state == "mounted";
       },
       function(attacker, defender) {
-        return attacker.flags.arousal >= 40 && attacker.flags.arousal < 60;
+        return attacker.arousal >= 40 && attacker.arousal < 60;
       }
     ],
     priority: 1,
@@ -555,6 +578,7 @@ function Deno() {
   this.attacks.push({
     attackPlayer: function(defender) {
       attacker.addArousal(5);
+      attack(attacker, defender, attacker.arousal / 15);
       return ["Deno thrusts very hard"];
     },
     requirements: [
@@ -562,7 +586,7 @@ function Deno() {
         return attacker.flags.state == "mounted";
       },
       function(attacker, defender) {
-        return attacker.flags.arousal >= 60 && attacker.flags.arousal < 80;
+        return attacker.arousal >= 60 && attacker.arousal < 80;
       }
     ],
     priority: 1,
@@ -573,7 +597,8 @@ function Deno() {
   // mount concentrate
   this.attacks.push({
     attackPlayer: function(defender) {
-      attacker.flags.arousal -= 10;
+      attacker.arousal -= 10;
+      attack(attacker, defender, attacker.arousal / 25);
       return ["Deno pauses and concentrates"];
     },
     requirements: [
@@ -581,7 +606,7 @@ function Deno() {
         return attacker.flags.state == "mounted";
       },
       function(attacker, defender) {
-        return attacker.flags.arousal >= 80 && attacker.flags.arousal < 100;
+        return attacker.arousal >= 80 && attacker.arousal < 100;
       }
     ],
     priority: 1,
@@ -592,7 +617,7 @@ function Deno() {
   // mount orgasm
   this.attacks.push({
     attackPlayer: function(defender) {
-      attacker.flags.state = "mounted";
+      attacker.flags.state = "stuffed";
       return ["Deno orgasms."];
     },
     requirements: [
@@ -600,7 +625,7 @@ function Deno() {
         return attacker.flags.state == "mounted";
       },
       function(attacker, defender) {
-        return attacker.flags.arousal >= 100;
+        return attacker.arousal >= 100;
       }
     ],
     priority: 1,
@@ -619,7 +644,7 @@ function Deno() {
         return attacker.flags.state == "stuffed";
       },
       function(attacker, defender) {
-        return attacker.flags.arousal >= 100;
+        return attacker.arousal >= 100;
       }
     ],
     priority: 1,
@@ -635,14 +660,15 @@ function Deno() {
     },
     requirements: [
       function(attacker, defender) {
-        return attacker.flags.state == "stuffed";
+        return attacker.flags.state == "mounted";
       },
       function(attacker, defender) {
-        return defender.flags.health <= 0;
+        return defender.health <= 0;
       }
     ],
     priority: 2,
-    weight: function(attacker, defender) { return 1; }
+    weight: function(attacker, defender) { return 1; },
+    gameover: function() { "Melted and shot into Deno's mate."; }
   });
 
 
@@ -1099,7 +1125,7 @@ function Deno() {
         }
         defender.flags.balls.streak++;
 
-        if (defender.flags.balls.streak >= 10 && defender.flags.arousal < 50) {
+        if (defender.flags.balls.streak >= 10 && defender.arousal < 50) {
           defender.flags.state = "walking";
           return ["The dragon starts walking"];
         }
