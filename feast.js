@@ -23,6 +23,7 @@ let deaths = [];
 let respawnRoom;
 
 let noLog = false;
+let logPadLine = undefined;
 
 let MIDNIGHT = 0;
 let MORNING = 21600;
@@ -313,6 +314,9 @@ function renderTime(time) {
 function move(direction) {
   if (noLog)
     clearScreen();
+  else
+    clearLogBreak();
+
   let target = currentRoom.exits[direction];
   if (target == null) {
     alert("Tried to move to an empty room!");
@@ -372,6 +376,8 @@ function start() {
   world = createWorld();
   currentRoom = world["Bedroom"];
   respawnRoom = currentRoom;
+  update(new Array(50).fill(newline));
+  update(["Welcome to Feast."]);
   moveTo(currentRoom,"");
   updateDisplay();
 }
@@ -479,15 +485,30 @@ function clearScreen() {
 
 function update(lines=[]) {
   let log = document.getElementById("log");
+
+
   for (let i=0; i<lines.length; i++) {
     let div = document.createElement("div");
     div.innerHTML = lines[i];
+
+    if (logPadLine === undefined && !noLog) {
+      logPadLine = div;
+      logPadLine.classList.add("log-entry-padded");
+    }
+
     log.appendChild(div);
   }
 
 
   log.scrollTop = log.scrollHeight;
   updateDisplay();
+}
+
+function clearLogBreak() {
+  if (logPadLine !== undefined) {
+    logPadLine.classList.remove("log-entry-padded");
+    logPadLine = undefined;
+  }
 }
 
 function changeMode(newMode) {
@@ -578,6 +599,8 @@ function startCombat(opponent) {
 function attackClicked(index) {
   if (noLog)
     clearScreen();
+  else
+    clearLogBreak();
   update(playerAttacks[index].attack(currentFoe).concat([newline]));
 
   if (currentFoe.health <= 0) {
@@ -623,6 +646,8 @@ function attackHovered(index) {
 function struggleClicked(index) {
   if (noLog)
     clearScreen();
+  else
+    clearLogBreak();
   let struggle = struggles[index];
 
   let result = struggle.struggle(player);
@@ -657,6 +682,8 @@ function struggleHovered(index) {
 function startDialog(dialog) {
   if (noLog)
     clearScreen();
+  else
+    clearLogBreak();
   currentDialog = dialog;
   changeMode("dialog");
   update(currentDialog.text.concat([newline]));

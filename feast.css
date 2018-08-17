@@ -141,6 +141,9 @@ button {
   overflow: auto;
 }
 
+.log-entry-padded {
+  margin: 50px 0px 0px 0px;
+}
 .stats {
   float: right;
   flex: 1;
