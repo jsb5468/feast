@@ -275,11 +275,11 @@ function updateDisplay() {
 
 }
 
-function advanceTimeTo(newTime) {
-  advanceTime((86400 + newTime - time) % 86400);
+function advanceTimeTo(newTime, conscious=true) {
+  advanceTime((86400 + newTime - time) % 86400, conscious);
 }
 
-function advanceTime(amount) {
+function advanceTime(amount, conscious=true) {
   time = (time + amount);
 
   date += Math.floor(time / 86400);
@@ -288,13 +288,17 @@ function advanceTime(amount) {
 
   player.restoreHealth(amount);
   player.restoreStamina(amount);
+  
   update(player.stomach.digest(amount));
   update(player.bowels.digest(amount));
   update(player.balls.digest(amount));
   update(player.womb.digest(amount));
   update(player.breasts.digest(amount));
 
-  update(player.buildArousal(amount));
+  if (conscious) {
+    update(player.buildArousal(amount));
+  }
+
 
 
 }
@@ -584,7 +588,7 @@ function respawn(respawnRoom) {
   player.breasts.waste = 0;
   player.breasts.digested = [];
 
-  advanceTime(Math.floor(86400 / 2 * (Math.random() * 0.5 - 0.25 + 1)));
+  advanceTime(Math.floor(86400 / 2 * (Math.random() * 0.5 - 0.25 + 1)), false);
   changeMode("explore");
   player.health = 100;
   update(["You wake back up in your bed."]);
