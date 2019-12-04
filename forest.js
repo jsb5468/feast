@@ -766,4 +766,28 @@ function Anaconda() {
       };
     }
   );
+  
+  this.playerAttacks.push(
+    function(attacker) {
+      return {
+        name: "Flee",
+        desc: "Try to run away",
+        attack: function(defender) {
+          let success = statCheck(attacker, defender, "dex");
+          if (success) {
+            attacker.changeStamina(-25);
+            attacker.clear();
+            changeMode("explore");
+            return ["You successfully run away."];
+          } else {
+            attacker.changeStamina(-25);
+            defender.changeStamina(-25);
+            return ["You can't escape!"];
+          }
+        },
+        requirements: [
+          function(attacker, defender) { return defender.flags.state == "combat"; }
+        ]
+      }
+  });
 }
