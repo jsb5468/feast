@@ -365,6 +365,7 @@ function next_step(stage) {
 
 window.addEventListener('load', function(event) {
   document.getElementById("character-step-1-next").addEventListener("click", function() { next_step(2); });
+  document.getElementById("character-load").addEventListener("click", startLoaded, false);
   document.getElementById("start-button").addEventListener("click", start, false);
 });
 
@@ -954,6 +955,10 @@ function loadGame() {
   moveToByName(save.position, "");
 }
 
+function startLoaded() { //used to load the game via the main menu
+  start();
+  loadGame();
+}
 // wow polyfills
 
 if (![].includes) {
