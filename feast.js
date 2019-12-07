@@ -969,43 +969,43 @@ function startLoaded() { //used to load the game via the main menu
   loadGame();
 }
 
-var confirmTimer;
-let confirmState = "";
-let confirmStateText = "";
+//these work in conjunction with buttonConfirm/buttonConfirmEnd and any functions that call them.
+var confirmTimer; //this is areference to the active setTimeout, only used to allow clearTimeout to know thich timeout to clear
+let confirmState = "";  //this records which function is asking for confirmation "" means nothing is asking for confirmation.
+let confirmStateText = ""; //this is where the original button text is stored when the button reads "Confirm?"
 
-function buttonConfirm(targetedButton, buttonText){
+function buttonConfirm(targetedButton, buttonText){ //starts a timer and requests the playter click the button again to confirm that they want to take the action
   if(confirmState != ""){
   buttonConfirmEnd();
   }
   document.getElementById([targetedButton]).innerHTML = "Confirm?"; //changes button text to "Confirm?"
-  confirmState = targetedButton;
-  confirmStateText = buttonText;
+  confirmState = targetedButton;  //copies data to global variable to make sure only one button is requesting confirmation at any given time
+  confirmStateText = buttonText;  //copies data to global variable to make sure only one button is requesting confirmation at any given time
   confirmTimer = setTimeout(buttonConfirmEnd, 5000); //5000 is 5 seconds
 }
 
-function buttonConfirmEnd(){
-  let targetedButtonText = document.getElementById([confirmState]).innerHTML;
-  document.getElementById([confirmState]).innerHTML = [confirmStateText];
-  confirmState = "";
-  clearTimeout(confirmTimer);
+function buttonConfirmEnd(){ //this resets the button once the request for confirmation has no longer active
+  document.getElementById([confirmState]).innerHTML = [confirmStateText]; //resets text
+  confirmState = ""; //resets confirmation state
+  clearTimeout(confirmTimer); //keeps function from being called again if a timer is running
 }
 
-function saveGameButton(){
+function saveGameButton(){//activates if the "Save Game" button is pressed
   let targetedButton = "save-button";
-  if (confirmState === targetedButton){
+  if (confirmState === targetedButton){//if the confirm timer is active for this function, actually saves game
     buttonConfirmEnd();
     saveGame();
   }else{
-    buttonConfirm(targetedButton, "Save Game");
+    buttonConfirm(targetedButton, "Save Game"); //starts confirm timer for this function
   }
 }
 
-function loadGameButton(){
+function loadGameButton(){//activates if the "Load Game" button is pressed
   let targetedButton = "load-button";
-  if (confirmState === targetedButton){
+  if (confirmState === targetedButton){//if the confirm timer is active for this function, actually loads game
     buttonConfirmEnd();
     loadGame();
-  }else{
+  }else{ //starts confirm timer for this function
     buttonConfirm(targetedButton, "Load Game");
   }
 }
