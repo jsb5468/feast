@@ -376,6 +376,8 @@ function start() {
   document.getElementById("game").style.display = "block";
   document.getElementById("stat-button-status").addEventListener("click", status, false);
   document.getElementById("log-button").addEventListener("click", toggleLog, false);
+  document.getElementById("load-button").addEventListener("click", loadGameButton, false);
+  document.getElementById("save-button").addEventListener("click", saveGameButton, false);
   loadCompass();
   loadDialog();
   world = createWorld();
@@ -520,6 +522,7 @@ function changeMode(newMode) {
   mode = newMode;
   let body = document.querySelector("body");
   document.getElementById("foe-stats").style.display = "none";
+  document.getElementById("options").style.display = "block";
   body.className = "";
   switch(mode) {
     case "explore":
@@ -529,9 +532,11 @@ function changeMode(newMode) {
     case "combat":
       body.classList.add("combat");
       document.getElementById("foe-stats").style.display = "block";
+      document.getElementById("options").style.display = "none";
       break;
     case "eaten":
       body.classList.add("eaten");
+        document.getElementById("options").style.display = "none";
       document.getElementById("foe-stats").style.display = "block";
       break;
   }
@@ -931,6 +936,8 @@ function saveGame() {
   let stringified = JSON.stringify(save);
 
   window.localStorage.setItem("save", stringified);
+  update(["Game saved."]);
+  updateDisplay();
 }
 
 function loadGame() {
@@ -953,12 +960,58 @@ function loadGame() {
 
   clearScreen();
   moveToByName(save.position, "");
+  update(["Game loaded."]);
+  updateDisplay();
 }
 
 function startLoaded() { //used to load the game via the main menu
   start();
   loadGame();
 }
+
+var confirmTimer;
+let confirmState = "";
+let confirmStateText = "";
+
+function buttonConfirm(targetedButton, buttonText){
+  if(confirmState != ""){
+  buttonConfirmEnd();
+  }
+  document.getElementById([targetedButton]).innerHTML = "Confirm?"; //changes button text to "Confirm?"
+  confirmState = targetedButton;
+  confirmStateText = buttonText;
+  confirmTimer = setTimeout(buttonConfirmEnd, 5000); //5000 is 5 seconds
+}
+
+function buttonConfirmEnd(){
+  let targetedButtonText = document.getElementById([confirmState]).innerHTML;
+  document.getElementById([confirmState]).innerHTML = [confirmStateText];
+  confirmState = "";
+  clearTimeout(confirmTimer);
+}
+
+function saveGameButton(){
+  let targetedButton = "save-button";
+  if (confirmState === targetedButton){
+    buttonConfirmEnd();
+    saveGame();
+  }else{
+    buttonConfirm(targetedButton, "Save Game");
+  }
+}
+
+function loadGameButton(){
+  let targetedButton = "load-button";
+  if (confirmState === targetedButton){
+    buttonConfirmEnd();
+    loadGame();
+  }else{
+    buttonConfirm(targetedButton, "Load Game");
+  }
+}
+
+
+
 // wow polyfills
 
 if (![].includes) {
