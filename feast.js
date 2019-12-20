@@ -8,7 +8,7 @@ let currentFoe = null;
 let dirButtons = [];
 let mode = "explore";
 let actions = [];
-let time = 9*60*60;
+let time = 9*60*60; //time is calculated in seconds
 let date = 1;
 let newline = "&nbsp;";
 
@@ -255,25 +255,26 @@ function updateDisplay() {
   document.getElementById("stat-dex").innerHTML = "Dex: " + player.dex;
   document.getElementById("stat-con").innerHTML = "Con: " + player.con;
   document.getElementById("stat-arousal").innerHTML = "Arousal: " + round(player.arousal,0) + "/" + round(player.arousalLimit(),0);
-  document.getElementById("stat-stomach").innerHTML = "Stomach: " + round(player.stomach.fullness(),0) + "/" + player.stomach.capacity;
+  document.getElementById("stat-stomach").innerHTML = "Stomach: " + round(player.stomach.fullness(),0) + "/" + round(player.stomach.capacity, 0);
   if (player.prefs.pred.anal || player.prefs.scat)
-    document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness(),0) + "/" + player.bowels.capacity;
+    document.getElementById("stat-bowels").innerHTML = "Bowels: " + round(player.bowels.fullness(),0) + "/" + round(player.bowels.capacity, 0);
   else
     document.getElementById("stat-bowels").innerHTML = "";
   if (player.prefs.pred.cock)
-    document.getElementById("stat-balls").innerHTML = "Balls: " + round(player.balls.fullness(),0) + "/" + player.balls.capacity;
+    document.getElementById("stat-balls").innerHTML = "Balls: " + round(player.balls.fullness(),0) + "/" + round(player.balls.capacity, 0);
   else
     document.getElementById("stat-balls").innerHTML = "";
   if (player.prefs.pred.unbirth)
-    document.getElementById("stat-womb").innerHTML = "Womb: " + round(player.womb.fullness(),0) + "/" + player.womb.capacity;
+    document.getElementById("stat-womb").innerHTML = "Womb: " + round(player.womb.fullness(),0) + "/" + round(player.womb.capacity, 0);
   else
     document.getElementById("stat-womb").innerHTML = "";
   if (player.prefs.pred.breast)
-    document.getElementById("stat-breasts").innerHTML = "Breasts: " + round(player.breasts.fullness(),0) + "/" + player.breasts.capacity;
+    document.getElementById("stat-breasts").innerHTML = "Breasts: " + round(player.breasts.fullness(),0) + "/" + round(player.breasts.capacity, 0);
   else
     document.getElementById("stat-breasts").innerHTML = "";
 
 }
+
 
 function advanceTimeTo(newTime, conscious=true) {
   advanceTime((86400 + newTime - time) % 86400, conscious);
@@ -294,6 +295,7 @@ function advanceTime(amount, conscious=true) {
   update(player.balls.digest(amount));
   update(player.womb.digest(amount));
   update(player.breasts.digest(amount));
+  stretchOrgans(amount);
 
   if (conscious) {
     update(player.buildArousal(amount));
@@ -380,6 +382,7 @@ function start() {
   document.getElementById("save-button").addEventListener("click", saveGameButton, false);
   loadCompass();
   loadDialog();
+  setupStrechableOrgans();
   world = createWorld();
   currentRoom = world["Bedroom"];
   respawnRoom = currentRoom;
@@ -904,10 +907,53 @@ function status() {
     }
   }
 
-
-
-
   update(lines);
+}
+
+function checkOverfill(organ,returnValue=false, returnPercent=false){
+let percentFilled = (round(player[organ].fullness(),0) / player[organ].capacity);
+  if (returnValue == false){
+    if (percentFilled > 1){
+      return (true);
+    }else{ 
+      return (false);
+    }
+  }else{
+    if (returnPercent == true){
+      return (round(player[organ].fullness(),0));
+    }else{
+      return (round(player[organ].fullness(),0) - player[organ].capacity);
+    }
+  }
+}
+
+var strechableOrgans = ["stomach","bowels","balls","womb","breasts"];
+
+function setupStrechableOrgans(){
+strechableOrgans = ["stomach"];
+
+  if (player.prefs.pred.anal || player.prefs.scat){ //these if conditions are copied from the if statements above that define if the stat menu shows stats for a set organ
+    strechableOrgans.push("bowels");
+ }if (player.prefs.pred.cock){
+    strechableOrgans.push("balls");
+ }if (player.prefs.pred.unbirth){
+    strechableOrgans.push("womb");
+ }if (player.prefs.pred.breast){
+    strechableOrgans.push("breasts");
+  }
+}
+
+function stretchOrgans(time){
+  for (i=0; i<strechableOrgans.length; i++){
+    let organ = strechableOrgans[i];
+    let overfillState = checkOverfill(organ, false, false);
+    if (overfillState == true){
+      excessMass = checkOverfill(organ,true, false);
+      massDigested = time*player[organ].digestRate;
+      massDigested = Math.min(excessMass, massDigested);
+      player[organ].capacity += massDigested;
+    }
+  }
 }
 
 let toSave = ["str","dex","con","name","species","health","stamina"];

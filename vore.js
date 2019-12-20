@@ -360,7 +360,7 @@ function Container(owner) {
   this.capacity  = 100;
 
   // kg/sec
-  this.digestRate = 80 / 8640;
+  this.digestRate = 80 / 8640; //100kg/3hr equivalent
 
   this.digest = function(time) {
     let lines = [];
@@ -380,7 +380,7 @@ function Container(owner) {
       }
 
       if (prey.health <= 0) {
-        let digested = Math.min(prey.mass, this.digestRate * time);
+        let digested = Math.min(prey.mass, this.digestRate * time * (this.capacity/100));
 
         prey.mass -= digested;
 
