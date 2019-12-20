@@ -367,7 +367,7 @@ function next_step(stage) {
 
 window.addEventListener('load', function(event) {
   document.getElementById("character-step-1-next").addEventListener("click", function() { next_step(2); });
-  document.getElementById("character-load").addEventListener("click", startLoaded, false);
+  document.getElementById("character-load").addEventListener("click", loadGame, false);
   document.getElementById("start-button").addEventListener("click", start, false);
 });
 
@@ -380,6 +380,7 @@ function start() {
   document.getElementById("log-button").addEventListener("click", toggleLog, false);
   document.getElementById("load-button").addEventListener("click", loadGameButton, false);
   document.getElementById("save-button").addEventListener("click", saveGameButton, false);
+  document.getElementById("inventory-button").addEventListener("click", overfillVerifier, false);
   loadCompass();
   loadDialog();
   setupStrechableOrgans();
@@ -389,7 +390,8 @@ function start() {
   update(new Array(50).fill(newline));
   update(["Welcome to Feast."]);
   moveTo(currentRoom,"");
-  updateDisplay();
+  
+
 }
 
 // copied from Stroll LUL
@@ -910,6 +912,11 @@ function status() {
   update(lines);
 }
 
+function overfillVerifier(){
+  testoutput = checkOverfill("stomach");
+  update([testoutput]);
+}
+
 function checkOverfill(organ,returnValue=false, returnPercent=false){
 let percentFilled = (round(player[organ].fullness(),0) / player[organ].capacity);
   if (returnValue == false){
@@ -969,7 +976,14 @@ function saveGame() {
   save.player.name = player.name;
   save.player.species = player.species;
   save.player.health = player.health;
-  save.player.health = player.stamina;
+  save.player.stamina = player.stamina;
+
+
+  save.stomach = JSON.stringify(player.stomach.contents); //organs
+  save.bowels = player.bowels.contents;
+  save.balls = JSON.stringify(player.balls.contents);
+  save.womb = JSON.stringify(player.womb.contents);
+  save.breasts = JSON.stringify(player.breasts.contents);
 
   save.prefs = JSON.stringify(player.prefs);
 
@@ -987,6 +1001,8 @@ function saveGame() {
 }
 
 function loadGame() {
+
+  start();
   changeMode("explore");
   let save = JSON.parse(window.localStorage.getItem("save"));
 
@@ -1000,20 +1016,32 @@ function loadGame() {
 
   player.prefs = JSON.parse(save.prefs);
   deaths = save.deaths;
+  setupStrechableOrgans();
 
   date = save.date;
   time = save.time;
+  
+
+  tempContents = JSON.parse(save.stomach)
+  player.stomach.contents = tempContents;
+  player.bowels.contents.concat(save.bowels);
+  player.balls.contents = JSON.parse(save.balls);
+  player.womb.contents = JSON.parse(save.womb);
+  player.breasts.contents = JSON.parse(save.breasts);
+
+
 
   clearScreen();
   moveToByName(save.position, "");
+      update([player.stomach.contents]);
+          update(["Game loaded."]);
+
+      update([save.stomach]);
   update(["Game loaded."]);
   updateDisplay();
 }
 
-function startLoaded() { //used to load the game via the main menu
-  start();
-  loadGame();
-}
+
 
 //these work in conjunction with buttonConfirm/buttonConfirmEnd and any functions that call them.
 var confirmTimer; //this is areference to the active setTimeout, only used to allow clearTimeout to know thich timeout to clear
